@@ -29,7 +29,7 @@ app.use(apiAccessAuthMiddleware);
 app.get('/health-check', (req, res) => {
   res.status(200).json({
     status: true,
-    message: 'Micro-Influx Chat Service is Up v1.0',
+    message: 'My ALX Guardian Service is Up v1.0',
   });
 });
 

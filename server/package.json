@@ -1,5 +1,5 @@
 {
-  "name": "my-alx-guardian-BE",
+  "name": "my-alx-guardian",
   "version": "1.0.0",
   "description": "",
   "main": "application/server.js",
@@ -12,13 +12,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/itsoluwatobby/my-alx-guardian-BE/server"
+    "url": "git+https://github.com/itsoluwatobby/my-alx-guardian/tree/main/server"
   },
   "bugs": {
-    "url": "https://github.com/itsoluwatobby/my-alx-guardian-BE/server/issues"
+    "url": "https://github.com/itsoluwatobby/my-alx-guardian/issues"
   },
-  "homepage": "https://github.com/itsoluwatobby/my-alx-guardian-BE/server#readme",
-  "author": "oluwwatobi akinola",
+  "homepage": "https://github.com/itsoluwatobby/my-alx-guardian/blob/main/server/README.md",
+  "author": "oluwatobi akinola",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
