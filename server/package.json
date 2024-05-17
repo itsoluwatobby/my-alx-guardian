@@ -1,0 +1,42 @@
+{
+  "name": "my-alx-guardian-BE",
+  "version": "1.0.0",
+  "description": "",
+  "main": "application/server.js",
+  "scripts": {
+    "test": "jest --config ./jest.config.json",
+    "lint": "npx eslint --fix ./application/**/*.js",
+    "start": "node application/server.js",
+    "dev": "nodemon application/server.js",
+    "serve": "nodemon application/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itsoluwatobby/my-alx-guardian-BE/server"
+  },
+  "bugs": {
+    "url": "https://github.com/itsoluwatobby/my-alx-guardian-BE/server/issues"
+  },
+  "homepage": "https://github.com/itsoluwatobby/my-alx-guardian-BE/server#readme",
+  "author": "oluwwatobi akinola",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "jest": "^29.7.0",
+    "joi": "^17.13.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.3.4",
+    "pino": "^9.0.0",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.29.1",
+    "nodemon": "^3.1.0"
+  }
+}
