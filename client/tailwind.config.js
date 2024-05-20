@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./src/**/*.{js,jsx,ts,tsx}'],
+  content: ["index.html", './src/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {},
     screens: {
@@ -25,7 +25,7 @@ export default {
       mobile: {'max': '480px'},
       midmobile: {'max': '380px'},
       minmobile: {'max': '280px'}
-    }
+    },
   },
   plugins: [],
 }
