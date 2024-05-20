@@ -1,3 +1,4 @@
+import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
@@ -13,14 +14,14 @@ import { useState } from 'react';
 
 function App() {
   const { setTheme, theme } = useGuardianContext() as GuardianContextType;
-  const [openSidebar, setOpenSidebar] = useState<boolean>(false)
+  const [openSidebarModal, setOpenSidebarModal] = useState<boolean>(false)
 
   return (
     <main className={`playfair-display-guardian w-full h-[100dvh] flex flex-col xxlscreen:mx-auto max-w-[1440px] transition-colors ${theme === 'light' ? 'bg-gradient-to-b from-[#fae2ef] from-[60%] to-transparent' : 'bg-gradient-to-b from-[#333333] from-[40%] to-[#606060] text-[#ffffff]'} overflow-y-scroll`}>
       <Navbar 
         theme={theme}
         setTheme={setTheme}
-        setOpenSidebar={setOpenSidebar}
+        setOpenSidebarModal={setOpenSidebarModal}
       />
 
       <Routes>
@@ -41,7 +42,7 @@ function App() {
 
       <Sidebar
         theme={theme} setTheme={setTheme}
-        openSidebar={openSidebar} setOpenSidebar={setOpenSidebar}
+        openSidebarModal={openSidebarModal} setOpenSidebarModal={setOpenSidebarModal}
       />
 
       <ToastContainer />

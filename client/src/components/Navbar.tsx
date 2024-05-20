@@ -1,15 +1,15 @@
 import { useCallback, useState } from "react";
-import { FaHamburger, FaSun } from "react-icons/fa"
+import { FaSun } from "react-icons/fa"
 import { FaMoon } from "react-icons/fa6"
 import { useLocation, useNavigate } from "react-router-dom";
 
 type NavbarProps = {
   theme: Theme;
   setTheme: React.Dispatch<React.SetStateAction<Theme>>;
-  setOpenSidebar: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpenSidebarModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Navbar({ theme, setTheme, setOpenSidebar }: NavbarProps) {
+export default function Navbar({ theme, setTheme, setOpenSidebarModal }: NavbarProps) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [activeLink, setActiveLink] = useState<string>('/' || '#');
@@ -56,9 +56,12 @@ export default function Navbar({ theme, setTheme, setOpenSidebar }: NavbarProps)
               className="cursor-pointer text-xl hover:scale-[1.04] active-scale-[1] transition-transform text-[#333333]" />
         }
         
-        <FaHamburger 
-        onClick={() => setOpenSidebar(true)}
-        className="text-2xl cursor-pointer hover:opacity-90 transition-opacity md:hidden" />
+        <div 
+        onClick={() => setOpenSidebarModal(true)}
+        className="md:hidden cursor-pointer hover:opacity-95 active:opacity-100 h-fit rounded-sm shadow-inner transition-opacity">
+          <div className={`relative ${theme === 'light' ? 'bg-[#333333] before:bg-[#333333] after:bg-[#333333]' : 'bg-white before:bg-white after:bg-white'} rounded-sm w-6 h-1 before:absolute before:-top-1.5 before:w-6 before:rounded-sm before:h-1 after:absolute after:-bottom-1.5 after:w-6 after:rounded-sm after:h-1`}>
+          </div>
+        </div>
       </div>
 
 
