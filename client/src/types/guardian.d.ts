@@ -11,6 +11,9 @@ type GuardianContextType = {
   setTheme: React.Dispatch<React.SetStateAction<Theme>>
 }
 
+type Toggle = 'OPEN' | 'CLOSE'
+type ExpandDetailsType = { id: string; toggle: Toggle; }
+
 type FooterTypes = {
   name: string;
   subs: string[];

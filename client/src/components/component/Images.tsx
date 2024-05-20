@@ -10,7 +10,7 @@ type ImagesProps = {
 export default function GuardianImages({ imageUri, classNames, imageClassNames, alt, loading }: ImagesProps) {
 
   return (
-    <figure className={classNames}>
+    <figure className={`bg-slate-700 ${classNames}`}>
       <img src={imageUri} loading={loading} alt={alt} className={`w-full h-full object-cover ${imageClassNames}`} />
     </figure>
   )
