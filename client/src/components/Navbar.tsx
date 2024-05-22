@@ -18,22 +18,30 @@ export default function Navbar({ theme, setTheme, setOpenSidebarModal }: NavbarP
     return `self-end w-1 h-1 rounded-sm ${theme === 'light' ? 'bg-black' : 'bg-white'} -translate-y-1 mx-[1px]`
   }, [])
 
+  const AuthenticatedRoutes = ['/dashboard'];
   const navigation = [
-    { name: 'Home', link: pathname === '/' ? '#' : '/' },
-    { name: 'Sign in', link: '/signin' },
-    { name: 'Sign up', link: '/signup' },
-    { name: 'About', link: '#about' },
-    { name: 'FAQ', link: '#faq' },
-    { name: 'Contact', link: '#contact' },
+    [
+      { name: 'Home', link: pathname === '/' ? '#' : '/' },
+      { name: 'Sign in', link: '/signin' },
+      { name: 'Sign up', link: '/signup' },
+      { name: 'About', link: '#about' },
+      { name: 'FAQ', link: '#faq' },
+      { name: 'Contact', link: '#contact' },
+    ],
+    [
+      { name: 'Dashboard', link: '/dashboard' },
+      { name: 'Profile', link: '/profile' },
+      // { name: 'Logout', link: logout },
+    ]
   ];
   return (
-    <nav className={`sticky top-0 w-full z-40 bg-opacity-85 ${theme === 'light' ? 'bg-[#fae2ef]' : 'bg-[#333333]'} h-10 pt-8 pb-6 px-6 flex items-center justify-between`}>
+    <nav className={`sticky top-0 w-full z-40 bg-opacity-85 ${theme === 'light' ? 'bg-[#faeff5]' : 'bg-[#333333]'} h-10 pt-8 pb-6 px-6 flex items-center justify-between`}>
       <h3 onClick={() => navigate('/')} className="cursor-pointer text-3xl flex items-center">M<div className={classNames(theme)}></div>A<div className={classNames(theme)}></div>G
       </h3>
 
-      <div className="md:flex justify-between items-center w-[60%] lg:w-1/2 hidden">
+      <div className="self-center md:flex justify-betwee gap-12 items-center w-fit hidden">
         {
-          navigation.map(nav => (
+          navigation[AuthenticatedRoutes.includes(pathname) ? 1 : 0].map(nav => (
             <a href={nav.link} key={nav.name}
             onClick={() => setActiveLink(nav.link)}
             className={`${activeLink === nav.link ? 'underline' : ''} hover:opacity-95 hover:underline underline-offset-4 transition-all text-[15px]`}>

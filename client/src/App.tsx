@@ -5,19 +5,21 @@ import Home from './pages/Home';
 import Signin from './pages/Signin';
 import Signup from './pages/Signup';
 import Navbar from './components/Navbar';
-import NotFound from './components/NotFound';
+import NotFound from './pages/NotFound';
 import Dashboard from './pages/Dashboard';
 import ProtectedRoutes from './layouts/ProtectedRoutes';
 import { useGuardianContext } from './hooks/useGuardianContext';
-import Sidebar from './components/Sidebar';
+import Sidebar from './components/SidebarModal';
 import { useState } from 'react';
+import DashboardLayout from './layouts/DashboardLayout';
+import Post from './pages/Post';
 
 function App() {
   const { setTheme, theme } = useGuardianContext() as GuardianContextType;
   const [openSidebarModal, setOpenSidebarModal] = useState<boolean>(false)
 
   return (
-    <main className={`playfair-display-guardian w-full h-[100dvh] flex flex-col xxlscreen:mx-auto max-w-[1440px] transition-colors ${theme === 'light' ? 'bg-gradient-to-b from-[#fae2ef] from-[60%] to-transparent' : 'bg-gradient-to-b from-[#333333] from-[40%] to-[#606060] text-[#ffffff]'} overflow-y-scroll`}>
+    <main className={`playfair-display-guardian w-full h-[100dvh] flex flex-col xxlscreen:mx-auto max-w-[1440px] transition-colors ${theme === 'light' ? 'bg-gradient-to-b from-[#faeff5] from-[60%] to-transparent' : 'bg-gradient-to-b from-[#333333] from-[40%] to-[#606060] text-[#ffffff]'} overflow-y-scroll`}>
       <Navbar 
         theme={theme}
         setTheme={setTheme}
@@ -31,8 +33,11 @@ function App() {
           <Route path='signin' element={<Signin />} />
           <Route path='signup' element={<Signup />} />
 
-          <Route element={<ProtectedRoutes />}>
-            <Route path='/dashboard' element={<Dashboard />} />
+          <Route path='/' element={<DashboardLayout />}>
+            <Route element={<ProtectedRoutes />}>
+              <Route path='dashboard' element={<Dashboard />} />
+              <Route path='post/:postId' element={<Post />} />
+            </Route>
           </Route>
           
           <Route path='*' element={<NotFound />} />

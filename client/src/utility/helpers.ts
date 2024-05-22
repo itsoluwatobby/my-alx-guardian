@@ -119,3 +119,5 @@ export const convertToMinutes = (duration: number): number | string => {
     return `${padMinutes}.${padSeconds}`;
   }
 }
+
+export const getName = (name: string): string => name[0];
