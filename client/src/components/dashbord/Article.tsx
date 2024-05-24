@@ -102,7 +102,9 @@ export const Article = ({ post, expandDetail, setExpandDetail }: ArticleProp) =>
           </div>
         </div>
 
-        <Comments expandDetail={expandDetail} post={post} />
+        <Comments 
+        setExpandDetail={setExpandDetail} 
+        expandDetail={expandDetail} post={post} />
 
       </section>
 

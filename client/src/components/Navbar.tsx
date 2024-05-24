@@ -1,18 +1,25 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { FaSun } from "react-icons/fa"
 import { FaMoon } from "react-icons/fa6"
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import useObserver from "../hooks/useObserver";
+import GuardianImages from "./component/GuardianImages";
+import UserDetails from "./component/UserDetails";
 
 type NavbarProps = {
+  showTitle: boolean;
   theme: Theme;
   setTheme: React.Dispatch<React.SetStateAction<Theme>>;
   setOpenSidebarModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Navbar({ theme, setTheme, setOpenSidebarModal }: NavbarProps) {
+export default function Navbar({ showTitle, theme, setTheme, setOpenSidebarModal }: NavbarProps) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const { postId } = useParams();
+  const userRef = useRef<HTMLDivElement>(null);
   const [activeLink, setActiveLink] = useState<string>('/' || '#');
+  const { isIntersecting, observerRef } = useObserver({screenPosition: '0px', threshold: 0.35})
 
   const classNames = useCallback((theme: Theme) => {
     return `self-end w-1 h-1 rounded-sm ${theme === 'light' ? 'bg-black' : 'bg-white'} -translate-y-1 mx-[1px]`
@@ -34,8 +41,9 @@ export default function Navbar({ theme, setTheme, setOpenSidebarModal }: NavbarP
       // { name: 'Logout', link: logout },
     ]
   ];
+
   return (
-    <nav className={`sticky top-0 w-full z-40 bg-opacity-85 ${theme === 'light' ? 'bg-[#faeff5]' : 'bg-[#333333]'} h-10 pt-8 pb-6 px-6 flex items-center justify-between`}>
+    <nav className={`sticky top-0 w-full z-40 bg-opacity-85 ${theme === 'light' ? 'bg-[#faeff5]' : 'bg-[#333333]'} h-10 pt-8 pb-6 px-6 flex items-center justify-between ${isIntersecting ? 'scale-0' : 'scale-1'}`}>
       <h3 onClick={() => navigate('/')} className="cursor-pointer text-3xl flex items-center">M<div className={classNames(theme)}></div>A<div className={classNames(theme)}></div>G
       </h3>
 
@@ -50,6 +58,26 @@ export default function Navbar({ theme, setTheme, setOpenSidebarModal }: NavbarP
           ))
         }
       </div>
+
+      <section
+      ref={observerRef}
+      className={`${pathname === `/post/${postId}` ? 'flex' : 'hidden'} ${showTitle ? 'scale-1' : 'scale-0'} transition-transform flex-col items-center gap-y-1`}>
+        <div
+        className={`flex items-center gap-x-3`}>
+          <GuardianImages
+            imageUri="/study.jpg"
+            alt={'User 1'}
+            classNames="cursor-pointer hover:scale-[1.03] hover:animate-spin transition-transform flex-none w-6 h-6 border-[1px] border-gray-200 rounded-full"
+            imageClassNames="rounded-full hover:animate-spin transition-transform"
+            />
+          <UserDetails
+            classNames="text-[11px]"
+            name="User 1" userRef={userRef}
+            date={new Date(new Date().getTime() - 6 * 60 * 60 * 924)}
+            />
+        </div>
+        <h2 className="text-center text-sm font-medium">Things really do fall apart</h2>
+      </section>
 
       <div className="flex gap-x-8 items-center">
         {

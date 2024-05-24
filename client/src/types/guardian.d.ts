@@ -8,7 +8,9 @@ type Theme = 'light' | 'dark';
 
 type GuardianContextType = {
   theme: Theme;
-  setTheme: React.Dispatch<React.SetStateAction<Theme>>
+  showTitle: boolean;
+  setTheme: React.Dispatch<React.SetStateAction<Theme>>;
+  setShowTitle: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 type Toggle = 'OPEN' | 'CLOSE'

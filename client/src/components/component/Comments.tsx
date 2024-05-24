@@ -7,13 +7,15 @@ import GuardianImages from "./GuardianImages";
 import UserDetails from "./UserDetails";
 import { TextArea } from "./TextAreaInput";
 import { FaCommentDots, FaHeart } from "react-icons/fa6";
+import { FaTimes } from "react-icons/fa";
 
 type CommentsProps = {
   expandDetail: ExpandDetailsType;
+  setExpandDetail: React.Dispatch<React.SetStateAction<ExpandDetailsType>>;
   post: { id: string };
 }
 
-export default function Comments({ expandDetail, post }: CommentsProps) {
+export default function Comments({ expandDetail, setExpandDetail, post }: CommentsProps) {
   const { theme } = useGuardianContext() as GuardianContextType;
   const [input, setInput] = useState<string>('');
   const [appState, setAppState] = useState<AppStateType>({} as AppStateType);
@@ -29,9 +31,16 @@ export default function Comments({ expandDetail, post }: CommentsProps) {
   return (
     <div
       className={`shadow-lg ${theme === 'light' ? 'bg-gradient-to-b from-[#fae2ef] from-[60%] to-transparent' : 'bg-gradient-to-b from-[#333333] from-[40%] to-[#606060] text-[#ffffff]'} w-full min-h-40 max-h-64 rounded-lg ${(expandDetail?.id === post.id && expandDetail.toggle === 'OPEN') ? 'translate-0' : 'hidden'} p-2 pt-1 text-sm flex flex-col`}>
-      <p className="w-fit font-sans opacity-90">Comments</p>
+      <div className="flex w-full justify-between items-center">
+        <p className="w-fit font-sans opacity-90">Comments</p>
+        <button title="close" 
+        onClick={() => setExpandDetail({ id: '', toggle: 'CLOSE' })}
+        className="rounded-sm px-2 py-0.5 shadow-md bg-gray-600">
+          <FaTimes />
+        </button>
+      </div>
 
-      <div className="flex flex-col flex-auto pb-4 overflow-y-scroll mb-2 gap-y-2">
+      <div className="flex flex-col flex-auto p-1 pb-4 overflow-y-scroll mb-2 gap-y-2">
         {
           [...Array(10).keys()].map((i) => (
             <Comment key={i} theme={theme} />

@@ -6,13 +6,16 @@ import ShareButton from "../components/ShareButton";
 import GuardianImages from "../components/component/GuardianImages";
 import UserDetails from "../components/component/UserDetails";
 import ProfilePopup from "../components/ProfilePopup";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Comments from "../components/component/Comments";
 import { useGuardianContext } from "../hooks/useGuardianContext";
+import useObserver from "../hooks/useObserver";
 
 export default function Post() {
   const { postId } = useParams();
-  const { theme } = useGuardianContext() as GuardianContextType;
+  const { isIntersecting, observerRef } = useObserver({screenPosition: '0px', threshold: 0.35});
+
+  const { setShowTitle } = useGuardianContext() as GuardianContextType;
   const userRef = useRef<HTMLDivElement>(null);
   const popupRef = useRef<HTMLElement>(null);
   const [reveal, setReveal] = useState<boolean>(false);
@@ -31,10 +34,20 @@ export default function Post() {
     return 'text-white cursor-pointer hover:scale-[1.02] active:scale-[1] transition-transform size-5'
   }, [])
 
+  useEffect(() => {
+    let isMounted = true;
+    isMounted ? setShowTitle(isIntersecting) : null;
+    return () => {
+      isMounted = false;
+    }
+  }, [isIntersecting, setShowTitle])
+
   return (
     <div 
     className="relative flex flex-col gap-2 h-full p-4 md:px-10 overflow-y-scroll">
-      <div className="flex items-center gap-x-3">
+      <section
+      ref={observerRef}
+      className={`${isIntersecting ? 'scale-0' : 'scale-1'} transition-transform flex items-center gap-x-3`}>
         <GuardianImages
           imageUri="/study.jpg"
           alt={'User 1'}
@@ -45,7 +58,7 @@ export default function Post() {
           name="User 1" userRef={userRef}
           date={new Date(new Date().getTime() - 6 * 60 * 60 * 924)}
         />
-      </div>
+      </section>
 
       <ProfilePopup
         name="User 1" reveal={reveal} popupRef={popupRef}
@@ -53,11 +66,17 @@ export default function Post() {
       />
   
       <section 
-      ref={scrollRef} 
+      ref={expandDetail.toggle === 'CLOSE' ? null : scrollRef} 
       className="relative flex flex-col gap-y-2">
         <div className="text-[13px] flex flex-col gap-y-4 cursor-default mt-1">
-          <h2 className="text-center text-2xl font-medium">Things really do fall apart</h2>
+          <h2 className={`${isIntersecting ? 'hidden' : 'block'} text-center text-2xl font-medium`}>Things really do fall apart</h2>
           <p className="indent-3">
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Incidunt voluptatibus debitis laborum temporibus mollitia ea consectetur autem, nobis hic nesciunt consequatur doloribus repudiandae distinctio, accusamus omnis ullam ducimus. Amet, vitae?
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Incidunt voluptatibus debitis laborum temporibus mollitia ea consectetur autem, nobis hic nesciunt consequatur doloribus repudiandae distinctio, accusamus omnis ullam ducimus. Amet, vitae?
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Incidunt voluptatibus debitis laborum temporibus mollitia ea consectetur autem, nobis hic nesciunt consequatur doloribus repudiandae distinctio, accusamus omnis ullam ducimus. Amet, vitae?
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Incidunt voluptatibus debitis laborum temporibus mollitia ea consectetur autem, nobis hic nesciunt consequatur doloribus repudiandae distinctio, accusamus omnis ullam ducimus. Amet, vitae?
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Incidunt voluptatibus debitis laborum temporibus mollitia ea consectetur autem, nobis hic nesciunt consequatur doloribus repudiandae distinctio, accusamus omnis ullam ducimus. Amet, vitae?
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Incidunt voluptatibus debitis laborum temporibus mollitia ea consectetur autem, nobis hic nesciunt consequatur doloribus repudiandae distinctio, accusamus omnis ullam ducimus. Amet, vitae?
             Lorem, ipsum dolor sit amet consectetur adipisicing elit. Incidunt voluptatibus debitis laborum temporibus mollitia ea consectetur autem, nobis hic nesciunt consequatur doloribus repudiandae distinctio, accusamus omnis ullam ducimus. Amet, vitae?
           </p>
         </div>
@@ -67,7 +86,7 @@ export default function Post() {
           classNames="w-full max-h-60 rounded-lg"
           imageClassNames="rounded-lg"
         />
-        <div className="fixed bottom-5 px-4 py-3 flex items-center w-fit gap-6 rounded-md bg-[#333333]">
+        <div className={`${expandDetail.toggle === 'CLOSE' ? 'flex' : 'hidden'} fixed bottom-5 px-4 py-3 items-center w-fit gap-6 rounded-md bg-[#333333] z-10`}>
           <div className="flex items-center gap-1">
             <FaHeart title="like" className={classes()} />
             <span className="text-xs font-sans text-white">{checkCount(5)}</span>
@@ -99,7 +118,11 @@ export default function Post() {
           </div>
         </div>
 
-        <Comments expandDetail={expandDetail} post={{ id: postId as string }} />
+        <Comments 
+          expandDetail={expandDetail} 
+          setExpandDetail={setExpandDetail}
+          post={{ id: postId as string }}
+        />
 
       </section>
 
