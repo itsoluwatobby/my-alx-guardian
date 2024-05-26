@@ -1,10 +1,10 @@
-const { microInfluxAsyncWrapper } = require('../utils/asyncWrapper');
+const { tryCatchWrapper } = require('../utils/asyncWrapper');
 const { verifyToken } = require('../utils/generateToken');
 const logger = require('../utils/logger');
 const responseDecorator = require('../utils/responseAdapter');
 
 exports.verifyAccessToken = (req, res, next) => {
-  microInfluxAsyncWrapper(res, async () => {
+  tryCatchWrapper(res, async () => {
     logger.trace(`>>>> Request details ${JSON.stringify(req.headers)}`);
     const accessToken = req.headers.authorization;
     if (!accessToken || !accessToken.startsWith('Bearer ')) {
@@ -18,8 +18,9 @@ exports.verifyAccessToken = (req, res, next) => {
     const token = accessToken?.split(' ')[1];
     const result = verifyToken(token);
     // verify user
-    if (req.body.userId !== result.userId) {
-      logger.debug(`UnAuthorised user: >>>>> Token not for <${req.body.userId}>`);
+    const { activeId } = req.query;
+    if (activeId !== result.userId) {
+      logger.debug(`UnAuthorised user: >>>>> Token not for <${activeId}>`);
       return res.json(responseDecorator.error(
         {},
         responseDecorator.responsetemplate.BADTOKEN,

@@ -1,34 +1,66 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
+import { Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import Signin from './pages/Signin';
+import Signup from './pages/Signup';
+import NotFound from './pages/NotFound';
+import Dashboard from './pages/Dashboard';
+import ProtectedRoutes from './layouts/ProtectedRoutes';
+import { useGuardianContext } from './hooks/useGuardianContext';
+import Sidebar from './components/SidebarModal';
+import { useState } from 'react';
+import DashboardLayout from './layouts/DashboardLayout';
+import Post from './pages/Post';
+import GuardianWrapper from './layouts/GuardianWrapper';
+import { NewPost } from './pages/NewPost';
+import ForgotPassword from './pages/ForgotPassword';
+import NewPassword from './pages/NewPassword';
+import EditProfile from './pages/EditProfile';
+import Profile from './pages/Profile';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const { setTheme, theme } = useGuardianContext() as GuardianContextType;
+  const [openSidebarModal, setOpenSidebarModal] = useState<boolean>(false);
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <main className={`playfair-display-guardian w-full h-[100dvh h-screen flex flex-col xxlscreen:mx-auto max-w-[1440px] p-2 transition-colors ${theme === 'light' ? 'bg-gradient-to-b from-[#faeff5] from-[60%] to-transparent' : 'bg-gradient-to-b from-[#3e3e3e] from-[40%] to-[#606060] text-[#ffffff]'} overflow-y-scroll`}>
+      <Routes>
+        <Route path='/' element={<GuardianWrapper 
+          setOpenSidebarModal={setOpenSidebarModal}
+        />}>
+          
+          <Route index element={<Home />} />
+          <Route path='signin' element={<Signin />} />
+          <Route path='signup' element={<Signup />} />
+          <Route path='forgotPassword' element={<ForgotPassword />} />
+          <Route path='newPassword' element={<NewPassword />} />
+
+          <Route path='/' element={<DashboardLayout />}>
+              
+              <Route path='dashboard' element={<Dashboard />} />
+              <Route path='post/:postId' element={<Post />} />
+              <Route path='profile/:userId' element={<Profile />} />
+
+            <Route element={<ProtectedRoutes />}>
+              <Route path='new-post' element={<NewPost />} />
+              <Route path='edit-profile' element={<EditProfile />} />
+            </Route>
+          
+          </Route>
+          
+          <Route path='*' element={<NotFound />} />
+
+        </Route>
+      </Routes>
+
+      <Sidebar
+        theme={theme} setTheme={setTheme}
+        openSidebarModal={openSidebarModal} setOpenSidebarModal={setOpenSidebarModal}
+      />
+
+      <ToastContainer />
+    </main>
   )
 }
 

@@ -15,7 +15,7 @@ const parseErrorResponse = (errorMessage) => {
   return [res.message, res.statusCode];
 };
 
-exports.servicesAsyncWrapper = async (callback) => {
+exports.tryCatchWrapperWithError = async (callback) => {
   try {
     return await callback();
   } catch (error) {
@@ -23,12 +23,12 @@ exports.servicesAsyncWrapper = async (callback) => {
   }
 };
 
-exports.microInfluxAsyncWrapper = async (res, callback) => {
+exports.tryCatchWrapper = async (res, callback) => {
   try {
     return await callback();
   } catch (error) {
     logger.error(error);
     const msg = parseErrorResponse(error.message);
-    return res.json(response.error(error, msg[0], msg[1]));
+    return res.status(msg[1]).json(response.error(error, msg[0], msg[1]));
   }
 };
