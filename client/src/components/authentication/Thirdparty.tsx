@@ -2,15 +2,16 @@ import { FcGoogle } from 'react-icons/fc';
 import { FaGithub } from 'react-icons/fa';
 import { thirdPartyAuthentication } from '../../utility/thirdpartySignups';
 import { useLocation, useNavigate } from 'react-router-dom';
-import React, { useState } from 'react';
+// import React from 'react';
+import useLocalStorage from '../../utility/localStorage';
 import { toast } from 'react-toastify';
 
-type ThirdPartyLoginProps = {
-  setLoading: React.Dispatch<React.SetStateAction<AppStateType>>;
-}
+// type ThirdPartyLoginProps = {
+//   setLoading: React.Dispatch<React.SetStateAction<AppStateType>>;
+// }
 
 type AuthProvider = 'google.com' | 'github.com';
-export default function ThirdPartyLogin({ setLoading }: ThirdPartyLoginProps) {
+export default function ThirdPartyLogin() {
   const navigate = useNavigate();
   const location = useLocation();
   // const [signin, { isLoading, isError, isSuccess }] = useSigninMutation();
@@ -35,8 +36,7 @@ export default function ThirdPartyLogin({ setLoading }: ThirdPartyLoginProps) {
       // const userData = { username, password: '', name };
       // const res = await signin(userData).unwrap(); //;
       // console.log(res.data)
-      // dispatch(setCredentials(res.data))
-      // localStorage.setItem('korin_pid', res.data.user.id.toString());
+      // useLocalStorage.setStorage('korin_pid', res.data.user._id);
 
       // typeof window !== 'undefined' ? window.localStorage.setItem('ClientModal', value) : null;
       toast.success('Login successful')

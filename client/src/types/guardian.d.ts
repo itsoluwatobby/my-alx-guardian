@@ -8,8 +8,13 @@ type Theme = 'light' | 'dark';
 
 type GuardianContextType = {
   theme: Theme;
-  setTheme: React.Dispatch<React.SetStateAction<Theme>>
+  showTitle: boolean;
+  setTheme: React.Dispatch<React.SetStateAction<Theme>>;
+  setShowTitle: React.Dispatch<React.SetStateAction<boolean>>;
 }
+
+type Toggle = 'OPEN' | 'CLOSE'
+type ExpandDetailsType = { id: string; toggle: Toggle; }
 
 type FooterTypes = {
   name: string;
@@ -38,5 +43,7 @@ type UserInfoType = {
 }
 
 type UserCredentialsType = Pick<UserInfoType, 'email' | 'password'>;
+
+type NewPasswordCredentials = Pick<UserInfoType, 'password' | 'confirmPassword'>;
 
 type TypingEvent = 'typing' | 'notTyping'

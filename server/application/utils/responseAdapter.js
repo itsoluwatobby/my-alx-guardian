@@ -1,7 +1,7 @@
 const responsetemplate = require('../config/responseTemplates');
 
 module.exports = {
-  responsetemplate, // TODO: load from yml and pass to this section
+  responsetemplate,
   success(data = {}, message = '', statuscode = 200) {
     const response = {
       statuscode,

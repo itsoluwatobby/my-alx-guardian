@@ -18,7 +18,7 @@ export default function Hero() {
 
       <button 
       onClick={() => navigate('/signin')}
-      className="rounded-lg p-4 px-8 cursor-pointer hover:opacity-95 active:opacity-100 bg-blue-600 transition-opacity text-white">
+      className="rounded-lg p-3 px-7 text-sm cursor-pointer hover:opacity-95 active:opacity-100 bg-blue-600 transition-opacity text-white">
         Get Started
       </button>
     </div>

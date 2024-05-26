@@ -1,37 +1,52 @@
+import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Signin from './pages/Signin';
 import Signup from './pages/Signup';
-import Navbar from './components/Navbar';
-import NotFound from './components/NotFound';
+import NotFound from './pages/NotFound';
 import Dashboard from './pages/Dashboard';
 import ProtectedRoutes from './layouts/ProtectedRoutes';
 import { useGuardianContext } from './hooks/useGuardianContext';
-import Sidebar from './components/Sidebar';
+import Sidebar from './components/SidebarModal';
 import { useState } from 'react';
+import DashboardLayout from './layouts/DashboardLayout';
+import Post from './pages/Post';
+import GuardianWrapper from './layouts/GuardianWrapper';
+import { NewPost } from './pages/NewPost';
+import ForgotPassword from './pages/ForgotPassword';
+import NewPassword from './pages/NewPassword';
+import EditProfile from './pages/EditProfile';
+import Profile from './pages/Profile';
 
 function App() {
   const { setTheme, theme } = useGuardianContext() as GuardianContextType;
-  const [openSidebar, setOpenSidebar] = useState<boolean>(false)
+  const [openSidebarModal, setOpenSidebarModal] = useState<boolean>(false);
 
   return (
-    <main className={`playfair-display-guardian w-full h-[100dvh] flex flex-col xxlscreen:mx-auto max-w-[1440px] transition-colors ${theme === 'light' ? 'bg-gradient-to-b from-[#fae2ef] from-[60%] to-transparent' : 'bg-gradient-to-b from-[#333333] from-[40%] to-[#606060] text-[#ffffff]'} overflow-y-scroll`}>
-      <Navbar 
-        theme={theme}
-        setTheme={setTheme}
-        setOpenSidebar={setOpenSidebar}
-      />
-
+    <main className={`playfair-display-guardian w-full h-[100dvh h-screen flex flex-col xxlscreen:mx-auto max-w-[1440px] p-2 transition-colors ${theme === 'light' ? 'bg-gradient-to-b from-[#faeff5] from-[60%] to-transparent' : 'bg-gradient-to-b from-[#3e3e3e] from-[40%] to-[#606060] text-[#ffffff]'} overflow-y-scroll`}>
       <Routes>
-        <Route path='/'>
+        <Route path='/' element={<GuardianWrapper 
+          setOpenSidebarModal={setOpenSidebarModal}
+        />}>
           
           <Route index element={<Home />} />
           <Route path='signin' element={<Signin />} />
           <Route path='signup' element={<Signup />} />
+          <Route path='forgotPassword' element={<ForgotPassword />} />
+          <Route path='newPassword' element={<NewPassword />} />
 
-          <Route element={<ProtectedRoutes />}>
-            <Route path='/dashboard' element={<Dashboard />} />
+          <Route path='/' element={<DashboardLayout />}>
+              
+              <Route path='dashboard' element={<Dashboard />} />
+              <Route path='post/:postId' element={<Post />} />
+              <Route path='profile/:userId' element={<Profile />} />
+
+            <Route element={<ProtectedRoutes />}>
+              <Route path='new-post' element={<NewPost />} />
+              <Route path='edit-profile' element={<EditProfile />} />
+            </Route>
+          
           </Route>
           
           <Route path='*' element={<NotFound />} />
@@ -41,7 +56,7 @@ function App() {
 
       <Sidebar
         theme={theme} setTheme={setTheme}
-        openSidebar={openSidebar} setOpenSidebar={setOpenSidebar}
+        openSidebarModal={openSidebarModal} setOpenSidebarModal={setOpenSidebarModal}
       />
 
       <ToastContainer />

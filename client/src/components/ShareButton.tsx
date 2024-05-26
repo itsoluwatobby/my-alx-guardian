@@ -1,9 +1,9 @@
 import { MdOutlineContentCopy } from "react-icons/md";
 import { toast } from "react-toastify";
 import { FaLinkedin, FaSquareXTwitter } from "react-icons/fa6";
-import { WhatsappShareButton, FacebookShareButton, LinkedinShareButton, TwitterShareButton, TelegramShareButton } from 'react-share';
+import { WhatsappShareButton, FacebookShareButton, LinkedinShareButton, TwitterShareButton } from 'react-share';
 import { IoLogoWhatsapp } from "react-icons/io";
-import { FaFacebookSquare, FaTelegram } from "react-icons/fa";
+import { FaFacebookSquare } from "react-icons/fa";
 
 
 type ShareButtonProps = {
@@ -62,13 +62,13 @@ export default function ShareButton({ share, setShare, classNames, eventTitle, l
           />
       </FacebookShareButton>
 
-      <TelegramShareButton
+      {/* <TelegramShareButton
         title={eventTitle} url={link} 
         >
         <FaTelegram className={iconClassNames} 
         onClick={onclick}
         />
-      </TelegramShareButton>
+      </TelegramShareButton> */}
 
       <LinkedinShareButton
         title={eventTitle} url={link}

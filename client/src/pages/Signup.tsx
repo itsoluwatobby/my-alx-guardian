@@ -3,8 +3,10 @@ import { ActionButton } from "../components/ActionButton";
 import { validation_regex } from "../utility/validation";
 import { PasswordInputs } from "../components/authentication/PasswordInputs";
 import { FormInputs } from "../components/FormInputs";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ThirdPartyLogin from "../components/authentication/Thirdparty";
+import guardianAsyncWrapper from "../app/guardianAsyncWrapper";
+import { toast } from "react-toastify";
 
 const initValidation = { validEmail: false, match: false }
 export default function Signup() {
@@ -12,10 +14,7 @@ export default function Signup() {
   const [validation, setValidation] = useState<typeof initValidation>(initValidation)
   const [reveal, setReveal] = useState<boolean>(false);
   const [newUser, setNewUser] = useState<UserInfoType>({} as UserInfoType);
-  // const [loading, setLoading] = useState<boolean>(false);
-  // const [showModal, setShowModal] = useState<ClientModalType>({
-  //   selection: 'null', modal: false
-  // });
+  const navigate = useNavigate();
 
   const { loading, isError } = appState;
   const { validEmail, match } = validation;
@@ -40,9 +39,19 @@ export default function Signup() {
   }, [password, confirmPassword])
 
   const canSubmit = [...Object.values(newUser)].every(Boolean);
+
+  const handleSignup = async(event: ChangeEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    guardianAsyncWrapper(async () => {
+
+      toast.success('Signup successful')
+      navigate('/signin')
+    }, setAppState);
+  }
+
   return (
     <main className="w-full flex flex-col md:flex-row items-center h-full">
-      <form className="flex-none md:w-[55%] w-full h-full flex flex-col gap-y-6 p-8 pt-14 items-center">
+      <form onSubmit={handleSignup} className="flex-none md:w-[55%] w-full h-full flex flex-col gap-y-6 p-8 pt-14 items-center">
 
         <FormInputs
           name="name" value={name} handleUserInfo={handleUserInfo} type='text' autoComplete={'off'} placeholder='John Doe'
@@ -78,7 +87,7 @@ export default function Signup() {
 
           <ThirdPartyLogin
             // showModal={showModal}
-            setLoading={setAppState}
+            // setLoading={setAppState}
           // setShowModal={setShowModal} 
           />
         </div>
