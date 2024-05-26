@@ -43,11 +43,11 @@ export default function Navbar({ showTitle, theme, setTheme, setOpenSidebarModal
   ];
 
   return (
-    <nav className={`sticky top-0 w-full z-40 bg-opacity-85 ${theme === 'light' ? 'bg-[#faeff5]' : 'bg-[#333333]'} h-10 pt-8 pb-6 px-6 flex items-center justify-between ${isIntersecting ? 'scale-0' : 'scale-1'}`}>
+    <nav className={`sticky top-0 w-full rounded-full z-40 bg-opacity-85 ${theme === 'light' ? 'bg-[#faeff5]' : 'bg-[#333333]'} h-10 py-7 px-6 flex items-center justify-between`}>
       <h3 onClick={() => navigate('/')} className="cursor-pointer text-3xl flex items-center">M<div className={classNames(theme)}></div>A<div className={classNames(theme)}></div>G
       </h3>
 
-      <div className="self-center md:flex justify-betwee gap-12 items-center w-fit hidden">
+      <div className="self-center md:flex justify-betwee gap-12 items-center w-fi hidden">
         {
           navigation[AuthenticatedRoutes.includes(pathname) ? 1 : 0].map(nav => (
             <a href={nav.link} key={nav.name}
@@ -99,8 +99,6 @@ export default function Navbar({ showTitle, theme, setTheme, setOpenSidebarModal
           </div>
         </div>
       </div>
-
-
     </nav>
   )
 }

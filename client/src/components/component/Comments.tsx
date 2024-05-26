@@ -6,7 +6,7 @@ import guardianAsyncWrapper from "../../app/guardianAsyncWrapper";
 import GuardianImages from "./GuardianImages";
 import UserDetails from "./UserDetails";
 import { TextArea } from "./TextAreaInput";
-import { FaCommentDots, FaHeart } from "react-icons/fa6";
+import { FaHeart } from "react-icons/fa6";
 import { FaTimes } from "react-icons/fa";
 
 type CommentsProps = {
@@ -20,7 +20,7 @@ export default function Comments({ expandDetail, setExpandDetail, post }: Commen
   const [input, setInput] = useState<string>('');
   const [appState, setAppState] = useState<AppStateType>({} as AppStateType);
 
-  const { loading, isError } = appState;
+  const { loading } = appState;
 
   const handleSubmit = async () => {
     return guardianAsyncWrapper(async () => {
@@ -28,8 +28,15 @@ export default function Comments({ expandDetail, setExpandDetail, post }: Commen
     }, setAppState);
   }
 
+  const scrollRef = useCallback((node: HTMLDivElement) => {
+    if (node) {
+      node.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, []);
+
   return (
     <div
+      ref={expandDetail.toggle === 'CLOSE' ? null : scrollRef}
       className={`shadow-lg ${theme === 'light' ? 'bg-gradient-to-b from-[#fae2ef] from-[60%] to-transparent' : 'bg-gradient-to-b from-[#333333] from-[40%] to-[#606060] text-[#ffffff]'} w-full min-h-40 max-h-64 rounded-lg ${(expandDetail?.id === post.id && expandDetail.toggle === 'OPEN') ? 'translate-0' : 'hidden'} p-2 pt-1 text-sm flex flex-col`}>
       <div className="flex w-full justify-between items-center">
         <p className="w-fit font-sans opacity-90">Comments</p>
@@ -48,8 +55,10 @@ export default function Comments({ expandDetail, setExpandDetail, post }: Commen
         }
       </div>
 
-      <div className="self-baseline w-full flex-none h-12 flex items-center gap-1">
-        <TextArea input={input} setInput={setInput}
+      <div 
+      className="self-baseline w-full flex-none h-12 flex items-center gap-1">
+        <TextArea 
+        input={input} setInput={setInput}
           classNames="w-[90%] h-full" placeholder="write a comment" max={200}
           inputClassNames="p-1"
         />

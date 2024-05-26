@@ -44,4 +44,6 @@ type UserInfoType = {
 
 type UserCredentialsType = Pick<UserInfoType, 'email' | 'password'>;
 
+type NewPasswordCredentials = Pick<UserInfoType, 'password' | 'confirmPassword'>;
+
 type TypingEvent = 'typing' | 'notTyping'

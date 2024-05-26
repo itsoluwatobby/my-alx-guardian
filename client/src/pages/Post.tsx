@@ -10,6 +10,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Comments from "../components/component/Comments";
 import { useGuardianContext } from "../hooks/useGuardianContext";
 import useObserver from "../hooks/useObserver";
+import ReactMarkdown from 'react-markdown';
 
 export default function Post() {
   const { postId } = useParams();
@@ -24,11 +25,11 @@ export default function Post() {
     { id: '', toggle: 'CLOSE' }
   );
 
-  const scrollRef = useCallback((node: HTMLDivElement) => {
-      if (node) {
-        node.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, []);
+  // const scrollRef = useCallback((node: HTMLDivElement) => {
+  //     if (node) {
+  //       node.scrollIntoView({ behavior: 'smooth' });
+  //     }
+  //   }, []);
 
   const classes = useCallback(() => {
     return 'text-white cursor-pointer hover:scale-[1.02] active:scale-[1] transition-transform size-5'
@@ -66,19 +67,13 @@ export default function Post() {
       />
   
       <section 
-      ref={expandDetail.toggle === 'CLOSE' ? null : scrollRef} 
-      className="relative flex flex-col gap-y-2">
+      // ref={expandDetail.toggle === 'CLOSE' ? null : scrollRef}
+      className="relative flex flex-col gap-y-2 pb-10">
         <div className="text-[13px] flex flex-col gap-y-4 cursor-default mt-1">
           <h2 className={`${isIntersecting ? 'hidden' : 'block'} text-center text-2xl font-medium`}>Things really do fall apart</h2>
-          <p className="indent-3">
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Incidunt voluptatibus debitis laborum temporibus mollitia ea consectetur autem, nobis hic nesciunt consequatur doloribus repudiandae distinctio, accusamus omnis ullam ducimus. Amet, vitae?
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Incidunt voluptatibus debitis laborum temporibus mollitia ea consectetur autem, nobis hic nesciunt consequatur doloribus repudiandae distinctio, accusamus omnis ullam ducimus. Amet, vitae?
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Incidunt voluptatibus debitis laborum temporibus mollitia ea consectetur autem, nobis hic nesciunt consequatur doloribus repudiandae distinctio, accusamus omnis ullam ducimus. Amet, vitae?
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Incidunt voluptatibus debitis laborum temporibus mollitia ea consectetur autem, nobis hic nesciunt consequatur doloribus repudiandae distinctio, accusamus omnis ullam ducimus. Amet, vitae?
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Incidunt voluptatibus debitis laborum temporibus mollitia ea consectetur autem, nobis hic nesciunt consequatur doloribus repudiandae distinctio, accusamus omnis ullam ducimus. Amet, vitae?
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Incidunt voluptatibus debitis laborum temporibus mollitia ea consectetur autem, nobis hic nesciunt consequatur doloribus repudiandae distinctio, accusamus omnis ullam ducimus. Amet, vitae?
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Incidunt voluptatibus debitis laborum temporibus mollitia ea consectetur autem, nobis hic nesciunt consequatur doloribus repudiandae distinctio, accusamus omnis ullam ducimus. Amet, vitae?
-          </p>
+          <ReactMarkdown className="indent-3">
+            {"Lorem, ipsum dolor sit amet consectetur adipisicing elit. Incidunt voluptatibus debitis laborum temporibus mollitia ea consectetur autem, nobis hic nesciunt consequatur doloribus repudiandae distinctio, accusamus omnis ullam ducimus. Amet, vitae? \n\n Lorem, ipsum dolor sit amet consectetur adipisicing elit. Incidunt voluptatibus debitis laborum temporibus mollitia ea consectetur autem, nobis hic nesciunt consequatur doloribus repudiandae distinctio, accusamus omnis ullam ducimus. Amet, vitae? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Incidunt voluptatibus debitis laborum temporibus mollitia ea consectetur autem, nobis hic nesciunt consequatur doloribus repudiandae distinctio, accusamus omnis ullam ducimus. Amet, vitae? \n\n Lorem, ipsum dolor sit amet consectetur adipisicing elit. Incidunt voluptatibus debitis laborum temporibus mollitia ea consectetur autem, nobis hic nesciunt consequatur doloribus repudiandae distinctio, accusamus omnis ullam ducimus. Amet, vitae? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Incidunt voluptatibus debitis laborum temporibus mollitia ea consectetur autem, nobis hic nesciunt consequatur doloribus repudiandae distinctio, accusamus omnis ullam ducimus. Amet, vitae? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Incidunt voluptatibus debitis laborum temporibus mollitia ea consectetur autem, nobis hic nesciunt consequatur doloribus repudiandae distinctio, accusamus omnis ullam ducimus. Amet, vitae? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Incidunt voluptatibus debitis laborum temporibus mollitia ea consectetur autem, nobis hic nesciunt consequatur doloribus repudiandae distinctio, accusamus omnis ullam ducimus. Amet, vitae?"}
+          </ReactMarkdown>
         </div>
 
         <GuardianImages

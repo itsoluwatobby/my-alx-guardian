@@ -39,7 +39,7 @@ export default function Signin() {
       toast.success('Signin successful')
       const pathname: string = location.state ? location?.state : '/dashboard';
       navigate(pathname, { replace: true })
-    });
+    }, setAppState);
   }
 
   const canSubmit = [...Object.values(user)].every(Boolean);

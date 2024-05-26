@@ -13,13 +13,18 @@ import { useState } from 'react';
 import DashboardLayout from './layouts/DashboardLayout';
 import Post from './pages/Post';
 import GuardianWrapper from './layouts/GuardianWrapper';
+import { NewPost } from './pages/NewPost';
+import ForgotPassword from './pages/ForgotPassword';
+import NewPassword from './pages/NewPassword';
+import EditProfile from './pages/EditProfile';
+import Profile from './pages/Profile';
 
 function App() {
   const { setTheme, theme } = useGuardianContext() as GuardianContextType;
-  const [openSidebarModal, setOpenSidebarModal] = useState<boolean>(false)
+  const [openSidebarModal, setOpenSidebarModal] = useState<boolean>(false);
 
   return (
-    <main className={`playfair-display-guardian w-full h-[100dvh] flex flex-col xxlscreen:mx-auto max-w-[1440px] transition-colors ${theme === 'light' ? 'bg-gradient-to-b from-[#faeff5] from-[60%] to-transparent' : 'bg-gradient-to-b from-[#333333] from-[40%] to-[#606060] text-[#ffffff]'} overflow-y-scroll`}>
+    <main className={`playfair-display-guardian w-full h-[100dvh h-screen flex flex-col xxlscreen:mx-auto max-w-[1440px] p-2 transition-colors ${theme === 'light' ? 'bg-gradient-to-b from-[#faeff5] from-[60%] to-transparent' : 'bg-gradient-to-b from-[#3e3e3e] from-[40%] to-[#606060] text-[#ffffff]'} overflow-y-scroll`}>
       <Routes>
         <Route path='/' element={<GuardianWrapper 
           setOpenSidebarModal={setOpenSidebarModal}
@@ -28,12 +33,20 @@ function App() {
           <Route index element={<Home />} />
           <Route path='signin' element={<Signin />} />
           <Route path='signup' element={<Signup />} />
+          <Route path='forgotPassword' element={<ForgotPassword />} />
+          <Route path='newPassword' element={<NewPassword />} />
 
           <Route path='/' element={<DashboardLayout />}>
-            <Route element={<ProtectedRoutes />}>
+              
               <Route path='dashboard' element={<Dashboard />} />
               <Route path='post/:postId' element={<Post />} />
+              <Route path='profile/:userId' element={<Profile />} />
+
+            <Route element={<ProtectedRoutes />}>
+              <Route path='new-post' element={<NewPost />} />
+              <Route path='edit-profile' element={<EditProfile />} />
             </Route>
+          
           </Route>
           
           <Route path='*' element={<NotFound />} />

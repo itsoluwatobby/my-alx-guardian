@@ -15,10 +15,6 @@ export default function Signup() {
   const [reveal, setReveal] = useState<boolean>(false);
   const [newUser, setNewUser] = useState<UserInfoType>({} as UserInfoType);
   const navigate = useNavigate();
-  // const [loading, setLoading] = useState<boolean>(false);
-  // const [showModal, setShowModal] = useState<ClientModalType>({
-  //   selection: 'null', modal: false
-  // });
 
   const { loading, isError } = appState;
   const { validEmail, match } = validation;
@@ -49,8 +45,8 @@ export default function Signup() {
     guardianAsyncWrapper(async () => {
 
       toast.success('Signup successful')
-      navigate('/signup')
-    });
+      navigate('/signin')
+    }, setAppState);
   }
 
   return (
