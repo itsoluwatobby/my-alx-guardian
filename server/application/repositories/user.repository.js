@@ -4,7 +4,7 @@ const { UserModel } = require('../models');
 class UserRepository {
   async getUser(query) {
     if (!query) return null;
-    const user = await UserModel.findOne({ query })
+    const user = await UserModel.findOne({ query });
     return user;
   }
 

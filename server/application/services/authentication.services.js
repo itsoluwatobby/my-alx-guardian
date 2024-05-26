@@ -3,13 +3,12 @@
 const { userRepository } = require('../repositories/user.repository');
 const { tryCatchWrapperWithError } = require('../utils/asyncWrapper');
 const { throwError } = require('../utils/responseAdapter');
-const { userValidator } = require('../utils/account.validation');
+const { registrationValidator } = require('../utils/account.validation');
 
 class UserService {
-  async updateUser(userObj) {
+  async registration(userObj) {
     return tryCatchWrapperWithError(async () => {
-      const { id, userType } = userObj;
-      const validationResponse = userValidator({ id, userType });
+      const validationResponse = registrationValidator(userObj);
       if (!validationResponse.valid) {
         throw new Error(validationResponse.error);
       }

@@ -12,7 +12,7 @@ const verifyToken = (token) => {
       result = {
         email: decoded.user?.email,
         userId: decoded.user?.userId,
-        userType: decoded.user?.userType,
+        provider: decoded.user?.provider,
       };
     }
   });

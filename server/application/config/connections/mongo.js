@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-const { DATABASE } = require('..');
+const { DATABASE, isProduction } = require('..');
 
-const DB_URL = DATABASE.MONGODB_LOCAL_URL || DATABASE.MONGODB_URL;
+const DB_URL = isProduction ? DATABASE.MONGODB_URL : DATABASE.MONGODB_LOCAL_URL;
 
 exports.connectDB = async () => {
   try {

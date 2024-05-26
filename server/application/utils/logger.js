@@ -36,4 +36,4 @@ class MicroInfluxLogger {
   }
 }
 
-module.exports = MicroInfluxLogger.getInstance('CHATSERVICE');
+module.exports = MicroInfluxLogger.getInstance('MYALXGIARDIANSERVICE');

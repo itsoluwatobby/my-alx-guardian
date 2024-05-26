@@ -1,4 +1,4 @@
-const { BrandModel } = require('./Brand.model');
+const { BrandModel } = require('./User.model');
 
 module.exports = {
   BrandModel,
