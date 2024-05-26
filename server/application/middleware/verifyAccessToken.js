@@ -18,8 +18,9 @@ exports.verifyAccessToken = (req, res, next) => {
     const token = accessToken?.split(' ')[1];
     const result = verifyToken(token);
     // verify user
-    if (req.query.activeId !== result.userId) {
-      logger.debug(`UnAuthorised user: >>>>> Token not for <${req.body.userId}>`);
+    const { activeId } = req.query;
+    if (activeId !== result.userId) {
+      logger.debug(`UnAuthorised user: >>>>> Token not for <${activeId}>`);
       return res.json(responseDecorator.error(
         {},
         responseDecorator.responsetemplate.BADTOKEN,

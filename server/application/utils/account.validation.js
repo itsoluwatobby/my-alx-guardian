@@ -36,6 +36,10 @@ exports.registrationValidator = async (data) => {
       .messages({
         'any.required': 'lastName is required',
       }),
+    provider: Joi.string().valid('Local, Google').required()
+      .messages({
+        'any.required': 'provider is required',
+      }),
   });
   const validationResponse = registrationSchema.validate(data);
   return {
@@ -72,6 +76,46 @@ exports.idValidator = async (data) => {
       }),
   });
   const validationResponse = idSchema.validate(data);
+  return {
+    valid: validationResponse.error == null,
+    error: validationResponse.error?.message,
+  };
+};
+
+exports.accountActivationValidator = async (data) => {
+  const accountActivationSchema = Joi.object().keys({
+    email: Joi.string().email()
+      .required()
+      .messages({
+        'string.email': 'email is not valid',
+        'any.required': 'email is required',
+      }),
+    otp: Joi.string().min(6).max(6).required()
+      .messages({
+        'any.required': 'otp is required',
+      }),
+  });
+  const validationResponse = accountActivationSchema.validate(data);
+  return {
+    valid: validationResponse.error == null,
+    error: validationResponse.error?.message,
+  };
+};
+
+exports.passwordResetValidator = async (data) => {
+  const passwordResetSchema = Joi.object().keys({
+    email: Joi.string().email()
+      .required()
+      .messages({
+        'string.email': 'email is not valid',
+        'any.required': 'email is required',
+      }),
+    newPassword: Joi.string().min(6).required()
+      .messages({
+        'any.required': 'newPassword is required',
+      }),
+  });
+  const validationResponse = passwordResetSchema.validate(data);
   return {
     valid: validationResponse.error == null,
     error: validationResponse.error?.message,

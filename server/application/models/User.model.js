@@ -1,5 +1,11 @@
 const mongoose = require('mongoose');
 const { Provider } = require('../utils/constants');
+const { CategoryEnum } = require('../utils/accountEnum');
+
+const InfluencerSocialAccounts = {
+  platform: { type: String },
+  followers: { type: Number },
+};
 
 const UserSchema = mongoose.Schema(
   {
@@ -12,14 +18,22 @@ const UserSchema = mongoose.Schema(
       type: String, required: [true, 'password is required'], trim: true, select: false,
     },
     profilePicture: { type: String, default: '' },
+    type: { type: String, default: CategoryEnum.General },
+    cohort: { type: String, default: '', trim: true },
     provider: {
       type: String,
       default: Provider.Local,
       enum: Object.values(Provider),
     },
+    title: { type: String, trim: true, default: '' },
+    skills: { type: Array, default: [] },
     bio: { type: String, trim: true, default: '' },
-    country: { type: String, default: '', trim: true },
+    location: {
+      address: { type: String, default: '', trim: true },
+      country: { type: String, default: '', trim: true },
+    },
     isAccountDeleted: { type: Boolean, default: false },
+    activeAccounts: [InfluencerSocialAccounts],
     verified: { type: Boolean, default: false },
     isPasswordReset: {
       reset: { type: Boolean, default: false },

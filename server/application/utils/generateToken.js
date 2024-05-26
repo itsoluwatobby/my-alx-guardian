@@ -2,6 +2,18 @@
 const jwt = require('jsonwebtoken');
 const config = require('../config');
 const { throwError } = require('./responseAdapter');
+const { Constants } = require('./constants');
+
+const createToken = (email, userId, userType) => {
+  const signedToken = jwt.sign(
+    {
+      user: { email, userId, userType },
+    },
+    config.JWT_SECRET,
+    { expiresIn: Constants.TOKEN_DURATION },
+  );
+  return signedToken;
+};
 
 const verifyToken = (token) => {
   let result;
@@ -19,4 +31,4 @@ const verifyToken = (token) => {
   return result;
 };
 
-module.exports = { verifyToken };
+module.exports = { createToken, verifyToken };

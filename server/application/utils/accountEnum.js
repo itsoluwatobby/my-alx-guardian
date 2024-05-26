@@ -12,3 +12,9 @@ exports.Months = {
   Nov: 'November',
   Dec: 'December',
 };
+
+exports.CategoryEnum = {
+  Forums: 'Forums',
+  Cohorts: 'Cohorts',
+  General: 'General',
+};

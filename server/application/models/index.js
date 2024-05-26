@@ -1,5 +1,11 @@
-const { BrandModel } = require('./User.model');
+const { AuthOtpModel } = require('./AuthOtp.model');
+const { CategoryModel } = require('./Categories.models');
+const { PostsModel } = require('./Posts.model');
+const { UserModel } = require('./User.model');
 
 module.exports = {
-  BrandModel,
+  UserModel,
+  PostsModel,
+  CategoryModel,
+  AuthOtpModel,
 };
