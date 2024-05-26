@@ -1,17 +1,21 @@
-// const config = require('../config/index');
 const logger = require('./logger');
+const { transporter } = require('./nodemailer');
+const { throwError } = require('./responseAdapter');
+const { tryCatchWrapperWithError } = require('./asyncWrapper');
 
 module.exports = {
 
-  async sendMail() {
-    try {
-      logger.trace('Scheduling message');
+  async sendMail(messageTemplate) {
+    return tryCatchWrapperWithError(async () => {
+      logger.trace('Sending message');
       // eslint-disable-next-line no-unused-vars
-
-      return true;
-    } catch (err) {
-      logger.debug(`An error occurred sending the mail with metadata: ${err}`);
-      return 'An error occurred sending the mail';
-    }
+      transporter.sendMail(messageTemplate, (err) => {
+        if (err) {
+          logger.debug(`An error occurred sending the mail with metadata: ${err}`);
+          throwError(400, 'unable to send mail, please retry');
+        }
+        return true;
+      });
+    });
   },
 };
