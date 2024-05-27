@@ -36,7 +36,7 @@ class PostController {
 
   updatePost(req, res) {
     return tryCatchWrapper(res, async () => {
-      const post = await this.postService.updatePost(req);
+      const post = await this.postService.updatePost(req.body, req.query.activeId);
       return res.json(response.success(post.data, post.message));
     });
   }
@@ -64,7 +64,7 @@ class PostController {
 
   deletePost(req, res) {
     return tryCatchWrapper(res, async () => {
-      const post = await this.postService.deletePost(req);
+      const post = await this.postService.deletePost(req.body, req.query.activeId);
       return res.json(response.success(post.data, post.message));
     });
   }

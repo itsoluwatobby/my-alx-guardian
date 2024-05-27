@@ -29,8 +29,7 @@ class PostService {
     });
   }
 
-  async updatePost(req) {
-    const postObj = req.body;
+  async updatePost(postObj, activeId) {
     return tryCatchWrapperWithError(async () => {
       const validationResponse = updatePostValidator(postObj);
       if (!validationResponse.valid) {
@@ -38,7 +37,7 @@ class PostService {
       }
 
       const { id, userId, ...rest } = postObj;
-      if (req.query.activeId !== userId) {
+      if (activeId !== userId) {
         throwError(401, 'You are unauthorised to modify post');
       }
       const user = await userRepository.getUser(userId);
@@ -151,8 +150,7 @@ class PostService {
     });
   }
 
-  async deletePost(req) {
-    const postObj = req.body;
+  async deletePost(postObj, activeId) {
     return tryCatchWrapperWithError(async () => {
       const validationResponse = await idValidator({ id: postObj.postId });
       if (!validationResponse.valid) {
@@ -161,10 +159,10 @@ class PostService {
       const { postId } = postObj;
       const post = await postsRepository.getPost(postId);
       if (!post) throwError(404, 'Post not found');
-      if (req.query.activeId !== post.userId.toString()) {
+      if (activeId !== post.userId.toString()) {
         throwError(401, 'You are unauthorised to modify post');
       }
-      const deletedPost = await postsRepository.deletePost({ postId });
+      const deletedPost = await postsRepository.deletePost(postId);
       if (!deletedPost) throwError(404, 'Error deleting post');
       return {
         data: deletedPost._id,

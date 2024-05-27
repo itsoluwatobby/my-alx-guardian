@@ -26,12 +26,8 @@ class PostsRepository {
       $or: [
         { title: { $in: [caseInsensitiveQuery] } },
         { body: { $in: [caseInsensitiveQuery] } },
-        {
-          category: {
-            type: { $in: [caseInsensitiveQuery] },
-            name: { $in: [caseInsensitiveQuery] },
-          },
-        },
+        { 'category.type': { $in: [caseInsensitiveQuery] } },
+        { 'category.name': { $in: [caseInsensitiveQuery] } },
       ],
     });
     return posts;
@@ -93,8 +89,8 @@ class PostsRepository {
   }
 
   async deletePost(query) {
-    await this.commentRepository.deleteAllComments(query);
-    const result = await PostsModel.findOneAndDelete(query);
+    await this.commentRepository.deleteAllComments({ postId: query });
+    const result = await PostsModel.findOneAndDelete({ _id: query });
     return result;
   }
 

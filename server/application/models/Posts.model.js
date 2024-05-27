@@ -28,7 +28,9 @@ const SharesShema = new mongoose.Schema(
 const PostsSchema = mongoose.Schema(
   {
     title: { type: String, trim: true },
-    userId: { type: String, required: [true, 'userId is required'], immutable: true, ref: 'users' },
+    userId: {
+      type: String, required: [true, 'userId is required'], immutable: true, ref: 'users',
+    },
     repostId: { type: String, ref: 'posts' },
     body: { type: String, required: [true, 'body is required'], trim: true },
     category: {
@@ -39,7 +41,7 @@ const PostsSchema = mongoose.Schema(
     likes: { type: Array, default: [] },
     isRepost: { type: Boolean, default: false },
     reposts: [Reposts],
-    sharedCount: { type: number, default: 0 },
+    sharedCount: { type: Number, default: 0 },
   },
   {
     timestamps: true,

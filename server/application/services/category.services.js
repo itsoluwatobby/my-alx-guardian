@@ -24,9 +24,20 @@ class CategoryService {
         throw new Error(validationResponse.error);
       }
 
-      const user = await this.this.userRepository.getUser(categoryObj.authorId);
+      const user = await this.userRepository.getUser(categoryObj.authorId);
       if (!user) throwError(404, 'Account not found');
-      const category = await this.categoryRepository.createCategory(categoryObj);
+      const duplicate = await this.categoryRepository.findCategory(
+        {
+          category: {
+            type: categoryObj.category.type,
+            name: categoryObj.category.name,
+          },
+        },
+      );
+      if (duplicate) throwError(406, `${categoryObj.category.name} already exist`);
+      const category = await this.categoryRepository.createCategory(
+        { ...categoryObj, members: [categoryObj.authorId] },
+      );
       if (!category) throwError(400, 'Mongo Error: Error creating category');
       return {
         data: category,
@@ -35,8 +46,7 @@ class CategoryService {
     });
   }
 
-  async updateCategory(req) {
-    const categoryObj = req.body;
+  async updateCategory(categoryObj, activeId) {
     return tryCatchWrapperWithError(async () => {
       const validationResponse = updateCategoryValidator(categoryObj);
       if (!validationResponse.valid) {
@@ -44,15 +54,19 @@ class CategoryService {
       }
 
       const { id, authorId, ...rest } = categoryObj;
-      if (req.query.activeId !== authorId) {
+      if (activeId !== authorId) {
         throwError(401, 'You are unauthorised to modify category');
       }
       const user = await this.userRepository.getUser(authorId);
       if (!user) throwError(404, 'Account not found');
-      const category = await this.categoryRepository.updateCategory(id, rest);
-      if (!category) throwError(400, 'Mongo Error: Error updating category');
+
+      const category = await this.categoryRepository.getCategory(id);
+      if (!category) throwError(404, 'Category not found');
+
+      const result = await this.categoryRepository.updateCategory(id, rest);
+      if (!result) throwError(400, 'Mongo Error: Error updating category');
       return {
-        data: category,
+        data: result,
         message: 'BE: Category updated successfully',
       };
     });
@@ -68,10 +82,14 @@ class CategoryService {
       const { id, userId, description } = categoryObj;
       const user = await this.userRepository.getUser(userId);
       if (!user) throwError(404, 'Account not found');
+      // only a member can modify a category
+      const category = await this.categoryRepository.getCategory(id);
+      if (!category) throwError(404, 'Category not found');
+      if (!category.members.includes(userId)) throwError(406, 'Only members can perform this action');
       const result = await this.categoryRepository.updateCategory(
         id,
         {
-          $set: { description, updatedBy: { userId } },
+          $set: { description, modifiedBy: { userId } },
           $push: { updates: userId },
         },
       );
@@ -92,6 +110,10 @@ class CategoryService {
 
       const user = await this.userRepository.getUser(categoryObj.userId);
       if (!user) throwError(404, 'Account not found');
+
+      const category = await this.categoryRepository.getCategory(categoryObj.id);
+      if (!category) throwError(404, 'Category not found');
+
       const result = await this.categoryRepository.follow_UnfollowCategory(categoryObj);
       if (!result.category) throwError(400, 'Mongo Error: Error creating category');
       return {
@@ -135,7 +157,8 @@ class CategoryService {
 
   async getSearchedCategories(categoryQuery) {
     return tryCatchWrapperWithError(async () => {
-      const categories = await this.categoryRepository.getCategories(categoryQuery);
+      if (!categoryQuery) throwError(400, 'search query required');
+      const categories = await this.categoryRepository.getSearchedCategories(categoryQuery);
       return {
         data: categories,
         message: 'BE: Categories retrieved successfully',
@@ -160,20 +183,19 @@ class CategoryService {
     });
   }
 
-  async deleteCategory(req) {
-    const categoryObj = req.body;
+  async deleteCategory(categoryObj, activeId) {
     return tryCatchWrapperWithError(async () => {
-      const { categoryId } = categoryObj;
-      const validationResponse = await idValidator({ id: categoryId });
+      const validationResponse = await followCategoryValidator(categoryObj);
       if (!validationResponse.valid) {
         throw new Error(validationResponse.error);
       }
-      const category = await this.categoryRepository.getCategory(categoryId);
+      const { id } = categoryObj;
+      const category = await this.categoryRepository.getCategory(id);
       if (!category) throwError(404, 'Category not found');
-      if (req.query.activeId !== category.userId.toString()) {
+      if (activeId !== category.authorId.toString()) {
         throwError(401, 'You are unauthorised to modify category');
       }
-      const deletedCategory = await this.categoryRepository.deleteCategory({ _id: categoryId });
+      const deletedCategory = await this.categoryRepository.deleteCategory({ _id: id });
       if (!deletedCategory) throwError(404, 'Error deleting category');
       return {
         data: deletedCategory._id,

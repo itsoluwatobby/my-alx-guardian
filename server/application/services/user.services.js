@@ -40,8 +40,7 @@ class UserService {
     });
   }
 
-  async updateUser(req) {
-    const userObj = req.body;
+  async updateUser(userObj, activeId) {
     return tryCatchWrapperWithError(async () => {
       const { id, ...others } = userObj;
       const influencerValidationResponse = updateUserValidator(userObj);
@@ -49,7 +48,7 @@ class UserService {
         throw new Error(influencerValidationResponse.error);
       }
 
-      if (req.query.activeId !== id) {
+      if (activeId !== id) {
         throwError(401, 'You are unauthorised to modify post');
       }
       const user = await this.userRepository.getUser(id);

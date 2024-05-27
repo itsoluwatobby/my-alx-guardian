@@ -9,14 +9,8 @@ class CategoryRepository {
     const categories = await CategoryModel.find(
       {
         $or: [
-          {
-            category: {
-              $or: [
-                { type: { $in: [caseInsensitiveQuery] } },
-                { name: { $in: [caseInsensitiveQuery] } },
-              ],
-            },
-          },
+          { 'category.type': { $in: [caseInsensitiveQuery] } },
+          { 'category.name': { $in: [caseInsensitiveQuery] } },
           { title: { $in: [caseInsensitiveQuery] } },
         ],
       },
@@ -30,13 +24,18 @@ class CategoryRepository {
       pageNumber,
       limit,
       CategoryModel,
-      { category: { type: CategoryEnum[type] } },
+      { 'category.type': type },
     );
     return categories;
   }
 
   async getCategory(categoryId) {
     const category = await CategoryModel.findById(categoryId);
+    return category;
+  }
+
+  async findCategory(queryObj) {
+    const category = await CategoryModel.findOne(queryObj);
     return category;
   }
 
@@ -51,20 +50,25 @@ class CategoryRepository {
         { $push: { members: userId } },
         { new: true },
       );
-      message = `BE: You joined this ${result.category.name}`;
+      message = `BE: You joined ${result.category.name}`;
     } else {
       result = await CategoryModel.findOneAndUpdate(
         { _id: id },
         { $pull: { members: userId } },
         { new: true },
       );
-      message = `BE: You left this ${result.category.name}`;
+      message = `BE: You left ${result.category.name}`;
     }
-    return { category: result, message };
+    const appendedMsg = result.category.name === CategoryEnum.Forums ? CategoryEnum.Forums : '';
+    return { category: result, message: `${message} ${appendedMsg}` };
   }
 
   async updateCategory(id, categoryObj) {
-    const result = await CategoryModel.findOneAndUpdate({ _id: id }, categoryObj, { new: true });
+    const result = await CategoryModel.findOneAndUpdate(
+      { _id: id },
+      { $set: categoryObj },
+      { new: true },
+    );
     return result;
   }
 

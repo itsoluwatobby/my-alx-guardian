@@ -30,8 +30,7 @@ class CommentService {
     });
   }
 
-  async updateComment(req) {
-    const commentObj = req.body;
+  async updateComment(commentObj, activeId) {
     return tryCatchWrapperWithError(async () => {
       const validationResponse = createCommentValidator(commentObj);
       if (!validationResponse.valid) {
@@ -39,7 +38,7 @@ class CommentService {
       }
 
       const { id, userId, ...rest } = commentObj;
-      if (req.query.activeId !== userId) {
+      if (activeId !== userId) {
         throwError(401, 'You are unauthorised to modify comment');
       }
       const user = await userRepository.getUser(userId);
@@ -121,8 +120,7 @@ class CommentService {
     });
   }
 
-  async deleteComment(req) {
-    const commentObj = req.body;
+  async deleteComment(commentObj, activeId) {
     return tryCatchWrapperWithError(async () => {
       const validationResponse = await idValidator({ id: commentObj.commentId });
       if (!validationResponse.valid) {
@@ -131,7 +129,7 @@ class CommentService {
       const { commentId } = commentObj;
       const comment = await commentRepository.getComment(commentId);
       if (!comment) throwError(404, 'Comment not found');
-      if (req.query.activeId !== comment.userId.toString()) {
+      if (activeId !== comment.userId.toString()) {
         throwError(401, 'You are unauthorised to modify comment');
       }
       const deletedComment = await commentRepository.deleteComment({ commentId });

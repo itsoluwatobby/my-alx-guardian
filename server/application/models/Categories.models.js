@@ -13,15 +13,19 @@ const RecentUpdate = new mongoose.Schema(
 const CategorySchema = mongoose.Schema(
   {
     category: {
-      type: { type: String, required: [true, 'Category is required'], default: CategoryEnum.General },
+      type: {
+        type: String, required: [true, 'type is required'], default: CategoryEnum.General,
+      },
       name: { type: String, unique: true, default: '' },
     },
     banner: { type: String, default: '' },
     title: { type: String, trim: true, default: '' },
     description: { type: String, trim: true, default: '' },
-    authorId: { type: String, required: [true, 'authorId is required'], immutable: true, ref: 'users' },
+    authorId: {
+      type: String, required: [true, 'authorId is required'], immutable: true, ref: 'users',
+    },
     members: { type: Array, default: [] },
-    updatedBy: RecentUpdate,
+    modifiedBy: RecentUpdate,
     updates: { type: Array, default: [] },
   },
   {

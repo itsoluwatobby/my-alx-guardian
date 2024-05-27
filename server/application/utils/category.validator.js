@@ -41,6 +41,10 @@ exports.createCategoryValidator = (data) => {
 exports.updateCategoryValidator = (data) => {
   const updateCategorySchema = Joi.object().keys({
     category: Joi.object().keys({
+      type: Joi.string().valid(Forums, Cohorts).required()
+        .messages({
+          'any.required': 'category.type is required',
+        }),
       name: Joi.string()
         .messages({
           'any.required': 'category.name is required',
@@ -49,9 +53,13 @@ exports.updateCategoryValidator = (data) => {
       .messages({
         'any.required': 'category is required',
       }),
+    id: Joi.string().required()
+      .messages({
+        'any.required': 'id is required',
+      }),
     banner: Joi.string()
       .messages({
-        'any.required': 'picture is required',
+        'any.required': 'banner is required',
       }),
     authorId: Joi.string().required()
       .messages({
@@ -102,6 +110,10 @@ exports.getCategoriesValidator = (data) => {
     limit: Joi.number().min(1)
       .messages({
         'any.required': 'limit is required',
+      }),
+    activeId: Joi.string().required()
+      .messages({
+        'any.required': 'activeId is required',
       }),
     type: Joi.string().valid(Cohorts, Forums).required()
       .messages({

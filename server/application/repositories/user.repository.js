@@ -22,15 +22,9 @@ class UserRepository {
   async findUser(email, withPassword = false) {
     return tryCatchWrapperWithError(async () => {
       if (!email) return null;
-      let user = null;
-      user = await UserModel.findOne(
+      const user = await UserModel.findOne(
         { email },
       ).select(withPassword ? '+password' : '-password');
-      if (!user) {
-        user = await UserModel.findOne(
-          { email },
-        ).select(withPassword ? '+password' : '-password');
-      }
       return user;
     });
   }

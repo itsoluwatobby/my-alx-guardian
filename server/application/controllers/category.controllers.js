@@ -43,7 +43,7 @@ class CategoryController {
 
   updateCategory(req, res) {
     return tryCatchWrapper(res, async () => {
-      const category = await this.categoryService.updateCategory(req);
+      const category = await this.categoryService.updateCategory(req.body, req.query.activeId);
       return res.json(response.success(category.data, category.message));
     });
   }
@@ -64,7 +64,7 @@ class CategoryController {
 
   deleteCategory(req, res) {
     return tryCatchWrapper(res, async () => {
-      const category = await this.categoryService.deleteCategory(req);
+      const category = await this.categoryService.deleteCategory(req.body, req.query.activeId);
       return res.json(response.success(category.data, category.message));
     });
   }
