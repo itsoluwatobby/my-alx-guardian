@@ -7,10 +7,9 @@ const { userRepository } = require('../repositories/user.repository');
 const { tryCatchWrapperWithError } = require('../utils/asyncWrapper');
 const { throwError } = require('../utils/responseAdapter');
 const {
-  registrationValidator, accountActivationValidator, loginValidator,
+  registrationValidator, loginValidator,
   emailCheckValidator, passwordResetValidator,
-  otpRequestValidator,
-  otpVerificationValidator,
+  otpRequestValidator, otpVerificationValidator,
 } = require('../utils/account.validation');
 const { Constants, Provider, OTP_PURPOSE } = require('../utils/constants');
 const { authOTPRepository } = require('../repositories/authOTP.repository');
@@ -23,10 +22,15 @@ const { successTemplate } = require('../templates/success.template');
 const { passwordresetTemplate } = require('../templates/passwordreset.template');
 
 class authenticationService {
-  userRepository = userRepository;
+  initTokenObj = { otp: '', createdAt: null, purpose: OTP_PURPOSE.PASS };
 
-  isOTPExpired(createdAt) {
-    const EXPIRES_IN_A_DAY = Constants.DAY_DURATION;
+  constructor() {
+    this.userRepository = userRepository;
+    this.clientLink = config.CLIENT_LINK;
+  }
+
+  isOTPExpired(createdAt, duration = Constants.DAY_DURATION) {
+    const EXPIRES_IN_A_DAY = duration ?? Constants.DAY_DURATION;
     const presentTime = new Date();
     const elaspedTime = +presentTime - +createdAt;
     return elaspedTime > EXPIRES_IN_A_DAY;
@@ -50,18 +54,22 @@ class authenticationService {
       }
 
       const { email, otp } = credentials;
-      const user = await this.getUserInfo(email);
+      const user = await this.userRepository.getUser(email);
+      if (!user) throwError(404, 'Account not found');
       const userOTP = await authOTPRepository.getOTP(email);
       const { purpose } = userOTP.token;
       if (!userOTP.token.createdAt) throwError(403, 'You need to request for an OTP');
       // validate token
-      if (this.isOTPExpired(userOTP.token.createdAt)) {
+      if (this.isOTPExpired(userOTP.token.createdAt, Constants.SIX_HOURS_DURATION)) {
         // resend otp
         const newOTP = await this.generateOTP();
         const token = { otp: newOTP, createdAt: new Date(), purpose };
         await authOTPRepository.updateOTP(email, token);
         logger.trace(' >>>> Call to mailer service');
-        const mailObj = registrationTemplate(email, user.firstName, newOTP);
+        const isPassReset = purpose === OTP_PURPOSE.RESETPASSWORDREQUEST;
+        const mailObj = isPassReset
+          ? passwordresetTemplate(email, user.firstName, otp, 6)
+          : registrationTemplate(email, user.firstName, otp, 24);
         await mailer.sendMail(mailObj);
 
         throwError(406, 'OTP expired: Please check your email for the new OTP');
@@ -116,7 +124,7 @@ class authenticationService {
 
       // send welcome and account activation emails
       logger.trace(' >>>> Call to mailer service');
-      const mailObj = registrationTemplate(email, user.firstName, otp);
+      const mailObj = registrationTemplate(email, user.firstName, otp, 24);
       await mailer.sendMail(mailObj);
       return {
         data: {
@@ -130,13 +138,13 @@ class authenticationService {
 
   async accountActivation(credentials) {
     return tryCatchWrapperWithError(async () => {
-      const validationResponse = await accountActivationValidator(credentials);
+      const validationResponse = otpVerificationValidator(credentials);
       if (!validationResponse.valid) {
         throw new Error(validationResponse.error);
       }
       const { email, otp } = credentials;
-      const user = await this.getUserInfo(email);
-      if (user.verified) throwError(406, 'Account already activated');
+      const user = await this.userRepository.getUser(email);
+      if (user.verified) throwError(406, 'Account already activated! Please login');
 
       const userOTP = await authOTPRepository.getOTP(email);
       if (!userOTP.token.createdAt) throwError(403, 'You need to request for an OTP');
@@ -148,7 +156,7 @@ class authenticationService {
         const token = { otp: newOTP, createdAt: new Date(), purpose: userOTP.token.purpose };
         await authOTPRepository.updateOTP(email, token);
         logger.trace(' >>>> Call to mailer service');
-        const mailObj = registrationTemplate(email, user.firstName, otp);
+        const mailObj = registrationTemplate(email, user.firstName, otp, 24);
         await mailer.sendMail(mailObj);
         throwError(406, 'OTP expired: Please check your email for the new OTP');
       }
@@ -159,7 +167,7 @@ class authenticationService {
       });
 
       // send email for successful activation
-      const mailObj = successTemplate(email, user.firstName, 'account');
+      const mailObj = successTemplate(email, user.firstName, 'account', this.clientLink);
       await mailer.sendMail(mailObj);
 
       return {
@@ -235,7 +243,7 @@ class authenticationService {
         });
       }
       if (!query) return { data: {}, message: 'BE: Logout successful' };
-      const user = await this.getUserInfo(query, true);
+      const user = await this.userRepository.getUser(query);
       // remove accessToken
       const result = await this.userRepository.updateUser(user._id, { accessToken: '' });
       return {
@@ -254,7 +262,8 @@ class authenticationService {
         throw new Error(validationResponse.error);
       }
       const { email } = credentials;
-      const user = await this.getUserInfo(email);
+      const user = await this.userRepository.getUser(email);
+      if (!user) throwError(404, 'Account not found');
       if (user.provider !== Provider.Local) throwError(403, `Please login with ${user.provider}`);
       if (!user.verified) throwError(406, 'Please check your email to activate your account');
 
@@ -293,8 +302,9 @@ class authenticationService {
         throw new Error(validationResponse.error);
       }
       const { email, newPassword } = credentials;
-      const user = await this.getUserInfo(email, true);
+      const user = await this.userRepository.getUser(email, true);
       // check if user did not initiate a password reset
+      if (!user) throwError(404, 'Account not found');
       if (!user.isPasswordReset.reset) throwError(403, 'Password reset request not initiated');
       if (!user.isPasswordReset.otpVerified) throwError(406, 'OTP not verified');
 
@@ -314,7 +324,7 @@ class authenticationService {
 
       // send email for successful password reset
       logger.trace(' >>>> Call to mailer service');
-      const mailObj = successTemplate(email, user.firstName, 'password');
+      const mailObj = successTemplate(email, user.firstName, 'password', this.clientLink);
       await mailer.sendMail(mailObj);
       return {
         data: {
@@ -333,7 +343,8 @@ class authenticationService {
         throw new Error(validationResponse.error);
       }
       const { email } = credentials;
-      const user = await this.getUserInfo(email);
+      const user = await this.userRepository.getUser(email);
+      if (!user) throwError(404, 'Account not found');
       const userOTP = await authOTPRepository.getOTP(email);
       const { purpose } = userOTP.token;
       if (purpose === OTP_PURPOSE.PASS) throwError(400, 'Bad request');

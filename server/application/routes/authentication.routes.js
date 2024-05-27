@@ -9,7 +9,7 @@ authenticationRoute.post('/signin', (req, res) => AuthenticationController.login
 authenticationRoute.post('/signout', (req, res) => AuthenticationController.logout(req, res));
 authenticationRoute.post('/forgotPassword', (req, res) => AuthenticationController.forgotPassword(req, res));
 authenticationRoute.put('/passwordReset', (req, res) => AuthenticationController.passwordReset(req, res));
-authenticationRoute.post('/sendOTP', (req, res) => AuthenticationController.resendOTP(req, res));
-authenticationRoute.post('/verifyOTP', (req, res) => AuthenticationController.verifyOTP(req, res));
+authenticationRoute.post('/resendOTP', (req, res) => AuthenticationController.resendOTP(req, res));
+authenticationRoute.put('/verifyOTP', (req, res) => AuthenticationController.verifyOTP(req, res));
 
 module.exports = authenticationRoute;
