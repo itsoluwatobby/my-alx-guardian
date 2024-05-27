@@ -59,16 +59,15 @@ class PostService {
         throw new Error(validationResponse.error);
       }
 
-      const { postId, userId, type } = postObj;
+      const { postId, userId } = postObj;
       const user = await userRepository.getUser(userId);
       if (!user) throwError(404, 'Account not found');
-      let post;
-      if (type === 'LIKE') post = await postsRepository.likePost({ postId, userId });
-      else post = await postsRepository.unlikePost({ postId, userId });
-      if (!post) throwError(400, 'Mongo Error: Error liking post');
+
+      const result = await postsRepository.like_UnlikePost({ postId, userId });
+      if (!result.post) throwError(400, 'Mongo Error: Error modifying post');
       return {
-        data: post,
-        message: `BE: Post ${type === 'LIKE' ? 'liked' : 'unliked'}`,
+        data: result.post,
+        message: `BE: ${result.message}`,
       };
     });
   }
@@ -85,6 +84,32 @@ class PostService {
       return {
         data: post,
         message: 'BE: Post found',
+      };
+    });
+  }
+
+  async getPosts(postQuery) {
+    return tryCatchWrapperWithError(async () => {
+      const { pageNumber, limit } = postQuery;
+      const validationResponse = getPostsValidator({ pageNumber, limit });
+      if (!validationResponse.valid) {
+        throw new Error(validationResponse.error);
+      }
+      const posts = await postsRepository.getPosts(postQuery);
+      return {
+        data: posts,
+        message: 'BE: Posts retrieved successfully',
+      };
+    });
+  }
+
+  async getSearchedPosts(postQuery) {
+    return tryCatchWrapperWithError(async () => {
+      if (postQuery) throwError(400, 'postQuery required');
+      const posts = await postsRepository.getSearchedPosts(postQuery);
+      return {
+        data: posts,
+        message: 'BE: Posts retrieved successfully',
       };
     });
   }
@@ -125,23 +150,8 @@ class PostService {
     });
   }
 
-  async getPosts(postQuery) {
-    return tryCatchWrapperWithError(async () => {
-      const { pageNumber, limit } = postQuery;
-      const validationResponse = getPostsValidator({ pageNumber, limit });
-      if (!validationResponse.valid) {
-        throw new Error(validationResponse.error);
-      }
-      const posts = await postsRepository.getPosts(postQuery);
-      return {
-        data: posts,
-        message: 'BE: Posts retrieved successfully',
-      };
-    });
-  }
-
   async deletePost(req) {
-    const postObj = req.params;
+    const postObj = req.body;
     return tryCatchWrapperWithError(async () => {
       const validationResponse = idvalidator({ id: postObj.postId });
       if (!validationResponse.valid) {

@@ -3,7 +3,7 @@
 const { tryCatchWrapperWithError } = require('../utils/asyncWrapper');
 const { throwError } = require('../utils/responseAdapter');
 const {
-  createCommentValidator, updateCommentValidator, getCommentsValidator,
+  createCommentValidator, getCommentsValidator,
   likeCommentValidator,
   tagCommentValidator,
 } = require('../utils/comment.validator');
@@ -33,7 +33,7 @@ class CommentService {
   async updateComment(req) {
     const commentObj = req.body;
     return tryCatchWrapperWithError(async () => {
-      const validationResponse = updateCommentValidator(commentObj);
+      const validationResponse = createCommentValidator(commentObj);
       if (!validationResponse.valid) {
         throw new Error(validationResponse.error);
       }
@@ -60,16 +60,14 @@ class CommentService {
         throw new Error(validationResponse.error);
       }
 
-      const { commentId, userId, type } = commentObj;
+      const { commentId, userId } = commentObj;
       const user = await userRepository.getUser(userId);
       if (!user) throwError(404, 'Account not found');
-      let comment;
-      if (type === 'LIKE') comment = await commentRepository.likeComment({ commentId, userId });
-      else comment = await commentRepository.unlikeComment({ commentId, userId });
-      if (!comment) throwError(400, 'Mongo Error: Error liking comment');
+      const result = await commentRepository.like_UnlikeCommemt({ commentId, userId });
+      if (!result.comment) throwError(400, 'Mongo Error: Error modifying comment');
       return {
-        data: comment,
-        message: `BE: Comment ${type === 'LIKE' ? 'liked' : 'unliked'}`,
+        data: result.comment,
+        message: `BE: ${result.message}`,
       };
     });
   }
@@ -124,7 +122,7 @@ class CommentService {
   }
 
   async deleteComment(req) {
-    const commentObj = req.params;
+    const commentObj = req.body;
     return tryCatchWrapperWithError(async () => {
       const validationResponse = idvalidator({ id: commentObj.commentId });
       if (!validationResponse.valid) {

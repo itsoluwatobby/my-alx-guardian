@@ -11,5 +11,6 @@ postRoute.patch('/toggle-like', (req, res) => PostController.toggleLike(req, res
 postRoute.put('/share-post', (req, res) => PostController.sharepost(req, res));
 postRoute.post('/repost', (req, res) => PostController.repost(req, res));
 postRoute.delete('/delete', (req, res) => PostController.deletePost(req, res));
+postRoute.get('/search', (req, res) => PostController.getSearchedPosts(req, res));
 
 module.exports = postRoute;

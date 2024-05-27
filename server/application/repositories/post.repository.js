@@ -15,8 +15,8 @@ class PostsRepository {
   }
 
   async getPosts(queryObj) {
-    const { pageNumber, limit } = queryObj;
-    const posts = await pagination(pageNumber, limit, PostsModel);
+    const { pageNumber, limit, query } = queryObj;
+    const posts = await pagination(pageNumber, limit, PostsModel, query);
     return posts;
   }
 
@@ -55,24 +55,27 @@ class PostsRepository {
     return result;
   }
 
-  async likePost(postObj) {
+  async like_UnlikePost(postObj) {
     const { postId, userId } = postObj;
-    const result = await PostsModel.findOneAndUpdate(
-      { _id: postId },
-      { $push: { likes: userId } },
-      { new: true },
-    );
-    return result;
-  }
-
-  async unlikePost(postObj) {
-    const { postId, userId } = postObj;
-    const result = await PostsModel.findOneAndUpdate(
-      { _id: postId },
-      { $pull: { likes: userId } },
-      { new: true },
-    );
-    return result;
+    const post = await this.getPost(postId);
+    let result;
+    let message;
+    if (!post.likes.includes(userId)) {
+      result = await PostsModel.findOneAndUpdate(
+        { _id: postId },
+        { $push: { likes: userId } },
+        { new: true },
+      );
+      message = 'Post liked';
+    } else {
+      result = await PostsModel.findOneAndUpdate(
+        { _id: postId },
+        { $pull: { likes: userId } },
+        { new: true },
+      );
+      message = 'Post unliked';
+    }
+    return { message, post: result };
   }
 
   async sharePost(postObj) {

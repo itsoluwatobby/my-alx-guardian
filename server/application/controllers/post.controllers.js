@@ -20,6 +20,13 @@ class PostController {
     });
   }
 
+  getSearchedPosts(req, res) {
+    return tryCatchWrapper(res, async () => {
+      const posts = await this.postService.getSearchedPosts(req.query.search);
+      return res.json(response.success(posts.data, posts.message));
+    });
+  }
+
   getPost(req, res) {
     return tryCatchWrapper(res, async () => {
       const post = await this.postService.getPost(req.params);

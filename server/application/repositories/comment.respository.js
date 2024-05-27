@@ -39,24 +39,27 @@ class CommentRepository {
     return result;
   }
 
-  async likeComment(postObj) {
+  async like_UnlikeCommemt(postObj) {
     const { commentId, userId } = postObj;
-    const result = await CommentModel.findOneAndUpdate(
-      { _id: commentId },
-      { $push: { likes: userId } },
-      { new: true },
-    );
-    return result;
-  }
-
-  async unlikeComment(postObj) {
-    const { commentId, userId } = postObj;
-    const result = await CommentModel.findOneAndUpdate(
-      { _id: commentId },
-      { $pull: { likes: userId } },
-      { new: true },
-    );
-    return result;
+    const post = await this.getComment(commentId);
+    let result;
+    let message;
+    if (!post.likes.includes(userId)) {
+      result = await CommentModel.findOneAndUpdate(
+        { _id: commentId },
+        { $push: { likes: userId } },
+        { new: true },
+      );
+      message = 'Comment liked';
+    } else {
+      result = await CommentModel.findOneAndUpdate(
+        { _id: commentId },
+        { $pull: { likes: userId } },
+        { new: true },
+      );
+      message = 'Comment unliked';
+    }
+    return { message, comment: result };
   }
 
   async deleteComment(commentId) {

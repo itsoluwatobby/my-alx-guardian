@@ -23,29 +23,6 @@ exports.createCommentValidator = (data) => {
   };
 };
 
-exports.updateCommentValidator = (data) => {
-  const updateCommentSchema = Joi.object().keys({
-    comment: Joi.string().required()
-      .messages({
-        'any.required': 'body is required',
-      }),
-    userId: Joi.string().required()
-      .messages({
-        'any.required': 'userId is required',
-      }),
-    postId: Joi.string().required()
-      .messages({
-        'any.required': 'postId is required',
-      }),
-  });
-
-  const validationResponse = updateCommentSchema.validate(data);
-  return {
-    valid: validationResponse.error == null,
-    error: validationResponse.error?.message,
-  };
-};
-
 exports.getCommentsValidator = (data) => {
   const getCommentsSchema = Joi.object().keys({
     pageNumber: Joi.number().min(1)
@@ -78,10 +55,6 @@ exports.likeCommentValidator = (data) => {
     commentId: Joi.string().required()
       .messages({
         'any.required': 'commentId is required',
-      }),
-    type: Joi.string().valid('LIKE', 'UNLIKE').required()
-      .messages({
-        'any.required': 'type is required',
       }),
   });
 
