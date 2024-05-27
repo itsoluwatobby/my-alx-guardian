@@ -8,7 +8,7 @@ const {
   followCategoryValidator,
 } = require('../utils/category.validator');
 const { userRepository } = require('../repositories/user.repository');
-const { idvalidator, idValidator } = require('../utils/account.validation');
+const { idValidator } = require('../utils/account.validation');
 const { categoryRepository } = require('../repositories/category.repository');
 
 class CategoryService {
@@ -104,7 +104,7 @@ class CategoryService {
   async getCategory(categoryObj) {
     return tryCatchWrapperWithError(async () => {
       const { categoryId } = categoryObj;
-      const validationResponse = idvalidator({ id: categoryId });
+      const validationResponse = await idValidator({ id: categoryId });
       if (!validationResponse.valid) {
         throw new Error(validationResponse.error);
       }
@@ -146,7 +146,7 @@ class CategoryService {
   async getCategoryMembers(categoryQuery) {
     return tryCatchWrapperWithError(async () => {
       const { categoryId } = categoryQuery;
-      const validationResponse = idValidator({ id: categoryId });
+      const validationResponse = await idValidator({ id: categoryId });
       if (!validationResponse.valid) {
         throw new Error(validationResponse.error);
       }
@@ -164,7 +164,7 @@ class CategoryService {
     const categoryObj = req.body;
     return tryCatchWrapperWithError(async () => {
       const { categoryId } = categoryObj;
-      const validationResponse = idvalidator({ id: categoryId });
+      const validationResponse = await idValidator({ id: categoryId });
       if (!validationResponse.valid) {
         throw new Error(validationResponse.error);
       }

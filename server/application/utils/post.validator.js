@@ -153,7 +153,16 @@ exports.sharePostValidator = (data) => {
       .messages({
         'any.required': 'postId is required',
       }),
-    platform: Joi.string().required()
+    platform: Joi.object().keys({
+      name: Joi.string().required()
+        .messages({
+          'any.required': 'platform.name is required',
+        }),
+      link: Joi.string().required()
+        .messages({
+          'any.required': 'platform.link is required',
+        }),
+    }).required()
       .messages({
         'any.required': 'platform is required',
       }),

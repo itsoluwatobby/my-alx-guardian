@@ -8,7 +8,7 @@ const {
   tagCommentValidator,
 } = require('../utils/comment.validator');
 const { userRepository } = require('../repositories/user.repository');
-const { idvalidator } = require('../utils/account.validation');
+const { idValidator } = require('../utils/account.validation');
 const { commentRepository } = require('../repositories/comment.respository');
 
 class CommentService {
@@ -92,7 +92,7 @@ class CommentService {
 
   async getComment(commentObj) {
     return tryCatchWrapperWithError(async () => {
-      const validationResponse = idvalidator({ id: commentObj.commentId });
+      const validationResponse = await idValidator({ id: commentObj.commentId });
       if (!validationResponse.valid) {
         throw new Error(validationResponse.error);
       }
@@ -124,7 +124,7 @@ class CommentService {
   async deleteComment(req) {
     const commentObj = req.body;
     return tryCatchWrapperWithError(async () => {
-      const validationResponse = idvalidator({ id: commentObj.commentId });
+      const validationResponse = await idValidator({ id: commentObj.commentId });
       if (!validationResponse.valid) {
         throw new Error(validationResponse.error);
       }

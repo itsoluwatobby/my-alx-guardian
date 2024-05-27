@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable class-methods-use-this */
-const { PostsModel } = require('../models');
+const { PostsModel, SharesModel } = require('../models');
 const { pagination } = require('../utils/paginate');
 const { commentRepository } = require('./comment.respository');
 
@@ -23,22 +23,14 @@ class PostsRepository {
   async getSearchedPosts(query) {
     const caseInsensitiveQuery = new RegExp(query, 'i');
     const posts = await PostsModel.find({
-      $and: [
+      $or: [
+        { title: { $in: [caseInsensitiveQuery] } },
+        { body: { $in: [caseInsensitiveQuery] } },
         {
-          $or: [
-            { title: { $in: [caseInsensitiveQuery] } },
-            { body: { $in: [caseInsensitiveQuery] } },
-            {
-              category: {
-                $or: [
-                  { type: { $in: [caseInsensitiveQuery] } },
-                  { name: { $in: [caseInsensitiveQuery] } },
-                ],
-              },
-            },
-            // { category: { type: { $in: [caseInsensitiveQuery] } } },
-            // { category: { name: { $in: [caseInsensitiveQuery] } } },
-          ],
+          category: {
+            type: { $in: [caseInsensitiveQuery] },
+            name: { $in: [caseInsensitiveQuery] },
+          },
         },
       ],
     });
@@ -80,18 +72,17 @@ class PostsRepository {
 
   async sharePost(postObj) {
     const { postId, userId, platform } = postObj;
-    const result = await PostsModel.findOneAndUpdate(
-      { _id: postId },
-      { $push: { shares: { userId, platform } } },
-      { new: true },
+    await SharesModel.create(
+      { userId, postId, platform },
     );
+    const result = await this.updatePost(postId, { $inc: { sharedCount: 1 } });
     return result;
   }
 
   async repost(postObj) {
     const { postId, userId } = postObj;
     const post = await PostsModel.findById(postId).select('title body _id, picture category reposts');
-    const { _id, reposts, ...rest } = post;
+    const { _id, reposts, ...rest } = post._doc;
     const createRepost = {
       ...rest, repostId: _id, isRepost: true, userId,
     };

@@ -3,7 +3,7 @@
 const { userRepository } = require('../repositories/user.repository');
 const { tryCatchWrapperWithError } = require('../utils/asyncWrapper');
 const { throwError, responsetemplate } = require('../utils/responseAdapter');
-const { userValidator, idValidator } = require('../utils/account.validation');
+const { idValidator } = require('../utils/account.validation');
 const { updateUserValidator } = require('../utils/user.validator');
 const { authOTPRepository } = require('../repositories/authOTP.repository');
 const logger = require('../utils/logger');
@@ -28,7 +28,7 @@ class UserService {
 
   async getUser(userObj) {
     return tryCatchWrapperWithError(async () => {
-      const validatorResponse = userValidator({ id: userObj.userId });
+      const validatorResponse = await idValidator({ id: userObj.userId });
       if (!validatorResponse.valid) {
         throw new Error(validatorResponse.error);
       }
@@ -65,7 +65,7 @@ class UserService {
 
   async deleteUser(userObj, headers) {
     return tryCatchWrapperWithError(async () => {
-      const validationResponse = idValidator(userObj);
+      const validationResponse = await idValidator(userObj);
       if (!validationResponse.valid) {
         throw new Error(validationResponse.error);
       }

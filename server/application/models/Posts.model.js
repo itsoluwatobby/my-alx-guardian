@@ -11,10 +11,14 @@ const Reposts = new mongoose.Schema(
   },
 );
 
-const Shares = new mongoose.Schema(
+const SharesShema = new mongoose.Schema(
   {
     userId: { type: mongoose.Schema.Types.ObjectId, required: [true, 'userId is required'], ref: 'users' },
-    platform: { type: String, default: '' },
+    postId: { type: mongoose.Schema.Types.ObjectId, required: [true, 'postId is required'], ref: 'users' },
+    platform: {
+      name: { type: String, default: '' },
+      link: { type: String, default: '' },
+    },
   },
   {
     timestamps: true,
@@ -24,7 +28,7 @@ const Shares = new mongoose.Schema(
 const PostsSchema = mongoose.Schema(
   {
     title: { type: String, trim: true },
-    userId: { type: String, required: [true, 'userId is required'], ref: 'users' },
+    userId: { type: String, required: [true, 'userId is required'], immutable: true, ref: 'users' },
     repostId: { type: String, ref: 'posts' },
     body: { type: String, required: [true, 'body is required'], trim: true },
     category: {
@@ -35,10 +39,11 @@ const PostsSchema = mongoose.Schema(
     likes: { type: Array, default: [] },
     isRepost: { type: Boolean, default: false },
     reposts: [Reposts],
-    shares: [Shares],
+    sharedCount: { type: number, default: 0 },
   },
   {
     timestamps: true,
   },
 );
 exports.PostsModel = mongoose.model('posts', PostsSchema);
+exports.SharesModel = mongoose.model('shares', SharesShema);

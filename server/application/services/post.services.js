@@ -7,7 +7,7 @@ const {
   likePostValidator, postModificationValidator, sharePostValidator,
 } = require('../utils/post.validator');
 const { userRepository } = require('../repositories/user.repository');
-const { idvalidator } = require('../utils/account.validation');
+const { idValidator } = require('../utils/account.validation');
 const { postsRepository } = require('../repositories/post.repository');
 
 class PostService {
@@ -62,7 +62,8 @@ class PostService {
       const { postId, userId } = postObj;
       const user = await userRepository.getUser(userId);
       if (!user) throwError(404, 'Account not found');
-
+      const post = await postsRepository.getPost(postId);
+      if (!post) throwError(404, 'Post not found');
       const result = await postsRepository.like_UnlikePost({ postId, userId });
       if (!result.post) throwError(400, 'Mongo Error: Error modifying post');
       return {
@@ -74,7 +75,7 @@ class PostService {
 
   async getPost(postObj) {
     return tryCatchWrapperWithError(async () => {
-      const validationResponse = idvalidator({ id: postObj.postId });
+      const validationResponse = await idValidator({ id: postObj.postId });
       if (!validationResponse.valid) {
         throw new Error(validationResponse.error);
       }
@@ -105,7 +106,7 @@ class PostService {
 
   async getSearchedPosts(postQuery) {
     return tryCatchWrapperWithError(async () => {
-      if (postQuery) throwError(400, 'postQuery required');
+      if (!postQuery) throwError(400, 'postQuery required');
       const posts = await postsRepository.getSearchedPosts(postQuery);
       return {
         data: posts,
@@ -153,7 +154,7 @@ class PostService {
   async deletePost(req) {
     const postObj = req.body;
     return tryCatchWrapperWithError(async () => {
-      const validationResponse = idvalidator({ id: postObj.postId });
+      const validationResponse = await idValidator({ id: postObj.postId });
       if (!validationResponse.valid) {
         throw new Error(validationResponse.error);
       }

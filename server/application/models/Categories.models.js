@@ -19,7 +19,7 @@ const CategorySchema = mongoose.Schema(
     banner: { type: String, default: '' },
     title: { type: String, trim: true, default: '' },
     description: { type: String, trim: true, default: '' },
-    authorId: { type: String, required: [true, 'authorId is required'], ref: 'users' },
+    authorId: { type: String, required: [true, 'authorId is required'], immutable: true, ref: 'users' },
     members: { type: Array, default: [] },
     updatedBy: RecentUpdate,
     updates: { type: Array, default: [] },

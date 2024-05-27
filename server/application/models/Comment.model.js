@@ -12,8 +12,8 @@ const Tag = new mongoose.Schema(
 
 const CommentSchema = mongoose.Schema(
   {
-    postId: { type: String, required: [true, 'postId is required'], ref: 'posts' },
-    userId: { type: String, required: [true, 'userId is required'], ref: 'users' },
+    postId: { type: String, required: [true, 'postId is required'], immutable: true, ref: 'posts' },
+    userId: { type: String, required: [true, 'userId is required'], immutable: true, ref: 'users' },
     comment: { type: String, required: [true, 'comment is required'], trim: true },
     likes: { type: Array, default: [] },
     tags: [Tag],
