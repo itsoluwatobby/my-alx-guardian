@@ -29,7 +29,7 @@ class AuthenticationController {
 
   logout(req, res) {
     return tryCatchWrapper(res, async () => {
-      const user = await this.authenticationService.logout(req);
+      const user = await this.authenticationService.logout(req.body.userId, req.headers);
       return res.json(response.success(user.data, user.message));
     });
   }
