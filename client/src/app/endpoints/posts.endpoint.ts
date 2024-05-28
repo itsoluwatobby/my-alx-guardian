@@ -37,4 +37,4 @@ export const POST = {
     method: HTTP_METHOD.GET,
     url: '/post/search',
   },
-};
+} as const;

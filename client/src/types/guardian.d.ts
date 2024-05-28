@@ -169,6 +169,7 @@ type GetPosts = ResponseTemplate & {
   data: { pageable: Pagination; data: PostType[]; }
 }
 
+type PostQuery = { pageNumber: number; limit: number; userId: string; }
 type GetPostResponse = CreatePostResponse
 
 type UpdatePostRequest = { id: strimg; } & Omit<PostType, '_id'>
@@ -205,6 +206,7 @@ type CommentType = {
 type CreateCommentRequest = Pick<CommentType, 'userId' | 'postId' | 'comment'>;
 type CreateCommentResponse = ResponseTemplate & { data: CommentType }
 
+type CommentQuery = { pageNumber: number; limit: number; postId: string; }
 type GetComments = ResponseTemplate & {
   data: { pageable: Pagination; data: CommentType[]; }
 }
@@ -220,10 +222,10 @@ type CommentLikeResponse = CreateCommentResponse
 type TagCommentRequest = { postId: string; userId: string; id: string; comment: string; }
 type TagCommentResponse = CreateCommentResponse
 
-type DeleteCommentRequest = CommentLikeRequest
+type DeleteCommentRequest = DeleteUserRequest
 type DeleteCommentResponse = ResponseTemplate & { data: string }
 
-type SearchCommentResponse = ResponseTemplate & { data: CommentType[] }
+// type SearchCommentResponse = ResponseTemplate & { data: CommentType[] }
 
 // ------------ CATEGORY -------------
 
@@ -244,6 +246,7 @@ type CategoryObjType = {
 type CreateCategoryRequest = Pick<CategoryObjType, 'authorId' | 'category' | 'banner' | 'title' | 'description'>;
 type CreateCategoryResponse = ResponseTemplate & { data: CategoryObjType }
 
+type CategoryQuery = { pageNumber: number; limit: number; type: Exclude<CategoryType, 'General'>; }
 type GetCategories = ResponseTemplate & {
   data: { pageable: Pagination; data: CategoryObjType[]; }
 }
@@ -261,7 +264,7 @@ type UpdateDescriptionResponse = CreateCategoryResponse
 type JoinLeaveCategoryRequest = Omit<UpdateDescriptionRequest, 'description'>
 type JoinLeaveCategoryResponse = CreateCategoryResponse
 
-type DeleteCategoryRequest = JoinLeaveCategoryRequest
+type DeleteCategoryRequest = DeleteUserRequest
 type DeleteCategoryResponse = ResponseTemplate & { data: string }
 
 type SearchCategoryResponse = ResponseTemplate & { data: CategoryObjType[] }

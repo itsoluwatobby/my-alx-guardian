@@ -5,7 +5,7 @@ export const CATEGORY = {
     method: HTTP_METHOD.POST,
     url: '/category/create-category',
   },
-  getCategoris: {
+  getCategories: {
     method: HTTP_METHOD.GET,
     url: '/category/get-categories',
   },
@@ -37,4 +37,4 @@ export const CATEGORY = {
     method: HTTP_METHOD.GET,
     url: '/category/search',
   },
-}
+} as const;

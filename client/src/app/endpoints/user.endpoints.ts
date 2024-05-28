@@ -17,4 +17,4 @@ export const USER = {
     method: HTTP_METHOD.POST,
     url: '/user/delete',
   },
-};
+} as const;

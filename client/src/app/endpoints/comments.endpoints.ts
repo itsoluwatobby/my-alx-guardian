@@ -29,4 +29,4 @@ export const COMMENT = {
     method: HTTP_METHOD.POST,
     url: '/comment/delete',
   },
-};
+} as const;

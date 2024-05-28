@@ -7,6 +7,8 @@ import { Link, useNavigate } from "react-router-dom";
 import ThirdPartyLogin from "../components/authentication/Thirdparty";
 import guardianAsyncWrapper from "../app/guardianAsyncWrapper";
 import { toast } from "react-toastify";
+import { authenticationAPI } from "../app/api-calls/auth.api";
+import { sanitizeEntries } from "../utility/helpers";
 
 const initValidation = { validEmail: false, match: false }
 export default function Signup() {
@@ -18,7 +20,7 @@ export default function Signup() {
 
   const { loading, isError } = appState;
   const { validEmail, match } = validation;
-  const { name, email, password, confirmPassword } = newUser;
+  const { firstName, lastName, email, password, confirmPassword } = newUser;
 
   const handleUserInfo = (event: ChangeEvent<HTMLInputElement>) => {
     const [name, value] = [event.target.name, event.target.value]
@@ -43,8 +45,11 @@ export default function Signup() {
   const handleSignup = async(event: ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
     guardianAsyncWrapper(async () => {
-
-      toast.success('Signup successful')
+      setAppState(prev => ({ ...prev, loading: true }));
+      const user = sanitizeEntries(newUser);
+      const res = await authenticationAPI.signup(user);
+      console.log({ res });
+      toast.success(res.message.split(': ')[1]);
       navigate('/signin')
     }, setAppState);
   }
@@ -53,9 +58,14 @@ export default function Signup() {
     <main className="w-full flex flex-col md:flex-row items-center h-full">
       <form onSubmit={handleSignup} className="flex-none md:w-[55%] w-full h-full flex flex-col gap-y-6 p-8 pt-14 items-center">
 
-        <FormInputs
-          name="name" value={name} handleUserInfo={handleUserInfo} type='text' autoComplete={'off'} placeholder='John Doe'
-        />
+        <div className="w-full flex mobile:flex-col flex-row gap-y-6 gap-x-4">
+          <FormInputs
+            name="firstName" value={firstName} handleUserInfo={handleUserInfo} type='text' autoComplete={'off'} placeholder='First name'
+          />
+          <FormInputs
+            name="lastName" value={lastName} handleUserInfo={handleUserInfo} type='text' autoComplete={'off'} placeholder='Last name'
+          />
+        </div>
         <FormInputs
           name="email" value={email} handleUserInfo={handleUserInfo} type='email' validEmail={validEmail} autoComplete='off'
           placeholder='jodndoe@gmail.com'
