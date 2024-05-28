@@ -134,13 +134,13 @@ class CommentService {
       if (!validationResponse.valid) {
         throw new Error(validationResponse.error);
       }
-      const { id } = commentObj;
-      const comment = await commentRepository.getComment(id);
+      const { commentId } = commentObj;
+      const comment = await commentRepository.getComment(commentId);
       if (!comment) throwError(404, 'Comment not found');
       if (activeId !== comment.userId.toString()) {
         throwError(401, 'You are unauthorised to modify comment');
       }
-      const deletedComment = await commentRepository.deleteComment({ _id: id });
+      const deletedComment = await commentRepository.deleteComment({ _id: commentId });
       if (!deletedComment) throwError(404, 'Error deleting comment');
       return {
         data: deletedComment._id,

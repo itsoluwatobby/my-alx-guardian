@@ -64,7 +64,7 @@ class CategoryController {
 
   deleteCategory(req, res) {
     return tryCatchWrapper(res, async () => {
-      const category = await this.categoryService.deleteCategory(req.body, req.query.activeId);
+      const category = await this.categoryService.deleteCategory(req.params, req.query.activeId);
       return res.json(response.success(category.data, category.message));
     });
   }

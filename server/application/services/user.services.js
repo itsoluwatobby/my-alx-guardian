@@ -69,14 +69,14 @@ class UserService {
         throw new Error(validationResponse.error);
       }
 
-      const { id } = userObj;
+      const { userId } = userObj;
       const userCredential = verifyToken(headers.authorization?.split(' ')[1]);
       // verify user
-      if (id !== userCredential.userId) {
-        logger.debug(`UnAuthorised user: >>>>> Token not for <${id}>`);
+      if (userId !== userCredential.userId) {
+        logger.debug(`UnAuthorised user: >>>>> Token not for <${userId}>`);
         throwError(401, responsetemplate.BADTOKEN);
       }
-      const user = await this.userRepository.getUser(id);
+      const user = await this.userRepository.getUser(userId);
       if (!user) throwError(404, 'Account not found');
 
       // deletes all users posted reviews and recieved reviews

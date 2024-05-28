@@ -10,7 +10,7 @@ categoryRoute.get('/members/:categoryId', (req, res) => CategoryController.getCa
 categoryRoute.put('/update', (req, res) => CategoryController.updateCategory(req, res));
 categoryRoute.put('/update-description', (req, res) => CategoryController.updateCategoryDescription(req, res));
 categoryRoute.put('/join-leave-category', (req, res) => CategoryController.follow_UnfollowCategory(req, res));
-categoryRoute.delete('/delete', (req, res) => CategoryController.deleteCategory(req, res));
+categoryRoute.delete('/delete/:categoryId', (req, res) => CategoryController.deleteCategory(req, res));
 categoryRoute.get('/search', (req, res) => CategoryController.getSearchedCategories(req, res));
 
 module.exports = categoryRoute;

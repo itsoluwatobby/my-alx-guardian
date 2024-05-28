@@ -9,6 +9,6 @@ commentRoute.get('/get/:commentId', (req, res) => CommentController.getComment(r
 commentRoute.put('/update', (req, res) => CommentController.updateComment(req, res));
 commentRoute.patch('/toggle-like', (req, res) => CommentController.toggleLike(req, res));
 commentRoute.put('/tag-comment', (req, res) => CommentController.tagComment(req, res));
-commentRoute.delete('/delete', (req, res) => CommentController.deleteComment(req, res));
+commentRoute.delete('/delete/:commentId', (req, res) => CommentController.deleteComment(req, res));
 
 module.exports = commentRoute;
