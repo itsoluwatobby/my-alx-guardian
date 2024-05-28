@@ -189,13 +189,13 @@ class CategoryService {
       if (!validationResponse.valid) {
         throw new Error(validationResponse.error);
       }
-      const { id } = categoryObj;
-      const category = await this.categoryRepository.getCategory(id);
+      const { categoryId } = categoryObj;
+      const category = await this.categoryRepository.getCategory(categoryId);
       if (!category) throwError(404, 'Category not found');
       if (activeId !== category.authorId.toString()) {
         throwError(401, 'You are unauthorised to modify category');
       }
-      const deletedCategory = await this.categoryRepository.deleteCategory({ _id: id });
+      const deletedCategory = await this.categoryRepository.deleteCategory({ _id: categoryId });
       if (!deletedCategory) throwError(404, 'Error deleting category');
       return {
         data: deletedCategory._id,

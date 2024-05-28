@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { Provider } = require('../utils/constants');
 
-const InfluencerSocialAccounts = {
+const UserSocialAccounts = {
   platform: { type: String },
   handle: { type: String },
   followers: { type: Number },
@@ -32,7 +32,7 @@ const UserSchema = mongoose.Schema(
       country: { type: String, default: '', trim: true },
     },
     isAccountDeleted: { type: Boolean, default: false },
-    activeAccounts: [InfluencerSocialAccounts],
+    activeAccounts: [UserSocialAccounts],
     verified: { type: Boolean, default: false },
     isPasswordReset: {
       reset: { type: Boolean, default: false },

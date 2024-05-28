@@ -64,7 +64,7 @@ class PostController {
 
   deletePost(req, res) {
     return tryCatchWrapper(res, async () => {
-      const post = await this.postService.deletePost(req.body, req.query.activeId);
+      const post = await this.postService.deletePost(req.params, req.query.activeId);
       return res.json(response.success(post.data, post.message));
     });
   }

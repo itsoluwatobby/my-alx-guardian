@@ -226,11 +226,11 @@ class authenticationService {
     });
   }
 
-  async logout(req) {
+  async logout(userId, headers) {
     return tryCatchWrapperWithError(async () => {
-      let query = req.body.userId;
+      let query = userId;
       if (!query) {
-        const accessToken = req.headers.authorization;
+        const accessToken = headers.authorization;
         if (!accessToken || !accessToken.startsWith('Bearer ')) {
           logger.debug(`No Bearer token found in request ${accessToken}`);
           return { data: {}, message: 'BE: Logout successful' };
