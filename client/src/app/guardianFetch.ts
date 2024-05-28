@@ -20,7 +20,7 @@ type UserResponseType = {
     data: UserObjType
   } 
 }
-export const BASEURL = process.env.NODE_ENV === 'production' ? 'https://contact-directory-api.onrender.com/api/v1' : 'http://localhost:4500/api/v1'
+export const BASEURL = process.env.NODE_ENV === 'production' ? 'https://my-alx-guardian-service.onrender.com/v1' : 'http://localhost:4500/api/v1'
 
 export const contactApi = axios.create({
   baseURL: BASEURL,
