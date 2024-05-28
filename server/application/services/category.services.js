@@ -185,17 +185,17 @@ class CategoryService {
 
   async deleteCategory(categoryObj, activeId) {
     return tryCatchWrapperWithError(async () => {
-      const validationResponse = await followCategoryValidator(categoryObj);
+      const { id } = categoryObj;
+      const validationResponse = await idValidator({ id });
       if (!validationResponse.valid) {
         throw new Error(validationResponse.error);
       }
-      const { categoryId } = categoryObj;
-      const category = await this.categoryRepository.getCategory(categoryId);
+      const category = await this.categoryRepository.getCategory(id);
       if (!category) throwError(404, 'Category not found');
       if (activeId !== category.authorId.toString()) {
         throwError(401, 'You are unauthorised to modify category');
       }
-      const deletedCategory = await this.categoryRepository.deleteCategory({ _id: categoryId });
+      const deletedCategory = await this.categoryRepository.deleteCategory({ _id: id });
       if (!deletedCategory) throwError(404, 'Error deleting category');
       return {
         data: deletedCategory._id,

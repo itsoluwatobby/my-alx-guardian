@@ -50,7 +50,7 @@ class CommentController {
 
   deleteComment(req, res) {
     return tryCatchWrapper(res, async () => {
-      const comment = await this.commentService.deleteComment(req.params, req.query.activeId);
+      const comment = await this.commentService.deleteComment(req.body, req.query.activeId);
       return res.json(response.success(comment.data, comment.message));
     });
   }

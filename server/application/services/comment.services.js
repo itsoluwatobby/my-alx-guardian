@@ -11,7 +11,6 @@ const { userRepository } = require('../repositories/user.repository');
 const { idValidator } = require('../utils/account.validation');
 const { commentRepository } = require('../repositories/comment.respository');
 const { postsRepository } = require('../repositories/post.repository');
-const { followCategoryValidator } = require('../utils/category.validator');
 
 class CommentService {
   async createComment(commentObj) {
@@ -130,17 +129,17 @@ class CommentService {
 
   async deleteComment(commentObj, activeId) {
     return tryCatchWrapperWithError(async () => {
-      const validationResponse = await followCategoryValidator(commentObj);
+      const validationResponse = await idValidator(commentObj);
       if (!validationResponse.valid) {
         throw new Error(validationResponse.error);
       }
-      const { commentId } = commentObj;
-      const comment = await commentRepository.getComment(commentId);
+      const { id } = commentObj;
+      const comment = await commentRepository.getComment(id);
       if (!comment) throwError(404, 'Comment not found');
       if (activeId !== comment.userId.toString()) {
         throwError(401, 'You are unauthorised to modify comment');
       }
-      const deletedComment = await commentRepository.deleteComment({ _id: commentId });
+      const deletedComment = await commentRepository.deleteComment({ _id: id });
       if (!deletedComment) throwError(404, 'Error deleting comment');
       return {
         data: deletedComment._id,
