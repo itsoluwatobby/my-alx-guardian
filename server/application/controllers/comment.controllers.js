@@ -29,7 +29,7 @@ class CommentController {
 
   updateComment(req, res) {
     return tryCatchWrapper(res, async () => {
-      const comment = await this.commentService.updateComment(req);
+      const comment = await this.commentService.updateComment(req.body, req.query.activeId);
       return res.json(response.success(comment.data, comment.message));
     });
   }
@@ -50,7 +50,7 @@ class CommentController {
 
   deleteComment(req, res) {
     return tryCatchWrapper(res, async () => {
-      const comment = await this.commentService.deleteComment(req);
+      const comment = await this.commentService.deleteComment(req.body, req.query.activeId);
       return res.json(response.success(comment.data, comment.message));
     });
   }

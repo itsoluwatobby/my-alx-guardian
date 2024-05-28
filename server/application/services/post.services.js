@@ -7,7 +7,7 @@ const {
   likePostValidator, postModificationValidator, sharePostValidator,
 } = require('../utils/post.validator');
 const { userRepository } = require('../repositories/user.repository');
-const { idvalidator } = require('../utils/account.validation');
+const { idValidator } = require('../utils/account.validation');
 const { postsRepository } = require('../repositories/post.repository');
 
 class PostService {
@@ -29,8 +29,7 @@ class PostService {
     });
   }
 
-  async updatePost(req) {
-    const postObj = req.body;
+  async updatePost(postObj, activeId) {
     return tryCatchWrapperWithError(async () => {
       const validationResponse = updatePostValidator(postObj);
       if (!validationResponse.valid) {
@@ -38,7 +37,7 @@ class PostService {
       }
 
       const { id, userId, ...rest } = postObj;
-      if (req.query.activeId !== userId) {
+      if (activeId !== userId) {
         throwError(401, 'You are unauthorised to modify post');
       }
       const user = await userRepository.getUser(userId);
@@ -59,23 +58,23 @@ class PostService {
         throw new Error(validationResponse.error);
       }
 
-      const { postId, userId, type } = postObj;
+      const { postId, userId } = postObj;
       const user = await userRepository.getUser(userId);
       if (!user) throwError(404, 'Account not found');
-      let post;
-      if (type === 'LIKE') post = await postsRepository.likePost({ postId, userId });
-      else post = await postsRepository.unlikePost({ postId, userId });
-      if (!post) throwError(400, 'Mongo Error: Error liking post');
+      const post = await postsRepository.getPost(postId);
+      if (!post) throwError(404, 'Post not found');
+      const result = await postsRepository.like_UnlikePost({ postId, userId });
+      if (!result.post) throwError(400, 'Mongo Error: Error modifying post');
       return {
-        data: post,
-        message: `BE: Post ${type === 'LIKE' ? 'liked' : 'unliked'}`,
+        data: result.post,
+        message: `BE: ${result.message}`,
       };
     });
   }
 
   async getPost(postObj) {
     return tryCatchWrapperWithError(async () => {
-      const validationResponse = idvalidator({ id: postObj.postId });
+      const validationResponse = await idValidator({ id: postObj.postId });
       if (!validationResponse.valid) {
         throw new Error(validationResponse.error);
       }
@@ -85,6 +84,32 @@ class PostService {
       return {
         data: post,
         message: 'BE: Post found',
+      };
+    });
+  }
+
+  async getPosts(postQuery) {
+    return tryCatchWrapperWithError(async () => {
+      const { pageNumber, limit } = postQuery;
+      const validationResponse = getPostsValidator({ pageNumber, limit });
+      if (!validationResponse.valid) {
+        throw new Error(validationResponse.error);
+      }
+      const posts = await postsRepository.getPosts(postQuery);
+      return {
+        data: posts,
+        message: 'BE: Posts retrieved successfully',
+      };
+    });
+  }
+
+  async getSearchedPosts(postQuery) {
+    return tryCatchWrapperWithError(async () => {
+      if (!postQuery) throwError(400, 'postQuery required');
+      const posts = await postsRepository.getSearchedPosts(postQuery);
+      return {
+        data: posts,
+        message: 'BE: Posts retrieved successfully',
       };
     });
   }
@@ -125,35 +150,19 @@ class PostService {
     });
   }
 
-  async getPosts(postQuery) {
+  async deletePost(postObj, activeId) {
     return tryCatchWrapperWithError(async () => {
-      const { pageNumber, limit } = postQuery;
-      const validationResponse = getPostsValidator({ pageNumber, limit });
-      if (!validationResponse.valid) {
-        throw new Error(validationResponse.error);
-      }
-      const posts = await postsRepository.getPosts(postQuery);
-      return {
-        data: posts,
-        message: 'BE: Posts retrieved successfully',
-      };
-    });
-  }
-
-  async deletePost(req) {
-    const postObj = req.params;
-    return tryCatchWrapperWithError(async () => {
-      const validationResponse = idvalidator({ id: postObj.postId });
+      const validationResponse = await idValidator({ id: postObj.postId });
       if (!validationResponse.valid) {
         throw new Error(validationResponse.error);
       }
       const { postId } = postObj;
       const post = await postsRepository.getPost(postId);
       if (!post) throwError(404, 'Post not found');
-      if (req.query.activeId !== post.userId.toString()) {
+      if (activeId !== post.userId.toString()) {
         throwError(401, 'You are unauthorised to modify post');
       }
-      const deletedPost = await postsRepository.deletePost({ postId });
+      const deletedPost = await postsRepository.deletePost(postId);
       if (!deletedPost) throwError(404, 'Error deleting post');
       return {
         data: deletedPost._id,

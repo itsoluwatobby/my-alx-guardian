@@ -22,7 +22,7 @@ class UserController {
 
   updateUser(req, res) {
     return tryCatchWrapper(res, async () => {
-      const user = await this.userService.updateUser(req);
+      const user = await this.userService.updateUser(req.body, req.query.activeId);
       return res.json(response.success(user.data, user.message));
     });
   }

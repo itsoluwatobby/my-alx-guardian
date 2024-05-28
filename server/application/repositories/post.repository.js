@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable class-methods-use-this */
-const { PostsModel } = require('../models');
+const { PostsModel, SharesModel } = require('../models');
 const { pagination } = require('../utils/paginate');
 const { commentRepository } = require('./comment.respository');
 
@@ -15,31 +15,19 @@ class PostsRepository {
   }
 
   async getPosts(queryObj) {
-    const { pageNumber, limit } = queryObj;
-    const posts = await pagination(pageNumber, limit, PostsModel);
+    const { pageNumber, limit, query } = queryObj;
+    const posts = await pagination(pageNumber, limit, PostsModel, query);
     return posts;
   }
 
   async getSearchedPosts(query) {
     const caseInsensitiveQuery = new RegExp(query, 'i');
     const posts = await PostsModel.find({
-      $and: [
-        {
-          $or: [
-            { title: { $in: [caseInsensitiveQuery] } },
-            { body: { $in: [caseInsensitiveQuery] } },
-            {
-              category: {
-                $or: [
-                  { type: { $in: [caseInsensitiveQuery] } },
-                  { name: { $in: [caseInsensitiveQuery] } },
-                ],
-              },
-            },
-            // { category: { type: { $in: [caseInsensitiveQuery] } } },
-            // { category: { name: { $in: [caseInsensitiveQuery] } } },
-          ],
-        },
+      $or: [
+        { title: { $in: [caseInsensitiveQuery] } },
+        { body: { $in: [caseInsensitiveQuery] } },
+        { 'category.type': { $in: [caseInsensitiveQuery] } },
+        { 'category.name': { $in: [caseInsensitiveQuery] } },
       ],
     });
     return posts;
@@ -55,40 +43,42 @@ class PostsRepository {
     return result;
   }
 
-  async likePost(postObj) {
+  async like_UnlikePost(postObj) {
     const { postId, userId } = postObj;
-    const result = await PostsModel.findOneAndUpdate(
-      { _id: postId },
-      { $push: { likes: userId } },
-      { new: true },
-    );
-    return result;
-  }
-
-  async unlikePost(postObj) {
-    const { postId, userId } = postObj;
-    const result = await PostsModel.findOneAndUpdate(
-      { _id: postId },
-      { $pull: { likes: userId } },
-      { new: true },
-    );
-    return result;
+    const post = await this.getPost(postId);
+    let result;
+    let message;
+    if (!post.likes.includes(userId)) {
+      result = await PostsModel.findOneAndUpdate(
+        { _id: postId },
+        { $push: { likes: userId } },
+        { new: true },
+      );
+      message = 'Post liked';
+    } else {
+      result = await PostsModel.findOneAndUpdate(
+        { _id: postId },
+        { $pull: { likes: userId } },
+        { new: true },
+      );
+      message = 'Post unliked';
+    }
+    return { message, post: result };
   }
 
   async sharePost(postObj) {
     const { postId, userId, platform } = postObj;
-    const result = await PostsModel.findOneAndUpdate(
-      { _id: postId },
-      { $push: { shares: { userId, platform } } },
-      { new: true },
+    await SharesModel.create(
+      { userId, postId, platform },
     );
+    const result = await this.updatePost(postId, { $inc: { sharedCount: 1 } });
     return result;
   }
 
   async repost(postObj) {
     const { postId, userId } = postObj;
     const post = await PostsModel.findById(postId).select('title body _id, picture category reposts');
-    const { _id, reposts, ...rest } = post;
+    const { _id, reposts, ...rest } = post._doc;
     const createRepost = {
       ...rest, repostId: _id, isRepost: true, userId,
     };
@@ -99,8 +89,8 @@ class PostsRepository {
   }
 
   async deletePost(query) {
-    await this.commentRepository.deleteAllComments(query);
-    const result = await PostsModel.findOneAndDelete(query);
+    await this.commentRepository.deleteAllComments({ postId: query });
+    const result = await PostsModel.findOneAndDelete({ _id: query });
     return result;
   }
 

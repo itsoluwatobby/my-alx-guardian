@@ -1,5 +1,6 @@
 const Joi = require('joi');
 
+const REGEX_PATTERN = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!£%*?&])[A-Za-z\d@£$!%?&]{9,}$/;
 exports.emailCheckValidator = async (data) => {
   const emailCheckSchema = Joi.object().keys({
     email: Joi.string().email()
@@ -17,7 +18,6 @@ exports.emailCheckValidator = async (data) => {
 };
 
 exports.registrationValidator = async (data) => {
-  const REGEX_PATTERN = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!£%*?&])[A-Za-z\d@£$!%?&]{9,}$/;
   const registrationSchema = Joi.object().keys({
     email: Joi.string().email()
       .required()
@@ -91,26 +91,6 @@ exports.idValidator = async (data) => {
   };
 };
 
-exports.accountActivationValidator = async (data) => {
-  const accountActivationSchema = Joi.object().keys({
-    email: Joi.string().email()
-      .required()
-      .messages({
-        'string.email': 'email is not valid',
-        'any.required': 'email is required',
-      }),
-    otp: Joi.string().min(6).max(6).required()
-      .messages({
-        'any.required': 'otp is required',
-      }),
-  });
-  const validationResponse = accountActivationSchema.validate(data);
-  return {
-    valid: validationResponse.error == null,
-    error: validationResponse.error?.message,
-  };
-};
-
 exports.passwordResetValidator = async (data) => {
   const passwordResetSchema = Joi.object().keys({
     email: Joi.string().email()
@@ -119,8 +99,16 @@ exports.passwordResetValidator = async (data) => {
         'string.email': 'email is not valid',
         'any.required': 'email is required',
       }),
-    newPassword: Joi.string().min(6).required()
+    newPassword: Joi.string().regex(REGEX_PATTERN, {
+      name: JSON.stringify({
+        a: 'Should atleast contain a symbol and number',
+        b: 'An uppercase and a lowerCase letter',
+        c: 'And a minimum of nine characters',
+        d: 'This symbols [^()"_+-*\\//] are not allowed ',
+      }),
+    }).required()
       .messages({
+        'regex.passowrd': 'invalid password format',
         'any.required': 'newPassword is required',
       }),
   });
@@ -135,6 +123,7 @@ exports.otpRequestValidator = (data) => {
   const otpRequestSchema = Joi.object().keys({
     email: Joi.string().email().required()
       .messages({
+        'string.email': 'email is not valid',
         'any.required': 'email is required',
       }),
   });
@@ -150,6 +139,7 @@ exports.otpVerificationValidator = (data) => {
   const otpVerificationSchema = Joi.object().keys({
     email: Joi.string().email().required()
       .messages({
+        'string.email': 'email is not valid',
         'any.required': 'email is required',
       }),
     otp: Joi.string().min(6).max(6).required()
