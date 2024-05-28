@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const { CategoryEnum } = require('./accountEnum');
 
 exports.createPostValidator = (data) => {
   const createPostSchema = Joi.object().keys({
@@ -41,6 +42,7 @@ exports.createPostValidator = (data) => {
 };
 
 exports.updatePostValidator = (data) => {
+  const { Forums, Cohorts, General } = CategoryEnum;
   const updatePostSchema = Joi.object().keys({
     id: Joi.string().required()
       .messages({
@@ -59,7 +61,7 @@ exports.updatePostValidator = (data) => {
         'any.required': 'userId is required',
       }),
     category: Joi.object().keys({
-      type: Joi.string().valid('Forums', 'Cohorts', 'General').required()
+      type: Joi.string().valid(Forums, Cohorts, General).required()
         .messages({
           'any.required': 'category.type is required',
         }),
@@ -67,7 +69,7 @@ exports.updatePostValidator = (data) => {
         .messages({
           'any.required': 'category.name is required',
         }),
-    })
+    }).required()
       .messages({
         'any.required': 'category is required',
       }),
@@ -113,10 +115,6 @@ exports.likePostValidator = (data) => {
       .messages({
         'any.required': 'postId is required',
       }),
-    type: Joi.string().valid('LIKE', 'UNLIKE').required()
-      .messages({
-        'any.required': 'type is required',
-      }),
   });
 
   const validationResponse = likePostSchema.validate(data);
@@ -155,7 +153,16 @@ exports.sharePostValidator = (data) => {
       .messages({
         'any.required': 'postId is required',
       }),
-    platform: Joi.string().required()
+    platform: Joi.object().keys({
+      name: Joi.string().required()
+        .messages({
+          'any.required': 'platform.name is required',
+        }),
+      link: Joi.string().required()
+        .messages({
+          'any.required': 'platform.link is required',
+        }),
+    }).required()
       .messages({
         'any.required': 'platform is required',
       }),

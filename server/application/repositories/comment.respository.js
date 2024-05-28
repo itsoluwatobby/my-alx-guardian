@@ -25,10 +25,10 @@ class CommentRepository {
   }
 
   async tagComment(commentObj) {
-    const { commentId, ...rest } = commentObj;
+    const { id, ...rest } = commentObj;
     const newComment = await this.createComment(rest);
     await CommentModel.findOneAndUpdate(
-      { _id: commentId },
+      { _id: id },
       { $push: { tags: { userId: rest.userId, responseId: newComment._id } } },
     );
     return newComment;
@@ -39,24 +39,26 @@ class CommentRepository {
     return result;
   }
 
-  async likeComment(postObj) {
-    const { commentId, userId } = postObj;
-    const result = await CommentModel.findOneAndUpdate(
-      { _id: commentId },
-      { $push: { likes: userId } },
-      { new: true },
-    );
-    return result;
-  }
-
-  async unlikeComment(postObj) {
-    const { commentId, userId } = postObj;
-    const result = await CommentModel.findOneAndUpdate(
-      { _id: commentId },
-      { $pull: { likes: userId } },
-      { new: true },
-    );
-    return result;
+  async like_UnlikeCommemt(id, userId) {
+    const post = await this.getComment(id);
+    let result;
+    let message;
+    if (!post.likes.includes(userId)) {
+      result = await CommentModel.findOneAndUpdate(
+        { _id: id },
+        { $push: { likes: userId } },
+        { new: true },
+      );
+      message = 'Comment liked';
+    } else {
+      result = await CommentModel.findOneAndUpdate(
+        { _id: id },
+        { $pull: { likes: userId } },
+        { new: true },
+      );
+      message = 'Comment unliked';
+    }
+    return { message, comment: result };
   }
 
   async deleteComment(commentId) {

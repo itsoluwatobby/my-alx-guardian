@@ -4,7 +4,7 @@ exports.createCommentValidator = (data) => {
   const createCommentSchema = Joi.object().keys({
     comment: Joi.string().required()
       .messages({
-        'any.required': 'body is required',
+        'any.required': 'comment is required',
       }),
     userId: Joi.string().required()
       .messages({
@@ -25,9 +25,13 @@ exports.createCommentValidator = (data) => {
 
 exports.updateCommentValidator = (data) => {
   const updateCommentSchema = Joi.object().keys({
+    id: Joi.string().required()
+      .messages({
+        'any.required': 'id is required',
+      }),
     comment: Joi.string().required()
       .messages({
-        'any.required': 'body is required',
+        'any.required': 'comment is required',
       }),
     userId: Joi.string().required()
       .messages({
@@ -75,13 +79,9 @@ exports.likeCommentValidator = (data) => {
       .messages({
         'any.required': 'userId is required',
       }),
-    commentId: Joi.string().required()
+    id: Joi.string().required()
       .messages({
-        'any.required': 'commentId is required',
-      }),
-    type: Joi.string().valid('LIKE', 'UNLIKE').required()
-      .messages({
-        'any.required': 'type is required',
+        'any.required': 'id is required',
       }),
   });
 
@@ -98,9 +98,9 @@ exports.tagCommentValidator = (data) => {
       .messages({
         'any.required': 'userId is required',
       }),
-    commentId: Joi.string().required()
+    id: Joi.string().required()
       .messages({
-        'any.required': 'commentId is required',
+        'any.required': 'id is required',
       }),
     postId: Joi.string().required()
       .messages({

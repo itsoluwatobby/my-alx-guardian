@@ -3,13 +3,15 @@
 const { tryCatchWrapperWithError } = require('../utils/asyncWrapper');
 const { throwError } = require('../utils/responseAdapter');
 const {
-  createCommentValidator, updateCommentValidator, getCommentsValidator,
-  likeCommentValidator,
+  createCommentValidator, getCommentsValidator,
+  likeCommentValidator, updateCommentValidator,
   tagCommentValidator,
 } = require('../utils/comment.validator');
 const { userRepository } = require('../repositories/user.repository');
-const { idvalidator } = require('../utils/account.validation');
+const { idValidator } = require('../utils/account.validation');
 const { commentRepository } = require('../repositories/comment.respository');
+const { postsRepository } = require('../repositories/post.repository');
+const { followCategoryValidator } = require('../utils/category.validator');
 
 class CommentService {
   async createComment(commentObj) {
@@ -18,6 +20,9 @@ class CommentService {
       if (!validationResponse.valid) {
         throw new Error(validationResponse.error);
       }
+
+      const post = await postsRepository.getPost(commentObj.postId);
+      if (!post) throwError(404, 'Post not found');
 
       const commenter = await userRepository.getUser(commentObj.userId);
       if (!commenter) throwError(404, 'Account not found');
@@ -30,8 +35,7 @@ class CommentService {
     });
   }
 
-  async updateComment(req) {
-    const commentObj = req.body;
+  async updateComment(commentObj, activeId) {
     return tryCatchWrapperWithError(async () => {
       const validationResponse = updateCommentValidator(commentObj);
       if (!validationResponse.valid) {
@@ -39,7 +43,7 @@ class CommentService {
       }
 
       const { id, userId, ...rest } = commentObj;
-      if (req.query.activeId !== userId) {
+      if (activeId !== userId) {
         throwError(401, 'You are unauthorised to modify comment');
       }
       const user = await userRepository.getUser(userId);
@@ -60,16 +64,14 @@ class CommentService {
         throw new Error(validationResponse.error);
       }
 
-      const { commentId, userId, type } = commentObj;
+      const { id, userId } = commentObj;
       const user = await userRepository.getUser(userId);
       if (!user) throwError(404, 'Account not found');
-      let comment;
-      if (type === 'LIKE') comment = await commentRepository.likeComment({ commentId, userId });
-      else comment = await commentRepository.unlikeComment({ commentId, userId });
-      if (!comment) throwError(400, 'Mongo Error: Error liking comment');
+      const result = await commentRepository.like_UnlikeCommemt(id, userId);
+      if (!result.comment) throwError(400, 'Mongo Error: Error modifying comment');
       return {
-        data: comment,
-        message: `BE: Comment ${type === 'LIKE' ? 'liked' : 'unliked'}`,
+        data: result.comment,
+        message: `BE: ${result.message}`,
       };
     });
   }
@@ -80,6 +82,9 @@ class CommentService {
       if (!validationResponse.valid) {
         throw new Error(validationResponse.error);
       }
+
+      const post = await postsRepository.getPost(commentObj.postId);
+      if (!post) throwError(404, 'Post not found');
 
       const user = await userRepository.getUser(commentObj.userId);
       if (!user) throwError(404, 'Account not found');
@@ -94,7 +99,7 @@ class CommentService {
 
   async getComment(commentObj) {
     return tryCatchWrapperWithError(async () => {
-      const validationResponse = idvalidator({ id: commentObj.commentId });
+      const validationResponse = await idValidator({ id: commentObj.commentId });
       if (!validationResponse.valid) {
         throw new Error(validationResponse.error);
       }
@@ -110,8 +115,8 @@ class CommentService {
 
   async getComments(commentQuery) {
     return tryCatchWrapperWithError(async () => {
-      const { pageNumber, limit } = commentQuery;
-      const validationResponse = getCommentsValidator({ pageNumber, limit });
+      const { pageNumber, limit, postId } = commentQuery;
+      const validationResponse = getCommentsValidator({ pageNumber, limit, postId });
       if (!validationResponse.valid) {
         throw new Error(validationResponse.error);
       }
@@ -123,20 +128,19 @@ class CommentService {
     });
   }
 
-  async deleteComment(req) {
-    const commentObj = req.params;
+  async deleteComment(commentObj, activeId) {
     return tryCatchWrapperWithError(async () => {
-      const validationResponse = idvalidator({ id: commentObj.commentId });
+      const validationResponse = await followCategoryValidator(commentObj);
       if (!validationResponse.valid) {
         throw new Error(validationResponse.error);
       }
-      const { commentId } = commentObj;
-      const comment = await commentRepository.getComment(commentId);
+      const { id } = commentObj;
+      const comment = await commentRepository.getComment(id);
       if (!comment) throwError(404, 'Comment not found');
-      if (req.query.activeId !== comment.userId.toString()) {
+      if (activeId !== comment.userId.toString()) {
         throwError(401, 'You are unauthorised to modify comment');
       }
-      const deletedComment = await commentRepository.deleteComment({ commentId });
+      const deletedComment = await commentRepository.deleteComment({ _id: id });
       if (!deletedComment) throwError(404, 'Error deleting comment');
       return {
         data: deletedComment._id,

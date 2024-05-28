@@ -8,4 +8,5 @@ module.exports = {
   JWT_SECRET: process.env.JWT_SECRET,
   USER_MAIL: process.env.USER_MAIL,
   USER_PASS: process.env.USER_PASS,
+  CLIENT_LINK: process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5173/signin',
 };
