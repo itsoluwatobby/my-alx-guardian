@@ -29,7 +29,7 @@ class UserController {
 
   deleteUser(req, res) {
     return tryCatchWrapper(res, async () => {
-      const user = await this.userService.deleteUser(req.params, req.headers);
+      const user = await this.userService.deleteUser(req.body, req.headers);
       return res.json(response.success(user.data, user.message));
     });
   }
