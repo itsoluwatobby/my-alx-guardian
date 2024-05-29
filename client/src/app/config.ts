@@ -11,7 +11,7 @@ export const guardianAPI = axios.create({
   baseURL: BASEURL,
   headers: {
     "Content-Type": "application/json",
-    "x-api-key": "x4rtd2bvhg5676e823775fd16acnhfghytrrd816e19b12e8c0fgh"
+    "x-api-key": import.meta.env.VITE_X_API_KEY,
   }
 })
 
