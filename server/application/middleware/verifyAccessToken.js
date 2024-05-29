@@ -9,7 +9,7 @@ exports.verifyAccessToken = (req, res, next) => {
     const accessToken = req.headers.authorization;
     if (!accessToken || !accessToken.startsWith('Bearer ')) {
       logger.debug(`No Bearer token found in request ${accessToken}`);
-      return res.json(responseDecorator.error(
+      return res.status(401).json(responseDecorator.error(
         {},
         responseDecorator.responsetemplate.NOBEARERTOKEN,
         401,
@@ -21,7 +21,7 @@ exports.verifyAccessToken = (req, res, next) => {
     const { activeId } = req.query;
     if (activeId !== result.userId) {
       logger.debug(`UnAuthorised user: >>>>> Token not for <${activeId}>`);
-      return res.json(responseDecorator.error(
+      return res.status(401).json(responseDecorator.error(
         {},
         responseDecorator.responsetemplate.BADTOKEN,
         401,

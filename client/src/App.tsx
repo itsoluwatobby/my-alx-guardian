@@ -18,6 +18,8 @@ import ForgotPassword from './pages/ForgotPassword';
 import NewPassword from './pages/NewPassword';
 import EditProfile from './pages/EditProfile';
 import Profile from './pages/Profile';
+import AccountVerification from './pages/AccountVerification';
+import SuccessVerification from './pages/SuccessVerification';
 
 function App() {
   const { setTheme, theme } = useGuardianContext() as GuardianContextType;
@@ -35,6 +37,8 @@ function App() {
           <Route path='signup' element={<Signup />} />
           <Route path='forgotPassword' element={<ForgotPassword />} />
           <Route path='newPassword' element={<NewPassword />} />
+          <Route path='account_verification' element={<AccountVerification />} />
+          <Route path='success_verification' element={<SuccessVerification />} />
 
           <Route path='/' element={<DashboardLayout />}>
               

@@ -23,10 +23,10 @@ exports.registrationTemplate = (recipientEmail, username, otp, ttl = 12) => {
             <h2 style='text-shadow: 2px 2px 10px rgba(0,0,0,0.1); font-size: 2rem; text-align: center;'>MY ALX GUARDIAN</h2>
             <h2 style="text-align: center; margin-top: 3rem; text-decoration: underline; font-size: 1.8rem;">Account Activation</h2>
             <h3 style='font-weight: 600; text-transform: capitalize; margin-top: 2rem;'>Hi, ${username}</h3>
-            <p>Welcome <span style=" text-transform: capitalize;">${username}</span>, to My ALX Guardian, come share your journey, insights, ask questions and also converse with your peers</p>
+            <p>Welcome <span style="text-transform: capitalize;">${username}</span>, to My ALX Guardian, come share your journey, insights, ask questions and also converse with your peers</p>
             <p>Please activate your account with the One Time Password (OTP) below. OTP expires in ${ttl} hours</p>
             <br/>
-            <h2>${otp}</h2>
+            <h2 style='font-size: 2.5rem;'>${otp}</h2>
             <br/>
           </div>
           <footer>

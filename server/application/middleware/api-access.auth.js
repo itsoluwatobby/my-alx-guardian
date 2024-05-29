@@ -11,7 +11,13 @@ module.exports = async (req, res, next) => {
   // Check if not token
   if (!apiKey) {
     logger.debug(`No api key found in request ${correlationID}`);
-    return res.json(responseDecorator.error({}, responseDecorator.responsetemplate.NOAPI, 401));
+    return res.status(400).json(
+      responseDecorator.error(
+        {},
+        responseDecorator.responsetemplate.NOAPI,
+        401,
+      ),
+    );
   }
   return next();
 };

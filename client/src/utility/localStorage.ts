@@ -9,15 +9,15 @@ class UseLocalStorage {
     if (typeof value === 'object' || typeof value === 'boolean') {
       storedValue = JSON.stringify(value);
     }
-    else storedValue = value as string;
+    else storedValue = btoa(value as string);
     this.useLocalStore.setItem(key, storedValue);
   }
 
   getStorage<T>(key: string): string | T {
     try {
-      return JSON.parse(this.useLocalStore.getItem(key)!) as T;
+      return JSON.parse(this.useLocalStore.getItem(key) as string) as T;
     } catch(error) {
-      return this.useLocalStore.getItem(key) as string;
+      return atob(this.useLocalStore.getItem(key) as string);
     }
   }
 

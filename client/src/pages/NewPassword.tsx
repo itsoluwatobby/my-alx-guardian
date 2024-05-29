@@ -1,14 +1,19 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { ActionButton } from "../components/ActionButton";
 import { PasswordInputs } from "../components/authentication/PasswordInputs";
-import { Link, useNavigate } from "react-router-dom";
-import guardianAsyncWrapper from "../app/guardianAsyncWrapper";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { guardianAsyncWrapper } from "../app/guardianAsyncWrapper";
 import { toast } from "react-toastify";
+import AppStand from "../components/AppStand";
+import { authenticationAPI } from "../app/api-calls/auth.api";
+import { sanitizeEntries } from "../utility/helpers";
 
 export default function NewPassword() {
   const [appState, setAppState] = useState<AppStateType>({} as AppStateType);
   const [match, setMatch] = useState<boolean>(false);
   const [reveal, setReveal] = useState<boolean>(false);
+  const [search] = useSearchParams();
+  const [email, setEmail] = useState<string>('');
   const [newPassword, setNewPassword] = useState<NewPasswordCredentials>({} as NewPasswordCredentials);
   const navigate = useNavigate();
 
@@ -19,6 +24,10 @@ export default function NewPassword() {
     const [name, value] = [event.target.name, event.target.value]
     setNewPassword(prev => ({ ...prev, [name]: value }))
   }
+
+  useEffect(() => {
+    setEmail(atob(search.get('token') as string));
+  }, [search])
 
   useEffect(() => {
     if (password && password === confirmPassword) {
@@ -32,8 +41,10 @@ export default function NewPassword() {
   const handleNewPassword = async(event: ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
     guardianAsyncWrapper(async () => {
-
-      toast.success('Password Reset successful')
+      setAppState(prev => ({ ...prev, loading: true }));
+      const credentails = sanitizeEntries({ email, newPassword: password });
+      await authenticationAPI.password_reset(credentails);
+      toast.success('Password Reset successful! Please login')
       navigate('/signin')
     }, setAppState);
   }
@@ -56,7 +67,7 @@ export default function NewPassword() {
 
         <ActionButton
           checker={canSubmit && !loading}
-          text='Reset' disabled={!canSubmit || loading}
+          text='Submit' disabled={!canSubmit || loading}
           loading={loading} isError={isError}
         />
 
@@ -67,12 +78,8 @@ export default function NewPassword() {
         
       </form>
 
-      <section className="hidden md:flex flex-col items-center gap-y-20 w-full h-full px-4 pt-20 shadow-md rounded-l-md">
-        <h2 className='text-4xl font-bold text-center'>
-          MY ALX GUARDIAN
-        </h2>
-        <p className="text-xl text-center">Make your ALX journey easier, connect with your colleagues</p>
-      </section>
+      <AppStand />
+    
     </main>
   )
 }

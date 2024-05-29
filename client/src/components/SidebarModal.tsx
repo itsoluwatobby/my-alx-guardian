@@ -12,7 +12,7 @@ type SidebarModalProps = {
 
 export default function SidebarModal({ theme, openSidebarModal, setTheme, setOpenSidebarModal }: SidebarModalProps) {
   const { pathname } = useLocation();
-  const logout = useLogout('', setOpenSidebarModal);
+  const logout = useLogout(setOpenSidebarModal);
 
   const AuthenticatedRoutes = ['/dashboard'];
   const navigation = [

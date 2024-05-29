@@ -42,7 +42,6 @@ type UserInfoType = {
   email: string;
   password: string;
   confirmPassword: string;
-  provider: Provider;
 }
 
 type UserCredentialsType = Pick<UserInfoType, 'email' | 'password'>;
@@ -54,11 +53,19 @@ type TypingEvent = 'typing' | 'notTyping'
 // -------------- AUTHENTICATION -------------
 type ResponseTemplate = { statuscode: number; message: string; }
 
+type RegistrationRequest = Omit<UserInfoType, 'confirmPassword'> & { provider: Provider; }
 type RegistrationResponse = ResponseTemplate & {
   data: { id: string; email: string; }
 }
 
-type ErrorResponse = ResponseTemplate & { error: object; }
+type ErrorResponse = {
+  response: {
+    data: ResponseTemplate & { error: object; }
+  }
+}
+
+type Entries = 'entry1' | 'entry2' | 'entry3' | 'entry4' | 'entry5' | 'entry6'
+type OTPValues = Record<Entries, string>;
 
 type LoginRequest = { email: string; password: string; }
 type LoginResponse = ResponseTemplate & {
@@ -169,6 +176,7 @@ type GetPosts = ResponseTemplate & {
   data: { pageable: Pagination; data: PostType[]; }
 }
 
+type PostQuery = { pageNumber: number; limit: number; userId: string; }
 type GetPostResponse = CreatePostResponse
 
 type UpdatePostRequest = { id: strimg; } & Omit<PostType, '_id'>
@@ -205,6 +213,7 @@ type CommentType = {
 type CreateCommentRequest = Pick<CommentType, 'userId' | 'postId' | 'comment'>;
 type CreateCommentResponse = ResponseTemplate & { data: CommentType }
 
+type CommentQuery = { pageNumber: number; limit: number; postId: string; }
 type GetComments = ResponseTemplate & {
   data: { pageable: Pagination; data: CommentType[]; }
 }
@@ -220,10 +229,10 @@ type CommentLikeResponse = CreateCommentResponse
 type TagCommentRequest = { postId: string; userId: string; id: string; comment: string; }
 type TagCommentResponse = CreateCommentResponse
 
-type DeleteCommentRequest = CommentLikeRequest
+type DeleteCommentRequest = DeleteUserRequest
 type DeleteCommentResponse = ResponseTemplate & { data: string }
 
-type SearchCommentResponse = ResponseTemplate & { data: CommentType[] }
+// type SearchCommentResponse = ResponseTemplate & { data: CommentType[] }
 
 // ------------ CATEGORY -------------
 
@@ -244,6 +253,7 @@ type CategoryObjType = {
 type CreateCategoryRequest = Pick<CategoryObjType, 'authorId' | 'category' | 'banner' | 'title' | 'description'>;
 type CreateCategoryResponse = ResponseTemplate & { data: CategoryObjType }
 
+type CategoryQuery = { pageNumber: number; limit: number; type: Exclude<CategoryType, 'General'>; }
 type GetCategories = ResponseTemplate & {
   data: { pageable: Pagination; data: CategoryObjType[]; }
 }
@@ -261,7 +271,7 @@ type UpdateDescriptionResponse = CreateCategoryResponse
 type JoinLeaveCategoryRequest = Omit<UpdateDescriptionRequest, 'description'>
 type JoinLeaveCategoryResponse = CreateCategoryResponse
 
-type DeleteCategoryRequest = JoinLeaveCategoryRequest
+type DeleteCategoryRequest = DeleteUserRequest
 type DeleteCategoryResponse = ResponseTemplate & { data: string }
 
 type SearchCategoryResponse = ResponseTemplate & { data: CategoryObjType[] }
