@@ -12,7 +12,7 @@ class PostAPI{
   loggedInId: string;
 
   constructor() {
-    this.loggedInId = localStore.getStorage('token');
+    this.loggedInId = localStore.getStorage('my-id');
   }
 
   async createPost(newPost: CreatePostRequest): Promise<CreatePostResponse> {

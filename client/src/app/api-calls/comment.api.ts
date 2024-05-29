@@ -12,7 +12,7 @@ class CommentAPI{
   loggedInId: string;
 
   constructor() {
-    this.loggedInId = localStore.getStorage('token');
+    this.loggedInId = localStore.getStorage('my-id');
   }
 
   async createComment(newComment: CreateCommentRequest): Promise<CreateCommentResponse> {
