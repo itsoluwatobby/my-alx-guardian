@@ -12,7 +12,7 @@ class CategoryAPI{
   loggedInId: string;
 
   constructor() {
-    this.loggedInId = localStore.getStorage('token');
+    this.loggedInId = localStore.getStorage('my-id');
   }
 
   async createCategory(newCategory: CreateCategoryRequest): Promise<CreateCategoryResponse> {

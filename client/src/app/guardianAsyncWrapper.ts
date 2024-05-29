@@ -5,7 +5,6 @@ export const guardianAsyncWrapper = async <T>(callback: () => T, setAppStateType
     return await callback();
   }
   catch(error) {
-    console.log(error);
     const errorRes = error as ErrorResponse
     setAppStateType(prev => ({ ...prev, isError: true }))
     console.log(errorRes.response)

@@ -11,7 +11,7 @@ class UserAPI{
   loggedInId: string;
 
   constructor() {
-    this.loggedInId = localStore.getStorage('token');
+    this.loggedInId = localStore.getStorage('my-id');
   }
 
   async getUser(userId: string, loggedIn: string): Promise<GetUserResponse> {
