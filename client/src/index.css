@@ -31,3 +31,23 @@ h1, h2, h3, h4, h5 {
   font-weight: 400;
   font-style: normal;
 }
+
+.shake {
+  display: inline-block;
+  padding: 20px;
+  font-size: 24px;
+  color: rgb(5, 177, 225);
+  border-radius: 5px;
+  animation: vibrate 0.3s linear 10;
+  animation: name duration timing-function delay iteration-count direction fill-mode;
+  -moz-animation: vibrate 0.3s linear 1;
+}
+
+@keyframes vibrate {
+  0% { transform: translate(0); }
+  25% { transform: translate(-2px, 2px); }
+  50% { transform: translate(2px, -2px); }
+  75% { transform: translate(-2px, -2px); }
+  100% { transform: translate(2px, 2px); }
+}
+

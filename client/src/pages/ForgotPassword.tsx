@@ -1,13 +1,16 @@
 import { ChangeEvent, useState } from "react";
 import { ActionButton } from "../components/ActionButton";
 import { FormInputs } from "../components/FormInputs";
-import { Link } from "react-router-dom";
-import guardianAsyncWrapper from "../app/guardianAsyncWrapper";
+import { Link, useNavigate } from "react-router-dom";
+import { guardianAsyncWrapper } from "../app/guardianAsyncWrapper";
 import { toast } from "react-toastify";
+import AppStand from "../components/AppStand";
+import { authenticationAPI } from "../app/api-calls/auth.api";
 
 export default function ForgotPassword() {
   const [appState, setAppState] = useState<AppStateType>({} as AppStateType);
   const [email, setEmail] = useState<string>('');
+  const navigate = useNavigate();
 
   const { loading, isError } = appState;
 
@@ -18,9 +21,10 @@ export default function ForgotPassword() {
   const handleSubmit = async(event: ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
     guardianAsyncWrapper(async () => {
-
-      toast.info('Password reset link sent to your email')
-      // navigate(pathname, { replace: true })
+      setAppState(prev => ({ ...prev, loading: true }));
+      await authenticationAPI.forgot_Password({ email });
+      toast.info('Password reset OTP sent to your email');
+      navigate(`/account_verification?token=${btoa(email)}`);
     }, setAppState);
   }
 
@@ -41,31 +45,16 @@ export default function ForgotPassword() {
           loading={loading} isError={isError}
         />
 
-        <div className="flex flex-col gap-1 mobile:gap-0.5 items-center py-1 mobile:text-sm">
-          <div className="flex items-center gap-x-1">
+        <div className="flex flex-col gap-1 mobile:gap-0.5 items-center py-1 mobile:text-sm w-full">
+          <div className="flex items-center gap-x-1 self-end">
             <span>Return to</span>
             <Link to='/signin' className='cursor-pointer text-[#14F400]'>Sign In</Link>
           </div>
         </div>
       </form>
+    
+     <AppStand />
 
-      <section className="hidden md:flex flex-col items-center gap-y-20 w-full h-full px-4 pt-20 shadow-md rounded-l-md">
-        <h2 className='text-4xl font-bold text-center'>
-          MY ALX GUARDIAN
-        </h2>
-
-        {/* <GuardianImages 
-          imageUri='/study.png'
-          classNames=''
-        /> */}
-        <p className="text-xl text-center">Make your ALX journey easier, connect with your colleagues</p>
-
-        {/* <button 
-        onClick={() => navigate('/signin')}
-        className="rounded-lg p-4 px-8 cursor-pointer hover:opacity-95 active:opacity-100 bg-blue-600 transition-opacity text-white">
-          Get Started
-        </button> */}
-      </section>
     </main>
   )
 }

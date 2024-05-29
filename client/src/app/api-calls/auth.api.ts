@@ -8,7 +8,7 @@ const {
 
 class AuthenticationAPI{
 
-  async signup(newUser: UserInfoType): Promise<RegistrationResponse> {
+  async signup(newUser: RegistrationRequest): Promise<RegistrationResponse> {
     const response = await guardianAPI[register.method](
       register.url, newUser) as { data: RegistrationResponse };
     return response.data

@@ -7,4 +7,17 @@ export const MAX_LENGTH = {
   TIMEOUT: 10_000,
   MIN_TIMEOUT: 5_000,
   MAX_TIMEOUT: 300_000,
+  DEBOUNCE: 750,
 } as const;
+
+export const Provider: Record<Provider, Provider> = {
+  Local: 'Local',
+  Google: 'Google',
+  Github: 'Github',
+};
+
+export const CategoryEnum: Record<CategoryType, CategoryType> = {
+  Forums: 'Forums',
+  Cohorts: 'Cohorts',
+  General: 'General',
+};

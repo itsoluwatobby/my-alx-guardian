@@ -5,8 +5,13 @@ import { FormInputs } from "../components/FormInputs";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import useLocalStorage from '../utility/localStorage';
 import ThirdPartyLogin from "../components/authentication/Thirdparty";
-import guardianAsyncWrapper from "../app/guardianAsyncWrapper";
+import { guardianAsyncWrapper } from "../app/guardianAsyncWrapper";
 import { toast } from "react-toastify";
+import { MetaTags } from "../layouts/MetaTagsOGgraph";
+import { authenticationAPI } from "../app/api-calls/auth.api";
+import { sanitizeEntries } from "../utility/helpers";
+import localStore from "../utility/localStorage";
+import AppStand from "../components/AppStand";
 
 export default function Signin() {
   const navigate = useNavigate();
@@ -35,7 +40,12 @@ export default function Signin() {
   const handleLogin = async(event: ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
     guardianAsyncWrapper(async () => {
-
+      setAppState(prev => ({ ...prev, loading: true }));
+      const credentails = sanitizeEntries({ email, password });
+      const res = await authenticationAPI.login(credentails);
+      console.log(res);
+      localStore.setStorage('token', res.data.accessToken);
+      localStore.setStorage('my-id', res.data.id);
       toast.success('Signin successful')
       const pathname: string = location.state ? location?.state : '/dashboard';
       navigate(pathname, { replace: true })
@@ -45,6 +55,12 @@ export default function Signin() {
   const canSubmit = [...Object.values(user)].every(Boolean);
   return (
     <main className="w-full flex flex-col md:flex-row items-center h-full">
+      <MetaTags
+        title='Signin'
+        description='User signin page'
+        url=''
+        image=''
+      />
       <form onSubmit={handleLogin} className="flex-none md:w-[55%] w-full h-full flex flex-col gap-y-6 p-8 pt-14 items-center">
   
         <FormInputs
@@ -90,23 +106,8 @@ export default function Signin() {
         </div>
       </form>
 
-      <section className="hidden md:flex flex-col items-center gap-y-20 w-full h-full px-4 pt-20 shadow-md rounded-l-md">
-        <h2 className='text-4xl font-bold text-center'>
-          MY ALX GUARDIAN
-        </h2>
+      <AppStand />
 
-        {/* <GuardianImages 
-          imageUri='/study.png'
-          classNames=''
-        /> */}
-        <p className="text-xl text-center">Make your ALX journey easier, connect with your colleagues</p>
-
-        {/* <button 
-        onClick={() => navigate('/signin')}
-        className="rounded-lg p-4 px-8 cursor-pointer hover:opacity-95 active:opacity-100 bg-blue-600 transition-opacity text-white">
-          Get Started
-        </button> */}
-      </section>
     </main>
   )
 }

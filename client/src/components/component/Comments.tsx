@@ -2,7 +2,7 @@ import { useCallback, useRef, useState } from "react";
 import { useGuardianContext } from "../../hooks/useGuardianContext";
 import { checkCount } from "../../utility/helpers";
 import { MdSend } from "react-icons/md";
-import guardianAsyncWrapper from "../../app/guardianAsyncWrapper";
+import { guardianAsyncWrapper } from "../../app/guardianAsyncWrapper";
 import GuardianImages from "./GuardianImages";
 import UserDetails from "./UserDetails";
 import { TextArea } from "./TextAreaInput";

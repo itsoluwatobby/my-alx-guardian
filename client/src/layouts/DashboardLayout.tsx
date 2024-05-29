@@ -28,13 +28,13 @@ export default function DashboardLayout() {
       Icon: MdArrowDropDown
     },
   ]
-
+// console.log(input)
   const ForumsCommon = ['Java', 'C', 'Javascript', 'Python', 'Bash', 'Linus']
 
   return (
     <main className="flex items-center h-full w-full">
       <div className="flex items-center h-full w-full">
-        <aside className="sticky top-14 flex flex-col justify-between py-4 px-1 h-[90vh] -mt-14 shadow-inner w-1/5 min-w-48 maxmobile:hidden">
+        <aside className="sticky top-14 flex flex-col justify-between py-4 px-1 h-[90vh] -mt-14 shadow-inner max-w-1/4 min-w-48 midscreen:hidden">
           <div className="flex flex-col gap-y-6 pl-10 py-8 border-b w-full">
             {
               rightBar.map(nav => (

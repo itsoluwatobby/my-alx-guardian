@@ -33,7 +33,7 @@ exports.successTemplate = (recipientEmail, username, option, link) => {
                     : '<p>Your password reset was successful, Please login</p>'
               }
             </div>
-            <a href='${link}' target="_blank">
+            <a href=${link} target="_blank">
               <button style="border-radius: 5px; text-decoration: none; color: black; margin-left: 40%; margin-right: 40%; padding: 10px; margin-top: 25px; width: 20%; margin-bottom: 10px; background-color: rgb(8, 112, 191); color: white; border: none; font-weight: 600; font-size: medium;">
                 Login
               </button>

@@ -42,7 +42,6 @@ type UserInfoType = {
   email: string;
   password: string;
   confirmPassword: string;
-  provider: Provider;
 }
 
 type UserCredentialsType = Pick<UserInfoType, 'email' | 'password'>;
@@ -54,11 +53,19 @@ type TypingEvent = 'typing' | 'notTyping'
 // -------------- AUTHENTICATION -------------
 type ResponseTemplate = { statuscode: number; message: string; }
 
+type RegistrationRequest = Omit<UserInfoType, 'confirmPassword'> & { provider: Provider; }
 type RegistrationResponse = ResponseTemplate & {
   data: { id: string; email: string; }
 }
 
-type ErrorResponse = ResponseTemplate & { error: object; }
+type ErrorResponse = {
+  response: {
+    data: ResponseTemplate & { error: object; }
+  }
+}
+
+type Entries = 'entry1' | 'entry2' | 'entry3' | 'entry4' | 'entry5' | 'entry6'
+type OTPValues = Record<Entries, string>;
 
 type LoginRequest = { email: string; password: string; }
 type LoginResponse = ResponseTemplate & {

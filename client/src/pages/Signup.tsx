@@ -5,10 +5,13 @@ import { PasswordInputs } from "../components/authentication/PasswordInputs";
 import { FormInputs } from "../components/FormInputs";
 import { Link, useNavigate } from "react-router-dom";
 import ThirdPartyLogin from "../components/authentication/Thirdparty";
-import guardianAsyncWrapper from "../app/guardianAsyncWrapper";
+import { guardianAsyncWrapper } from "../app/guardianAsyncWrapper";
 import { toast } from "react-toastify";
 import { authenticationAPI } from "../app/api-calls/auth.api";
 import { sanitizeEntries } from "../utility/helpers";
+import { Provider } from "../utility/constants";
+import { MetaTags } from "../layouts/MetaTagsOGgraph";
+import AppStand from "../components/AppStand";
 
 const initValidation = { validEmail: false, match: false }
 export default function Signup() {
@@ -46,16 +49,22 @@ export default function Signup() {
     event.preventDefault();
     guardianAsyncWrapper(async () => {
       setAppState(prev => ({ ...prev, loading: true }));
-      const user = sanitizeEntries(newUser);
+      const sanitized = sanitizeEntries({ firstName, lastName, email, password })
+      const user: RegistrationRequest = { ...sanitized, provider: Provider.Local };
       const res = await authenticationAPI.signup(user);
-      console.log({ res });
       toast.success(res.message.split(': ')[1]);
-      navigate('/signin')
+      navigate(`/account_verification?activate=${true}&token=${btoa(email)}`)
     }, setAppState);
   }
 
   return (
     <main className="w-full flex flex-col md:flex-row items-center h-full">
+      <MetaTags
+        title='Signup'
+        description='User registration'
+        url=''
+        image=''
+      />
       <form onSubmit={handleSignup} className="flex-none md:w-[55%] w-full h-full flex flex-col gap-y-6 p-8 pt-14 items-center">
 
         <div className="w-full flex mobile:flex-col flex-row gap-y-6 gap-x-4">
@@ -103,23 +112,8 @@ export default function Signup() {
         </div>
       </form>
 
-      <section className="hidden md:flex flex-col items-center gap-y-20 w-full h-full px-4 pt-20 shadow-md rounded-l-md">
-        <h2 className='text-4xl font-bold text-center'>
-          MY ALX GUARDIAN
-        </h2>
-
-        {/* <GuardianImages 
-          imageUri='/study.png'
-          classNames=''
-        /> */}
-        <p className="text-xl text-center">Make your ALX journey easier, connect with your colleagues</p>
-
-        {/* <button 
-        onClick={() => navigate('/signin')}
-        className="rounded-lg p-4 px-8 cursor-pointer hover:opacity-95 active:opacity-100 bg-blue-600 transition-opacity text-white">
-          Get Started
-        </button> */}
-      </section>
+      <AppStand />
+      
     </main>
   )
 }
