@@ -7,7 +7,7 @@ import { postAPI } from '../app/api-calls/post.api';
 import { MAX_LENGTH } from '../utility/constants';
 import 'react-markdown-editor-lite/lib/index.css';
 import localStore from '../utility/localStorage';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Loading from '../components/Loading';
 import ReactMarkdown from 'react-markdown';
@@ -23,12 +23,19 @@ MdEditor.use(Plugins.AutoResize, {
 })
 
 export const NewPost = () => {
+  const { postId } = useParams();
   const { loggedInUserId } = useGuardianContext() as GuardianContextType;
   const [markdownText, setMarkdownText] = useState<string>("");
   const [appState, setAppState] = useState<AppStateType>(initAppState);
+  const [appStateEdit, setAppStateEdit] = useState<AppStateType>(initAppState);
+
   const userId = localStore.getStorage('my-id', false) as string;
+  const [editPost, setEditPost] = useState<PostType>({} as PostType);
   const [preview, setPreview] = useState<boolean>(false);
+
+  const [isEditPost, setIsEditPost] = useState<boolean>(false);
   const { isTyping, val } = useDeboundedInput(markdownText, MAX_LENGTH.DEBOUNCE);
+
   const [canViewOptions] = useState({
     menu: true, md: true, html: true,
     both: false, fullScreen: true, hideMenu: true,
@@ -36,31 +43,68 @@ export const NewPost = () => {
   const navigate = useNavigate();
 
   const { loading } = appState;
+  const { loading: loadingEdit } = appStateEdit;
   // Handle the change in the editor
   const handleChange = ({ text }: { text: string }) => setMarkdownText(text);
 
   useEffect(() => {
-    if (val?.length && !isTyping) {
-      localStore.setStorage(userId, val, false)
-    }
-  }, [val, isTyping, userId])
+    setIsEditPost(Boolean(postId))
+  }, [postId])
 
   useEffect(() => {
-    if (userId) {
+    if (isEditPost && editPost.body) {
+      const hasEditPost = localStore.getStorage(postId as string, false) as string ?? '';
+      setMarkdownText(hasEditPost ?? editPost.body)
+    }
+  }, [isEditPost, editPost.body, postId])
+
+  useEffect(() => {
+    if (!postId) return;
+    guardianAsyncWrapper(async () => {
+      const res = await postAPI.getPost(postId);
+      setEditPost(res.data)
+    }, setAppStateEdit);
+  }, [postId])
+
+  useEffect(() => {
+    if (val?.length && !isTyping && !postId) {
+      localStore.setStorage(userId, val, false)
+    }
+  }, [val, isTyping, userId, postId])
+
+  useEffect(() => {
+    if (val?.length && !isTyping && postId) {
+      localStore.setStorage(postId, val, false)
+    }
+  }, [val, isTyping, postId])
+
+  useEffect(() => {
+    if (userId && !postId) {
       setMarkdownText(localStore.getStorage(userId, false) as string ?? '');
     }
-  }, [userId])
+  }, [userId, postId])
 
   const handleSubmit = () => {
     if (loading) return;
     guardianAsyncWrapper(async () => {
       setAppState(prev => ({ ...prev, loading: true }));
-      const newPost: CreatePostRequest = {
-        userId: loggedInUserId, body: val,
-        category: { type: 'General' },
+      if (isEditPost) {
+        const { _id, category, ...rest } = editPost;
+        const editedPost: UpdatePostRequest = {
+          ...rest,
+          id: _id,
+          category: { type: category.type },
+        };
+        await postAPI.updatePost(editedPost);
+        localStore.removeStorage(postId as string);
+      } else {
+        const newPost: CreatePostRequest = {
+          userId: loggedInUserId, body: val,
+          category: { type: 'General' },
+        }
+        await postAPI.createPost(newPost);
+        localStore.removeStorage(userId);
       }
-      await postAPI.createPost(newPost);
-      localStore.removeStorage(userId);
       setMarkdownText('');
       toast.info('Post created!');
       navigate('/dashboard');

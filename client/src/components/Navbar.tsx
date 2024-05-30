@@ -1,25 +1,33 @@
-import { useCallback, useRef, useState } from "react";
-import { FaSun } from "react-icons/fa"
-import { FaMoon } from "react-icons/fa6"
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import useObserver from "../hooks/useObserver";
 import GuardianImages from "./component/GuardianImages";
+import { useCallback, useEffect, useRef, useState } from "react";
 import UserDetails from "./component/UserDetails";
+import useObserver from "../hooks/useObserver";
+import { FaMoon } from "react-icons/fa6"
+import { FaSun } from "react-icons/fa"
+import { guardianAsyncWrapper } from "../app/guardianAsyncWrapper";
+import { initAppState } from "../utility/initVaraibles";
+import { userAPI } from "../app/api-calls/user.api";
+import { useGuardianContext } from "../hooks/useGuardianContext";
 
 type NavbarProps = {
-  showTitle: boolean;
-  theme: Theme;
-  setTheme: React.Dispatch<React.SetStateAction<Theme>>;
+  // showTitle: boolean;
+  // theme: Theme;
+  // setTheme: React.Dispatch<React.SetStateAction<Theme>>;
   setOpenSidebarModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Navbar({ showTitle, theme, setTheme, setOpenSidebarModal }: NavbarProps) {
+export default function Navbar({ setOpenSidebarModal }: NavbarProps) {
   const navigate = useNavigate();
+  const { currentPost, theme, setTheme, showTitle } = useGuardianContext() as GuardianContextType;
   const { pathname } = useLocation();
   const { postId } = useParams();
   const userRef = useRef<HTMLDivElement>(null);
   const [activeLink, setActiveLink] = useState<string>('/' || '#');
-  const { isIntersecting, observerRef } = useObserver({screenPosition: '0px', threshold: 0.35})
+
+  const [appState, setAppState] = useState<AppStateType>(initAppState);
+  const [user, setUser] = useState<UserType>({} as UserType);
+  const { observerRef } = useObserver({screenPosition: '0px', threshold: 0.35})
 
   const classNames = useCallback((theme: Theme) => {
     return `self-end w-1 h-1 rounded-sm ${theme === 'light' ? 'bg-black' : 'bg-white'} -translate-y-1 mx-[1px]`
@@ -42,9 +50,18 @@ export default function Navbar({ showTitle, theme, setTheme, setOpenSidebarModal
     ]
   ];
 
+  useEffect(() => {
+    if (!currentPost.userId) return;
+    guardianAsyncWrapper(async () => {
+      setAppState(prev => ({ ...prev, loading: true }));
+      const res = await userAPI.getUser(currentPost.userId as string);
+      setUser(res.data)
+    }, setAppState);
+  }, [currentPost.userId])
+
   return (
     <nav className={`sticky top-0 w-full rounded-full z-40 bg-opacity-85 ${theme === 'light' ? 'bg-[#faeff5]' : 'bg-[#333333]'} h-10 py-7 px-6 flex items-center justify-between`}>
-      <h3 onClick={() => navigate('/')} className="cursor-pointer text-3xl flex items-center">M<div className={classNames(theme)}></div>A<div className={classNames(theme)}></div>G
+      <h3 onClick={() => navigate('/dashboard')} className="cursor-pointer text-3xl flex items-center">M<div className={classNames(theme)}></div>A<div className={classNames(theme)}></div>G
       </h3>
 
       <div className="self-center md:flex justify-betwee gap-12 items-center w-fi hidden">
@@ -61,25 +78,24 @@ export default function Navbar({ showTitle, theme, setTheme, setOpenSidebarModal
 
       <section
       ref={observerRef}
-      className={`${pathname === `/post/${postId}` ? 'flex' : 'hidden'} ${showTitle ? 'scale-1' : 'scale-0'} transition-transform flex-col items-center gap-y-1`}>
+      className={`${pathname === `/post/${postId}` ? 'flex' : 'hidden'} ${showTitle ? 'scale-0' : 'scale-1'} transition-transform flex-col items-center gap-y-1`}>
         <div
         className={`flex items-center gap-x-3`}>
           <GuardianImages
-            imageUri="/study.jpg"
-            alt={'User 1'}
-            classNames="cursor-pointer hover:scale-[1.03] hover:animate-spin transition-transform flex-none w-6 h-6 border-[1px] border-gray-200 rounded-full"
+            imageUri={user.profilePicture ?? ''}
+            alt={user.firstName ?? ''} isLoading={appState.loading}
+            classNames="cursor-pointer mobile:hidden hover:scale-[1.03] hover:animate-spin transition-transform flex-none w-6 h-6 border-[1px] border-gray-200 rounded-full"
             imageClassNames="rounded-full hover:animate-spin transition-transform"
             />
           <UserDetails
             classNames="text-[11px]"
-            name="User 1" userRef={userRef}
-            date={new Date(new Date().getTime() - 6 * 60 * 60 * 924)}
+            name={user.firstName ?? ''} userRef={userRef}
+            date={currentPost.createdAt! ?? new Date()}
             />
         </div>
-        <h2 className="text-center text-sm font-medium">Things really do fall apart</h2>
       </section>
 
-      <div className="flex gap-x-8 items-center">
+      <div className="flex gap-x-8 items-center mobile:gap-x-3">
         {
           theme === 'dark' ?
               <FaSun 

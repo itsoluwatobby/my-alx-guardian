@@ -63,7 +63,6 @@ export const Comment = ({ theme, comment, edit, setEdit, setInput, setPosts, log
   useEffect(() => {
     if (!comment?.postId) return;
     guardianAsyncWrapper(async () => {
-      console.log('run')
       const res = await postAPI.getPost(comment.postId);
       setPosts(prev => ([...prev.filter(filt => filt._id !== comment.postId), res.data]));
     }, () => { });
