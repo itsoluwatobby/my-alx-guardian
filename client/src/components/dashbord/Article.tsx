@@ -1,34 +1,32 @@
 import { guardianAsyncWrapper } from "../../app/guardianAsyncWrapper"
 import { useGuardianContext } from "../../hooks/useGuardianContext"
-import { FaCommentDots, FaHeart, FaShare } from "react-icons/fa6"
-import { useCallback, useEffect, useRef, useState } from "react"
 import { initAppState } from "../../utility/initVaraibles"
 import GuardianImages from "../component/GuardianImages"
 import { userAPI } from "../../app/api-calls/user.api";
-import { checkCount } from "../../utility/helpers"
+import { useEffect, useRef, useState } from "react"
 import UserDetails from "../component/UserDetails"
-import Comments from "../component/Comments"
+import PostInteraction from "./PostInteraction"
+import Comments from "../comments/Comments"
 import ReactMarkdown from 'react-markdown';
 import ProfilePopup from "../ProfilePopup"
-import ShareButton from "../ShareButton";
 import { Link } from "react-router-dom"
 
 type ArticleProp = {
   post: PostType;
   expandDetail: ExpandDetailsType;
+  setPosts: React.Dispatch<React.SetStateAction<PostType[]>>;
   setExpandDetail: React.Dispatch<React.SetStateAction<ExpandDetailsType>>;
 }
 
-export const Article = ({ post, expandDetail, setExpandDetail }: ArticleProp) => {
-  const { theme } = useGuardianContext() as GuardianContextType;
-  const [share, setShare] = useState<boolean>(false);
+export const Article = ({ post, setPosts, expandDetail, setExpandDetail }: ArticleProp) => {
+  const { theme, loggedInUserId } = useGuardianContext() as GuardianContextType;
   const userRef = useRef<HTMLDivElement>(null);
   const popupRef = useRef<HTMLElement>(null);
   const [reveal, setReveal] = useState<boolean>(false);
   const [user, setUser] = useState<UserType>({} as UserType);
   const [appState, setAppState] = useState<AppStateType>(initAppState);
 
-  const { res } = appState;
+  const {  } = appState;
 
   useEffect(() => {
     if (!userRef.current) return;
@@ -38,8 +36,8 @@ export const Article = ({ post, expandDetail, setExpandDetail }: ArticleProp) =>
     // userRef.current.addEventListener('mouseleave', () => {
     //   if (popupRef.current.onmouseenter) setReveal(true);
     //   else setReveal(false);
-      // popupRef.current.addEventListener('mouseleave', () => setReveal(false));
-      // setReveal(false)
+    // popupRef.current.addEventListener('mouseleave', () => setReveal(false));
+    // setReveal(false)
     // });
   }, [])
 
@@ -51,10 +49,6 @@ export const Article = ({ post, expandDetail, setExpandDetail }: ArticleProp) =>
     }, setAppState);
   }, [post.userId])
 
-  const classes = useCallback((theme: Theme) => {
-    return `${theme === 'light' ? 'text-[#333333]' : ''} cursor-pointer hover:scale-[1.02] active:scale-[1] transition-transform size-4`
-  }, [])
-
   return (
     <article className="relative flex gap-2">
       <GuardianImages
@@ -64,7 +58,7 @@ export const Article = ({ post, expandDetail, setExpandDetail }: ArticleProp) =>
         imageClassNames="rounded-full hover:animate-spin transition-transform"
       />
       {/* work on the popup */}
-      <ProfilePopup 
+      <ProfilePopup
         name="User 1" reveal={reveal} popupRef={popupRef}
         classNames="z-10 top-5"
       />
@@ -84,41 +78,15 @@ export const Article = ({ post, expandDetail, setExpandDetail }: ArticleProp) =>
           classNames="w-full max-h-60 rounded-lg"
           imageClassNames="rounded-lg"
         />
-        <div className="mt-1 flex items-center gap-6">
-          <div className="flex items-center gap-1">
-            <FaHeart title="like" className={classes(theme)} />
-            <span className="text-xs font-sans">{checkCount(post?.likes.length ?? 0)}</span>
-          </div>
 
-          <div className="relative flex items-center gap-1">
-            <FaCommentDots
-              onClick={() => setExpandDetail(
-                {
-                  id: post._id,
-                  toggle: (expandDetail?.id === post._id && expandDetail?.toggle === 'OPEN') ? 'CLOSE' : 'OPEN'
-                }
-              )}
-              className={classes(theme)} />
-            <span className="text-xs font-sans">{checkCount(5)}</span>
-          </div>
+        <PostInteraction
+          setExpandDetail={setExpandDetail} loggedInUserId={loggedInUserId}
+          post={post} setPosts={setPosts} theme={theme} expandDetail={expandDetail}
+        />
 
-          <div className="relative">
-            <FaShare title="share"
-              onClick={() => setShare(prev => !prev)}
-              className={classes(theme)} />
-            <ShareButton
-              classNames={`absolute bg-gray-600 text-white -top-10 left-1`}
-              share={share} setShare={setShare}
-              eventTitle=""
-              link=""
-              hashtags={[]}
-            />
-          </div>
-        </div>
-
-        <Comments 
-        setExpandDetail={setExpandDetail} 
-        expandDetail={expandDetail} post={post} />
+        <Comments
+          setExpandDetail={setExpandDetail} setPosts={setPosts}
+          expandDetail={expandDetail} postId={post._id} />
 
       </section>
 

@@ -18,6 +18,10 @@
   width: 100%;
 }
 
+.skeleton.width-90{
+  width: 90%;
+}
+
 .skeleton.width-75{
   width: 75%;
 }
@@ -28,6 +32,10 @@
 
 .skeleton.width-30{
   width: 30%;
+}
+
+.skeleton.width-15{
+  width: 15%;
 }
 
 .skeleton.width-10{
@@ -46,6 +54,13 @@
 .skeleton.profile-circle{
   width: 45px;
   height: 45px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.skeleton.profile-circle-small{
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   flex: none;
 }

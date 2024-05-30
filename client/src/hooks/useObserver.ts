@@ -15,8 +15,8 @@ export default function useObserver({ screenPosition, threshold=0 }: useObserver
   const [isIntersecting, setIsIntersecting] = useState<boolean>(false)
   const observerRef = useCallback((node: HTMLElement) => {
     const observer = new IntersectionObserver(entries => {
-      if(entries[0].isIntersecting) setIsIntersecting(false);
-      else setIsIntersecting(true);
+      if(entries[0].isIntersecting) setIsIntersecting(true);
+      else setIsIntersecting(false);
     },
     {
       threshold: threshold,

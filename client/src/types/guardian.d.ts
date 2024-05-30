@@ -170,6 +170,7 @@ type PostType = {
   reposts: [];
   createdAt: string;
   updatedAt: string;
+  commentCount: number;
 }
 
 type CreatePostRequest = Pick<PostType, 'userId' | 'body' | 'category'>;
@@ -182,14 +183,16 @@ type GetPosts = ResponseTemplate & {
 type PostQuery = { pageNumber: number; limit: number; userId?: string; }
 type GetPostResponse = CreatePostResponse
 
-type UpdatePostRequest = { id: strimg; } & Omit<PostType, '_id'>
+type UpdatePostRequest = { id: strimg; } & Omit<PostType, '_id'>;
 type UpdatePostResponse = CreatePostResponse
 
 type PostLikeRequest = { userId: string; postId: string }
 type PostLikeResponse = CreatePostResponse
 
+type PlatformNames = 'Whatsapp' | 'Twitter' | 'LinkedIn' | 'Facebook' | 'Copied' | 'pass'
+type Platform = { name: PlatformNames; link: string }
 type SharePostRequest = PostLikeRequest & {
-  platform: { name: string; link: string }
+  platform: Platform;
 }
 
 type RepostRequest = PostLikeRequest

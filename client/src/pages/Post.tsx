@@ -7,14 +7,14 @@ import GuardianImages from "../components/component/GuardianImages";
 import UserDetails from "../components/component/UserDetails";
 import ProfilePopup from "../components/ProfilePopup";
 import { useCallback, useEffect, useRef, useState } from "react";
-import Comments from "../components/component/Comments";
+import Comments from "../components/comments/Comments";
 import { useGuardianContext } from "../hooks/useGuardianContext";
 import useObserver from "../hooks/useObserver";
 import ReactMarkdown from 'react-markdown';
 
 export default function Post() {
   const { postId } = useParams();
-  const { isIntersecting, observerRef } = useObserver({screenPosition: '0px', threshold: 0.35});
+  const { isIntersecting, observerRef } = useObserver({ screenPosition: '0px', threshold: 0.35 });
 
   const { setShowTitle } = useGuardianContext() as GuardianContextType;
   const userRef = useRef<HTMLDivElement>(null);
@@ -44,11 +44,11 @@ export default function Post() {
   }, [isIntersecting, setShowTitle])
 
   return (
-    <div 
-    className="relative flex flex-col gap-2 h-full p-4 md:px-10 overflow-y-scroll">
+    <div
+      className="relative flex flex-col gap-2 h-full p-4 md:px-10 overflow-y-scroll">
       <section
-      ref={observerRef}
-      className={`${isIntersecting ? 'scale-0' : 'scale-1'} transition-transform flex items-center gap-x-3`}>
+        ref={observerRef}
+        className={`${isIntersecting ? 'scale-0' : 'scale-1'} transition-transform flex items-center gap-x-3`}>
         <GuardianImages
           imageUri="/study.jpg"
           alt={'User 1'}
@@ -65,10 +65,10 @@ export default function Post() {
         name="User 1" reveal={reveal} popupRef={popupRef}
         classNames="z-10 top-5"
       />
-  
-      <section 
-      // ref={expandDetail.toggle === 'CLOSE' ? null : scrollRef}
-      className="relative flex flex-col gap-y-2 pb-10">
+
+      <section
+        // ref={expandDetail.toggle === 'CLOSE' ? null : scrollRef}
+        className="relative flex flex-col gap-y-2 pb-10">
         <div className="text-[13px] flex flex-col gap-y-4 cursor-default mt-1">
           <h2 className={`${isIntersecting ? 'hidden' : 'block'} text-center text-2xl font-medium`}>Things really do fall apart</h2>
           <ReactMarkdown className="indent-3">
@@ -113,8 +113,8 @@ export default function Post() {
           </div>
         </div>
 
-        <Comments 
-          expandDetail={expandDetail} 
+        <Comments
+          expandDetail={expandDetail}
           setExpandDetail={setExpandDetail}
           post={{ id: postId as string }}
         />

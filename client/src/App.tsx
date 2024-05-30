@@ -26,7 +26,7 @@ function App() {
   const [openSidebarModal, setOpenSidebarModal] = useState<boolean>(false);
 
   return (
-    <main className={`playfair-display-guardian w-full h-[100dvh h-screen flex flex-col xxlscreen:mx-auto max-w-[1440px] p-2 transition-colors ${theme === 'light' ? 'bg-gradient-to-b from-[#faeff5] from-[60%] to-transparent' : 'bg-gradient-to-b from-[#3e3e3e] from-[40%] to-[#606060] text-[#ffffff]'} overflow-y-scroll`}>
+    <main className={`playfair-display-guardian w-full h-[100dvh h-screen flex flex-col xxlscreen:mx-auto max-w-[1440px] p-2 transition-colors ${theme === 'light' ? 'bg-gradient-to-b from-[#f4f1f3] from-[60%] to-transparent' : 'bg-gradient-to-b from-[#3e3e3e] from-[40%] to-[#606060] text-[#ffffff]'} overflow-y-scroll`}>
       <Routes>
         <Route path='/' element={<GuardianWrapper 
           setOpenSidebarModal={setOpenSidebarModal}
