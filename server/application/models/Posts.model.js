@@ -41,6 +41,7 @@ const PostsSchema = mongoose.Schema(
     isRepost: { type: Boolean, default: false },
     reposts: [Reposts],
     sharedCount: { type: Number, default: 0 },
+    commentCount: { type: Number, default: 0 },
   },
   {
     timestamps: true,

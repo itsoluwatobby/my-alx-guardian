@@ -2,7 +2,7 @@ import { format } from 'timeago.js'
 import { reduceTextLength } from '../../utility/helpers';
 
 type UserDetailsProps = {
-  date: Date;
+  date: string;
   name: string;
   classNames?: string;
   userRef: React.LegacyRef<HTMLDivElement>;

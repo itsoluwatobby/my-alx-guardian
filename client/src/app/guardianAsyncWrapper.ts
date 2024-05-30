@@ -6,9 +6,10 @@ export const guardianAsyncWrapper = async <T>(callback: () => T, setAppStateType
   }
   catch(error) {
     const errorRes = error as ErrorResponse
-    setAppStateType(prev => ({ ...prev, isError: true }))
     console.log(errorRes.response)
-    const msg = errorRes.response.data.message.split(': ')[1] ?? errorRes.response.data.message
+    const data = errorRes.response.data;
+    const msg = data.message.split(': ')[1] ?? data.message
+    setAppStateType(prev => ({ ...prev, isError: true, error: msg }))
     toast.error(msg);
   }
   finally {
