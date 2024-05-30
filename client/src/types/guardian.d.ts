@@ -32,6 +32,7 @@ type SubApiRes = Record<string, ApiValue> | Record<string, ApiValue>[]
 type ApiResponseType<E, K> = Record<(string | E), (K | SubApiRes)>
 
 type AppStateType = {
+  error: string;
   loading: boolean;
   isError: boolean;
   success: boolean;

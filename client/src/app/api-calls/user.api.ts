@@ -14,27 +14,27 @@ class UserAPI{
     this.loggedInId = localStore.getStorage('my-id');
   }
 
-  async getUser(userId: string, loggedIn: string): Promise<GetUserResponse> {
-    const response = await guardianAuthenticatedAPI[get.method](`${get.url}/${userId}?activeId=${loggedIn}`) as { data: GetUserResponse };
+  async getUser(userId: string): Promise<GetUserResponse> {
+    const response = await guardianAuthenticatedAPI[get.method](`${get.url}/${userId}?activeId=${this.loggedInId}`) as { data: GetUserResponse };
     return response.data
   }
 
-  async searchUsers(query: string, loggedIn: string): Promise<GetUsersResponse> {
+  async searchUsers(query: string): Promise<GetUsersResponse> {
     const response = await guardianAuthenticatedAPI[getUsers.method](
-      `${getUsers.url}/?query=${query}&activeId=${loggedIn}`
+      `${getUsers.url}/?query=${query}&activeId=${this.loggedInId}`
     ) as { data: GetUsersResponse };
     return response.data
   }
 
-  async updateUser(userObj: UpdateUserRequest, loggedIn: string): Promise<UpdateUserResponse> {
-    const response = await guardianAuthenticatedAPI[update.method](`${update.url}/?activeId=${loggedIn}`, userObj) as { data: UpdateUserResponse };
+  async updateUser(userObj: UpdateUserRequest): Promise<UpdateUserResponse> {
+    const response = await guardianAuthenticatedAPI[update.method](`${update.url}/?activeId=${this.loggedInId}`, userObj) as { data: UpdateUserResponse };
     return response.data
   }
 
-  async deleteAccount(userObj: DeleteUserRequest, loggedIn: string): Promise<DeleteUserResponse> {
-    const response = await guardianAuthenticatedAPI[deleteUser.method](`${deleteUser.url}/?activeId=${loggedIn}`, userObj) as { data: DeleteUserResponse };
+  async deleteAccount(userObj: DeleteUserRequest): Promise<DeleteUserResponse> {
+    const response = await guardianAuthenticatedAPI[deleteUser.method](`${deleteUser.url}/?activeId=${this.loggedInId}`, userObj) as { data: DeleteUserResponse };
     return response.data
   }
 }
 
-export const postAPI = new UserAPI();
+export const userAPI = new UserAPI();

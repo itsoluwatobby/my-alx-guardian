@@ -8,6 +8,9 @@ import { guardianAsyncWrapper } from "../app/guardianAsyncWrapper";
 import { sanitizeEntries } from "../utility/helpers";
 import { postAPI } from "../app/api-calls/post.api";
 import { initAppState } from "../utility/initVaraibles";
+import PostSkeletonLoading from "../components/skeletonLoading/PostSkeletonLoading";
+import { useGuardianContext } from "../hooks/useGuardianContext";
+import { MdRunningWithErrors } from "react-icons/md";
 
 type SearchResult = {
   prevQuery: string;
@@ -23,13 +26,14 @@ export default function Dashboard() {
     { id: '', toggle: 'CLOSE' }
   );
   const [appState, setAppState] = useState<AppStateType>(initAppState);
+  const { theme } = useGuardianContext() as GuardianContextType;
   const [appState1, setAppState1] = useState<AppStateType>(initAppState);
   const [posts, setPosts] = useState<PostType[]>([]);
   const [postQuery, setPostQuery] = useState<PostQuery>({
     pageNumber: 1, limit: 5,
   });
 
-  const { loading } = appState;
+  const { loading, isError, error } = appState;
   const { loading: isLoading, res } = appState1;
   const { pageNumber, limit } = postQuery;
 
@@ -70,11 +74,27 @@ export default function Dashboard() {
       </div>
       <div className="flex flex-col flex-auto py-4 gap-4">
         {
-          [...Array(10).keys()].map((i) => (
-            <Article key={i} post={{ id: i.toString() }}
+          isLoading ?
+            [...Array(3).keys()].map((i) => (
+              <PostSkeletonLoading key={i} />
+            ))
+          :
+          isError ? 
+            <div className="mt-10 flex capitalize flex-col items-center gap-y-3">
+              <MdRunningWithErrors className="size-20" />
+              {error}
+            </div>
+          :
+          posts.length ?
+            posts?.map((post) => (
+              <Article key={post._id} post={post}
               expandDetail={expandDetail} setExpandDetail={setExpandDetail}
-            />
-          ))
+              />
+            ))
+            :
+            <div className="text-center mt-10 text-3xl">
+              Not posts Available
+            </div>
         }
       </div>
     </section>

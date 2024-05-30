@@ -20,13 +20,23 @@ class CommentService {
         throw new Error(validationResponse.error);
       }
 
-      const post = await postsRepository.getPost(commentObj.postId);
+      const post = await postsRepository.updatePost(
+        commentObj.postId,
+        { $inc: { commentCount: 1 } },
+      );
       if (!post) throwError(404, 'Post not found');
 
       const commenter = await userRepository.getUser(commentObj.userId);
       if (!commenter) throwError(404, 'Account not found');
+
       const comment = await commentRepository.createComment(commentObj);
-      if (!comment) throwError(400, 'Mongo Error: Error creating comment');
+      if (!comment) {
+        await postsRepository.updatePost(
+          commentObj.postId,
+          { $inc: { commentCount: post.commentCount > 0 ? -1 : 0 } },
+        );
+        throwError(400, 'Mongo Error: Error creating comment');
+      }
       return {
         data: comment,
         message: 'BE: Comment created successfully',

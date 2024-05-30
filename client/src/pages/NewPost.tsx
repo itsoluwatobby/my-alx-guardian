@@ -1,18 +1,18 @@
-import { useEffect, useState } from 'react';
-import MarkdownIt from 'markdown-it';
 import MdEditor, { Plugins } from 'react-markdown-editor-lite';
-import 'react-markdown-editor-lite/lib/index.css';
-import ReactMarkdown from 'react-markdown';
-import useDeboundedInput from '../hooks/useDeboundedInput';
-import { MAX_LENGTH } from '../utility/constants';
-import localStore from '../utility/localStorage';
-import { guardianAsyncWrapper } from '../app/guardianAsyncWrapper';
-import { postAPI } from '../app/api-calls/post.api';
-import { initAppState } from '../utility/initVaraibles';
 import { useGuardianContext } from '../hooks/useGuardianContext';
-import { toast } from 'react-toastify';
-import Loading from '../components/Loading';
+import { guardianAsyncWrapper } from '../app/guardianAsyncWrapper';
+import useDeboundedInput from '../hooks/useDeboundedInput';
+import { initAppState } from '../utility/initVaraibles';
+import { postAPI } from '../app/api-calls/post.api';
+import { MAX_LENGTH } from '../utility/constants';
+import 'react-markdown-editor-lite/lib/index.css';
+import localStore from '../utility/localStorage';
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import Loading from '../components/Loading';
+import ReactMarkdown from 'react-markdown';
+import { toast } from 'react-toastify';
+import MarkdownIt from 'markdown-it';
 
 // Initialize a markdown parser
 const mdParser = new MarkdownIt(/* Markdown-it options */);
@@ -44,7 +44,7 @@ export const NewPost = () => {
       localStore.setStorage(userId, val, false)
     }
   }, [val, isTyping, userId])
-  
+
   useEffect(() => {
     if (userId) {
       setMarkdownText(localStore.getStorage(userId, false) as string ?? '');
@@ -66,7 +66,7 @@ export const NewPost = () => {
       navigate('/dashboard');
     }, setAppState);
   }
-  
+
   // const handleUpdateSubmit = () => {
   //   if (loading) return;
   //   guardianAsyncWrapper(async () => {

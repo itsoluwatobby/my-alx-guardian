@@ -1,16 +1,20 @@
-import { FaCommentDots, FaHeart, FaShare } from "react-icons/fa6"
-import GuardianImages from "../component/GuardianImages"
-import ShareButton from "../ShareButton"
-import { useCallback, useEffect, useRef, useState } from "react"
+import { guardianAsyncWrapper } from "../../app/guardianAsyncWrapper"
 import { useGuardianContext } from "../../hooks/useGuardianContext"
+import { FaCommentDots, FaHeart, FaShare } from "react-icons/fa6"
+import { useCallback, useEffect, useRef, useState } from "react"
+import { initAppState } from "../../utility/initVaraibles"
+import GuardianImages from "../component/GuardianImages"
+import { userAPI } from "../../app/api-calls/user.api";
 import { checkCount } from "../../utility/helpers"
-import Comments from "../component/Comments"
 import UserDetails from "../component/UserDetails"
+import Comments from "../component/Comments"
+import ReactMarkdown from 'react-markdown';
 import ProfilePopup from "../ProfilePopup"
+import ShareButton from "../ShareButton";
 import { Link } from "react-router-dom"
 
 type ArticleProp = {
-  post: { id: string };
+  post: PostType;
   expandDetail: ExpandDetailsType;
   setExpandDetail: React.Dispatch<React.SetStateAction<ExpandDetailsType>>;
 }
@@ -21,6 +25,10 @@ export const Article = ({ post, expandDetail, setExpandDetail }: ArticleProp) =>
   const userRef = useRef<HTMLDivElement>(null);
   const popupRef = useRef<HTMLElement>(null);
   const [reveal, setReveal] = useState<boolean>(false);
+  const [user, setUser] = useState<UserType>({} as UserType);
+  const [appState, setAppState] = useState<AppStateType>(initAppState);
+
+  const { res } = appState;
 
   useEffect(() => {
     if (!userRef.current) return;
@@ -35,6 +43,14 @@ export const Article = ({ post, expandDetail, setExpandDetail }: ArticleProp) =>
     // });
   }, [])
 
+  useEffect(() => {
+    guardianAsyncWrapper(async () => {
+      setAppState(prev => ({ ...prev, loading: true }));
+      const res = await userAPI.getUser(post.userId);
+      setUser(res.data)
+    }, setAppState);
+  }, [post.userId])
+
   const classes = useCallback((theme: Theme) => {
     return `${theme === 'light' ? 'text-[#333333]' : ''} cursor-pointer hover:scale-[1.02] active:scale-[1] transition-transform size-4`
   }, [])
@@ -42,11 +58,12 @@ export const Article = ({ post, expandDetail, setExpandDetail }: ArticleProp) =>
   return (
     <article className="relative flex gap-2">
       <GuardianImages
-        imageUri="/study.jpg"
-        alt={'User 1'}
+        imageUri={user?.profilePicture ?? ''}
+        alt={user?.firstName ?? ''}
         classNames="cursor-pointer hover:scale-[1.03] hover:animate-spin transition-transform flex-none w-10 h-10 border-2 border-gray-200 rounded-full"
         imageClassNames="rounded-full hover:animate-spin transition-transform"
       />
+      {/* work on the popup */}
       <ProfilePopup 
         name="User 1" reveal={reveal} popupRef={popupRef}
         classNames="z-10 top-5"
@@ -54,14 +71,11 @@ export const Article = ({ post, expandDetail, setExpandDetail }: ArticleProp) =>
       <section className="flex flex-col gap-1">
         <div className="flex flex-col text-sm">
           <UserDetails
-            name="User 1" userRef={userRef}
-            date={new Date(new Date().getTime() - 6 * 60 * 60 * 924)}
+            name={user?.firstName} userRef={userRef}
+            date={post.createdAt ?? new Date()}
           />
-          <Link to={`/post/${1254}`} className="text-[13px] flex flex-col cursor-default mt-1">
-            <h2 className="line-clamp-1 text-sm font-medium">Things reaally do fall apart</h2>
-            <p className="line-clamp-3 indent-3">
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Incidunt voluptatibus debitis laborum temporibus mollitia ea consectetur autem, nobis hic nesciunt consequatur doloribus repudiandae distinctio, accusamus omnis ullam ducimus. Amet, vitae?
-            </p>
+          <Link to={`/post/${post._id}`} className="text-[13px] flex flex-col cursor-default mt-1">
+            <ReactMarkdown>{post?.body ?? ''}</ReactMarkdown>
           </Link>
         </div>
 
@@ -73,15 +87,15 @@ export const Article = ({ post, expandDetail, setExpandDetail }: ArticleProp) =>
         <div className="mt-1 flex items-center gap-6">
           <div className="flex items-center gap-1">
             <FaHeart title="like" className={classes(theme)} />
-            <span className="text-xs font-sans">{checkCount(5)}</span>
+            <span className="text-xs font-sans">{checkCount(post?.likes.length ?? 0)}</span>
           </div>
 
           <div className="relative flex items-center gap-1">
             <FaCommentDots
               onClick={() => setExpandDetail(
                 {
-                  id: post.id,
-                  toggle: (expandDetail?.id === post.id && expandDetail?.toggle === 'OPEN') ? 'CLOSE' : 'OPEN'
+                  id: post._id,
+                  toggle: (expandDetail?.id === post._id && expandDetail?.toggle === 'OPEN') ? 'CLOSE' : 'OPEN'
                 }
               )}
               className={classes(theme)} />
