@@ -3,10 +3,6 @@ const { CategoryEnum } = require('./accountEnum');
 
 exports.createPostValidator = (data) => {
   const createPostSchema = Joi.object().keys({
-    title: Joi.string()
-      .messages({
-        'any.required': 'title is required',
-      }),
     body: Joi.string().required()
       .messages({
         'any.required': 'body is required',
@@ -47,10 +43,6 @@ exports.updatePostValidator = (data) => {
     id: Joi.string().required()
       .messages({
         'any.required': 'id is required',
-      }),
-    title: Joi.string()
-      .messages({
-        'any.required': 'title is required',
       }),
     body: Joi.string().required()
       .messages({

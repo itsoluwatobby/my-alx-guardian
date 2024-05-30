@@ -7,31 +7,55 @@ import { MAX_LENGTH } from "../utility/constants";
 import { guardianAsyncWrapper } from "../app/guardianAsyncWrapper";
 import { sanitizeEntries } from "../utility/helpers";
 import { postAPI } from "../app/api-calls/post.api";
+import { initAppState } from "../utility/initVaraibles";
 
+type SearchResult = {
+  prevQuery: string;
+  result: PostType[] | UserType[] | CategoryObjType[];
+}
 export default function Dashboard() {
   const [search, setSearch] = useState<string>('');
+  const [searchResult, setSearchResult] = useState<SearchResult>({
+    prevQuery: '', result: []
+  });
   const { val, isTyping } = useDeboundedInput(search, MAX_LENGTH.DEBOUNCE);
   const [expandDetail, setExpandDetail] = useState<ExpandDetailsType>(
     { id: '', toggle: 'CLOSE' }
   );
-  const [appState, setAppState] = useState<AppStateType>({
-    loading: false, isError: false, success: false, res: {}
-    
+  const [appState, setAppState] = useState<AppStateType>(initAppState);
+  const [appState1, setAppState1] = useState<AppStateType>(initAppState);
+  const [posts, setPosts] = useState<PostType[]>([]);
+  const [postQuery, setPostQuery] = useState<PostQuery>({
+    pageNumber: 1, limit: 5,
   });
 
   const { loading } = appState;
-console.log(loading);
-useEffect(() => {
-  if (!val || isTyping || loading) return;
-  guardianAsyncWrapper(async () => {
-      console.log(loading)
+  const { loading: isLoading, res } = appState1;
+  const { pageNumber, limit } = postQuery;
+
+  useEffect(() => {
+    if (!val || isTyping || loading) return;
+    guardianAsyncWrapper(async () => {
+      if (searchResult.prevQuery === val) return;
       setAppState(prev => ({ ...prev, loading: true }));
-      console.log('loading')
       const searchQuery = sanitizeEntries({ val })
       const res = await postAPI.searchPost(searchQuery.val);
       console.log(res);
+      setSearchResult({ prevQuery: val, result: res.data })
     }, setAppState);
-  }, [isTyping, val, loading])
+  }, [isTyping, val, loading, searchResult.prevQuery])
+
+  useEffect(() => {
+    guardianAsyncWrapper(async () => {
+      setAppState1(prev => ({ ...prev, loading: true }));
+      const res = await postAPI.findPosts({ pageNumber, limit });
+      // console.log(res);
+      setAppState1(prev => ({ ...prev, res: res.data?.pageable }))
+      setPosts(res.data.data);
+    }, setAppState1);
+  }, [pageNumber, limit])
+
+  console.log(res);
 
   return (
     <section className="flex flex-col flex-auto rounded-md overflow-y-scroll h-full shadow-md p-3 px-2">

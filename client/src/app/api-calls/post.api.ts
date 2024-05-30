@@ -32,7 +32,7 @@ class PostAPI{
   
   async findPosts(query: PostQuery): Promise<GetPosts> {
     const { pageNumber, limit, userId } = query;
-    const postQuery = `postNumber=${pageNumber}&limit=${limit}&userId=${userId}`
+    const postQuery = `pageNumber=${pageNumber}&limit=${limit}&userId=${userId}`
     const response = await guardianAuthenticatedAPI[getPosts.method](
       `${getPosts.url}/?${postQuery}&activeId=${this.loggedInId}`
     ) as { data: GetPosts };

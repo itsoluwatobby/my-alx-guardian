@@ -24,7 +24,6 @@ class PostsRepository {
     const caseInsensitiveQuery = new RegExp(query, 'i');
     const posts = await PostsModel.find({
       $or: [
-        { title: { $in: [caseInsensitiveQuery] } },
         { body: { $in: [caseInsensitiveQuery] } },
         { 'category.type': { $in: [caseInsensitiveQuery] } },
         { 'category.name': { $in: [caseInsensitiveQuery] } },
@@ -77,7 +76,7 @@ class PostsRepository {
 
   async repost(postObj) {
     const { postId, userId } = postObj;
-    const post = await PostsModel.findById(postId).select('title body _id, picture category reposts');
+    const post = await PostsModel.findById(postId).select('body _id, picture category reposts');
     const { _id, reposts, ...rest } = post._doc;
     const createRepost = {
       ...rest, repostId: _id, isRepost: true, userId,

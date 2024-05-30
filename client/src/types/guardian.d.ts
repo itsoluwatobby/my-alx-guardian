@@ -5,10 +5,13 @@ type Children = {
 }
 
 type Theme = 'light' | 'dark';
+type TypingEvent = 'typing' | 'notTyping' | 'pass'
+type DebouncedType = { val: string; isTyping: boolean, event: TypingEvent }
 
 type GuardianContextType = {
   theme: Theme;
   showTitle: boolean;
+  loggedInUserId: string
   setTheme: React.Dispatch<React.SetStateAction<Theme>>;
   setShowTitle: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -157,7 +160,6 @@ type CategoryType = 'General' | 'Cohorts' | 'Forums';
 type PostType = {
   userId: string;
   _id: string;
-  title: string;
   body: string;
   picture: string;
   likes: string[];
@@ -169,14 +171,14 @@ type PostType = {
   updatedAt: string;
 }
 
-type CreatePostRequest = Pick<PostType, 'userId' | 'title' | 'body' | 'category'>;
+type CreatePostRequest = Pick<PostType, 'userId' | 'body' | 'category'>;
 type CreatePostResponse = ResponseTemplate & { data: PostType }
 
 type GetPosts = ResponseTemplate & {
   data: { pageable: Pagination; data: PostType[]; }
 }
 
-type PostQuery = { pageNumber: number; limit: number; userId: string; }
+type PostQuery = { pageNumber: number; limit: number; userId?: string; }
 type GetPostResponse = CreatePostResponse
 
 type UpdatePostRequest = { id: strimg; } & Omit<PostType, '_id'>
