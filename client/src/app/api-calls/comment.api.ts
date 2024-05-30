@@ -38,7 +38,7 @@ class CommentAPI{
   
   async findComments(query: CommentQuery): Promise<GetComments> {
     const { pageNumber, limit, postId } = query;
-    const commentQuery = `commentNumber=${pageNumber}&limit=${limit}&userId=${postId}`
+    const commentQuery = `pageNumber=${pageNumber}&limit=${limit}&userId=${postId}`
     const response = await guardianAuthenticatedAPI[getComments.method](
       `${getComments.url}/?${commentQuery}&activeId=${this.loggedInId}`
     ) as { data: GetComments };

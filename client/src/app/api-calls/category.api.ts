@@ -40,7 +40,7 @@ class CategoryAPI{
   
   async findCategorys(query: CategoryQuery): Promise<GetCategories> {
     const { pageNumber, limit, type } = query;
-    const categoryQuery = `categoryNumber=${pageNumber}&limit=${limit}&userId=${type}`
+    const categoryQuery = `pageNumber=${pageNumber}&limit=${limit}&userId=${type}`
     const response = await guardianAuthenticatedAPI[getCategories.method](
       `${getCategories.url}/?${categoryQuery}&activeId=${this.loggedInId}`
     ) as { data: GetCategories };

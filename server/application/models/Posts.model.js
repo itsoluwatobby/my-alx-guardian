@@ -27,7 +27,6 @@ const SharesShema = new mongoose.Schema(
 
 const PostsSchema = mongoose.Schema(
   {
-    title: { type: String, trim: true },
     userId: {
       type: String, required: [true, 'userId is required'], immutable: true, ref: 'users',
     },
