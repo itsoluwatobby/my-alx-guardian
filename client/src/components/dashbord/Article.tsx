@@ -10,6 +10,8 @@ import Comments from "../comments/Comments"
 import ReactMarkdown from 'react-markdown';
 import ProfilePopup from "../ProfilePopup"
 import { Link } from "react-router-dom"
+import { MdCancel, MdDeleteForever, MdEdit, MdMoreHoriz } from "react-icons/md";
+import { postAPI } from "../../app/api-calls/post.api";
 
 type ArticleProp = {
   post: PostType;
@@ -24,9 +26,12 @@ export const Article = ({ post, setPosts, expandDetail, setExpandDetail }: Artic
   const popupRef = useRef<HTMLElement>(null);
   const [reveal, setReveal] = useState<boolean>(false);
   const [user, setUser] = useState<UserType>({} as UserType);
-  const [appState, setAppState] = useState<AppStateType>(initAppState);
 
-  const {  } = appState;
+  const [openToggle, setOpenToggle] = useState<boolean>(false);
+  const [appState, setAppState] = useState<AppStateType>(initAppState);
+  const [appState2, setAppState2] = useState<AppStateType>(initAppState);
+
+  const { loading } = appState;
 
   useEffect(() => {
     if (!userRef.current) return;
@@ -49,11 +54,21 @@ export const Article = ({ post, setPosts, expandDetail, setExpandDetail }: Artic
     }, setAppState);
   }, [post.userId])
 
+  const handleDeleteComment = () => {
+    if (appState2.loading) return;
+    guardianAsyncWrapper(async () => {
+      setAppState2(prev => ({ ...prev, loading: true }));
+      const { _id } = post;
+      await postAPI.delete_post({ postId: _id });
+      setPosts(prev => ([...prev.filter(filt => filt._id !== _id)]));
+    }, setAppState2);
+  }
+
   return (
     <article className="relative flex gap-2">
       <GuardianImages
         imageUri={user?.profilePicture ?? ''}
-        alt={user?.firstName ?? ''}
+        alt={user?.firstName ?? ''} isLoading={loading}
         classNames="cursor-pointer hover:scale-[1.03] hover:animate-spin transition-transform flex-none w-10 h-10 border-2 border-gray-200 rounded-full"
         imageClassNames="rounded-full hover:animate-spin transition-transform"
       />
@@ -62,6 +77,30 @@ export const Article = ({ post, setPosts, expandDetail, setExpandDetail }: Artic
         name="User 1" reveal={reveal} popupRef={popupRef}
         classNames="z-10 top-5"
       />
+
+      <MdMoreHoriz
+        onClick={() => setOpenToggle(prev => !prev)}
+        className={`absolute right-4 size-5 ${post.userId === loggedInUserId ? '' : 'hidden'} ${openToggle ? 'hidden' : ''} cursor-pointer hover:scale-[1.03] active:scale-[1] transition-transform`} />
+
+      <div className={`${openToggle ? 'flex' : 'hidden'} items-center text-xl gap-x-1 absolute top-2 right-0`}>
+        <MdEdit
+          onClick={() => {
+            // setInput(comment.comment)
+            // setEdit(comment)
+            setOpenToggle(false)
+          }}
+          className={`cursor-pointer hover:scale-[1.03] active:scale-[1] transition-transform`} />
+        <MdDeleteForever
+          onClick={() => {
+            handleDeleteComment()
+            setOpenToggle(false)
+          }}
+          className={`cursor-pointer hover:scale-[1.03] active:scale-[1] transition-transform`} />
+        <MdCancel
+          onClick={() => setOpenToggle(false)}
+        />
+      </div>
+
       <section className="flex flex-col gap-1">
         <div className="flex flex-col text-sm">
           <UserDetails

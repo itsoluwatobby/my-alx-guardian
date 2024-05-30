@@ -26,7 +26,7 @@ export default function Dashboard() {
   const [expandDetail, setExpandDetail] = useState<ExpandDetailsType>(
     { id: '', toggle: 'CLOSE' }
   );
-  const { observerRef, isIntersecting } = useObserver(
+  const { observerRef } = useObserver(
     { screenPosition: '0px', threshold: 0.4 },
   );
   const [appState, setAppState] = useState<AppStateType>(initAppState);
@@ -38,14 +38,14 @@ export default function Dashboard() {
     pages: { previous: null, current: null, next: null },
     length: 0, pagesLeft: 0, numberOfPages: 0,
   });
-  const [postQuery, setPostQuery] = useState<PostQuery>({
+  const [postQuery] = useState<PostQuery>({
     pageNumber: 1, limit: 100,
   });
+// setPostQuery
 
-  console.log(isIntersecting);
-
-  const { pages, pagesLeft } = paginate;
-  console.log(postQuery)
+  const { pagesLeft } = paginate;
+  // const { pages, pagesLeft } = paginate;
+  // console.log(postQuery)
 
   const { loading, isError, error } = appState;
   const { loading: loading1 } = appState1;
