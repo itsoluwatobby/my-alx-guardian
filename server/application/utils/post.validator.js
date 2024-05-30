@@ -1,5 +1,5 @@
 const Joi = require('joi');
-const { CategoryEnum } = require('./accountEnum');
+// const { CategoryEnum } = require('./accountEnum');
 
 exports.createPostValidator = (data) => {
   const createPostSchema = Joi.object().keys({
@@ -38,7 +38,7 @@ exports.createPostValidator = (data) => {
 };
 
 exports.updatePostValidator = (data) => {
-  const { Forums, Cohorts, General } = CategoryEnum;
+  // const { Forums, Cohorts, General } = CategoryEnum;
   const updatePostSchema = Joi.object().keys({
     id: Joi.string().required()
       .messages({
@@ -52,23 +52,23 @@ exports.updatePostValidator = (data) => {
       .messages({
         'any.required': 'userId is required',
       }),
-    category: Joi.object().keys({
-      type: Joi.string().valid(Forums, Cohorts, General).required()
-        .messages({
-          'any.required': 'category.type is required',
-        }),
-      name: Joi.string()
-        .messages({
-          'any.required': 'category.name is required',
-        }),
-    }).required()
-      .messages({
-        'any.required': 'category is required',
-      }),
-    picture: Joi.string()
-      .messages({
-        'any.required': 'picture is required',
-      }),
+    // category: Joi.object().keys({
+    //   type: Joi.string().valid(Forums, Cohorts, General).required()
+    //     .messages({
+    //       'any.required': 'category.type is required',
+    //     }),
+    //   name: Joi.string()
+    //     .messages({
+    //       'any.required': 'category.name is required',
+    //     }),
+    // }).required()
+    //   .messages({
+    //     'any.required': 'category is required',
+    //   }),
+    // picture: Joi.string()
+    //   .messages({
+    //     'any.required': 'picture is required',
+    //   }),
   });
 
   const validationResponse = updatePostSchema.validate(data);

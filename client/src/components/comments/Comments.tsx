@@ -26,7 +26,7 @@ export default function Comments({ expandDetail, setPosts, setExpandDetail, post
   const [appState, setAppState] = useState<AppStateType>(initAppState);
   const [appState1, setAppState1] = useState<AppStateType>(initAppState);
   const [appState2, setAppState2] = useState<AppStateType>(initAppState);
-  
+
   const [comments, setComments] = useState<CommentType[]>([]);
   const [commentQuery] = useState<CommentQuery>({
     pageNumber: 1, limit: 50, postId: '',
@@ -88,7 +88,7 @@ export default function Comments({ expandDetail, setPosts, setExpandDetail, post
   return (
     <div
       // ref={expandDetail.toggle === 'CLOSE' ? null : scrollRef}
-      className={`shadow-lg ${theme === 'light' ? 'bg-gradient-to-b from-[#bebebe] from-[60%] to-transparent' : 'bg-gradient-to-b from-[#333333] from-[40%] to-[#b3b1b1] text-[#ffffff]'} w-full min-h-40 max-h-64 rounded-lg ${(expandDetail?.id === postId && expandDetail.toggle === 'OPEN') ? 'translate-0' : 'hidden'} p-2 pt-1 text-sm flex flex-col`}>
+      className={`shadow-lg ${theme === 'light' ? 'bg-gradient-to-b from-[#bebebe] from-[60%] to-transparent' : 'bg-gradient-to-b from-[#333333] from-[40%] to-[#4e4d4d] text-[#ffffff]'} w-full min-h-40 max-h-64 rounded-lg ${(expandDetail?.id === postId && expandDetail.toggle === 'OPEN') ? 'translate-0' : 'hidden'} p-2 pt-1 text-sm flex flex-col`}>
       <div className="flex w-full justify-between items-center pt-1 pb-2 shadow-sm">
         <p className="w-fit font-sans opacity-90">Comments</p>
         <button title="close"

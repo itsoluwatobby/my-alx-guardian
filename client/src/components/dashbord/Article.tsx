@@ -9,7 +9,7 @@ import PostInteraction from "./PostInteraction"
 import Comments from "../comments/Comments"
 import ReactMarkdown from 'react-markdown';
 import ProfilePopup from "../ProfilePopup"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { MdCancel, MdDeleteForever, MdEdit, MdMoreHoriz } from "react-icons/md";
 import { postAPI } from "../../app/api-calls/post.api";
 
@@ -30,6 +30,7 @@ export const Article = ({ post, setPosts, expandDetail, setExpandDetail }: Artic
   const [openToggle, setOpenToggle] = useState<boolean>(false);
   const [appState, setAppState] = useState<AppStateType>(initAppState);
   const [appState2, setAppState2] = useState<AppStateType>(initAppState);
+  const navigate = useNavigate();
 
   const { loading } = appState;
 
@@ -82,11 +83,10 @@ export const Article = ({ post, setPosts, expandDetail, setExpandDetail }: Artic
         onClick={() => setOpenToggle(prev => !prev)}
         className={`absolute right-4 size-5 ${post.userId === loggedInUserId ? '' : 'hidden'} ${openToggle ? 'hidden' : ''} cursor-pointer hover:scale-[1.03] active:scale-[1] transition-transform`} />
 
-      <div className={`${openToggle ? 'flex' : 'hidden'} items-center text-xl gap-x-1 absolute top-2 right-0`}>
+      <div className={`${openToggle ? 'flex' : 'hidden'} items-center text-2xl gap-x-2 absolute top-0 right-0`}>
         <MdEdit
           onClick={() => {
-            // setInput(comment.comment)
-            // setEdit(comment)
+            navigate(`/edit-post/${post._id}`)
             setOpenToggle(false)
           }}
           className={`cursor-pointer hover:scale-[1.03] active:scale-[1] transition-transform`} />
@@ -102,7 +102,7 @@ export const Article = ({ post, setPosts, expandDetail, setExpandDetail }: Artic
       </div>
 
       <section className="flex flex-col gap-1">
-        <div className="flex flex-col text-sm">
+        <div className={`${appState2.loading ? 'animate-pulse' : ''} flex flex-col text-sm`}>
           <UserDetails
             name={user?.firstName} userRef={userRef}
             date={post.createdAt ?? new Date()}
@@ -111,12 +111,6 @@ export const Article = ({ post, setPosts, expandDetail, setExpandDetail }: Artic
             <ReactMarkdown>{post?.body ?? ''}</ReactMarkdown>
           </Link>
         </div>
-
-        <GuardianImages
-          imageUri="/study.jpg"
-          classNames="w-full max-h-60 rounded-lg"
-          imageClassNames="rounded-lg"
-        />
 
         <PostInteraction
           setExpandDetail={setExpandDetail} loggedInUserId={loggedInUserId}

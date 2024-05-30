@@ -48,6 +48,7 @@ function App() {
 
             <Route element={<ProtectedRoutes />}>
               <Route path='new-post' element={<NewPost />} />
+              <Route path='edit-post/:postId' element={<NewPost />} />
               <Route path='edit-profile' element={<EditProfile />} />
             </Route>
           

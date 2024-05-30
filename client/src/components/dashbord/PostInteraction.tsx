@@ -88,7 +88,7 @@ export default function PostInteraction({ post, setPosts, theme, loggedInUserId,
           onClick={() => setShare(prev => !prev)}
           className={classes()} />
         <ShareButton
-          classNames={`absolute bg-gray-600 text-white -top-10 left-1`}
+          classNames={`absolute bg-gray-600 text-white text-lg -top-10 left-1`}
           share={share} setShare={setShare}
           setPlatform={setPlatform}
           eventTitle={reduceTextLength(post.body, 25, 'letter')}

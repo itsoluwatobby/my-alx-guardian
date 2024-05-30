@@ -11,9 +11,11 @@ type DebouncedType = { val: string; isTyping: boolean, event: TypingEvent }
 type GuardianContextType = {
   theme: Theme;
   showTitle: boolean;
-  loggedInUserId: string
+  loggedInUserId: string;
+  currentPost: Partial<PostType>;
   setTheme: React.Dispatch<React.SetStateAction<Theme>>;
   setShowTitle: React.Dispatch<React.SetStateAction<boolean>>;
+  setCurrentPost: React.Dispatch<React.SetStateAction<Partial<PostType>>>
 }
 
 type Toggle = 'OPEN' | 'CLOSE'

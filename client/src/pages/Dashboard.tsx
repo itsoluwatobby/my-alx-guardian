@@ -30,7 +30,7 @@ export default function Dashboard() {
     { screenPosition: '0px', threshold: 0.4 },
   );
   const [appState, setAppState] = useState<AppStateType>(initAppState);
-  // const { theme } = useGuardianContext() as GuardianContextType;
+
   const [appState1, setAppState1] = useState<AppStateType>(initAppState);
   const [startSearch, setStartSearch] = useState<boolean>(false);
   const [posts, setPosts] = useState<PostType[]>([]);
