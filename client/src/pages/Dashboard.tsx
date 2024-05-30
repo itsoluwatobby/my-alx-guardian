@@ -1,16 +1,17 @@
-import { Input } from "../components/component/Input";
-import { useEffect, useState } from "react";
-import { Article } from "../components/dashbord/Article";
-import { MetaTags } from "../layouts/MetaTagsOGgraph";
-import useDeboundedInput from "../hooks/useDeboundedInput";
-import { MAX_LENGTH } from "../utility/constants";
+import PostSkeletonLoading from "../components/skeletonLoading/PostSkeletonLoading";
 import { guardianAsyncWrapper } from "../app/guardianAsyncWrapper";
+import useDeboundedInput from "../hooks/useDeboundedInput";
+import RenderTemplate from "../components/RenderTemplate";
+import { Article } from "../components/dashbord/Article";
+import { initAppState } from "../utility/initVaraibles";
+import { MetaTags } from "../layouts/MetaTagsOGgraph";
+import { Input } from "../components/component/Input";
 import { sanitizeEntries } from "../utility/helpers";
 import { postAPI } from "../app/api-calls/post.api";
-import { initAppState } from "../utility/initVaraibles";
-import PostSkeletonLoading from "../components/skeletonLoading/PostSkeletonLoading";
-import { useGuardianContext } from "../hooks/useGuardianContext";
-import { MdRunningWithErrors } from "react-icons/md";
+import { MAX_LENGTH } from "../utility/constants";
+import { useEffect, useState } from "react";
+import useObserver from "../hooks/useObserver";
+import Loading from "../components/Loading";
 
 type SearchResult = {
   prevQuery: string;
@@ -25,21 +26,35 @@ export default function Dashboard() {
   const [expandDetail, setExpandDetail] = useState<ExpandDetailsType>(
     { id: '', toggle: 'CLOSE' }
   );
+  const { observerRef, isIntersecting } = useObserver(
+    { screenPosition: '0px', threshold: 0.4 },
+  );
   const [appState, setAppState] = useState<AppStateType>(initAppState);
-  const { theme } = useGuardianContext() as GuardianContextType;
+  // const { theme } = useGuardianContext() as GuardianContextType;
   const [appState1, setAppState1] = useState<AppStateType>(initAppState);
+  const [startSearch, setStartSearch] = useState<boolean>(false);
   const [posts, setPosts] = useState<PostType[]>([]);
+  const [paginate, setPaginate] = useState<Pagination>({
+    pages: { previous: null, current: null, next: null },
+    length: 0, pagesLeft: 0, numberOfPages: 0,
+  });
   const [postQuery, setPostQuery] = useState<PostQuery>({
-    pageNumber: 1, limit: 5,
+    pageNumber: 1, limit: 100,
   });
 
+  console.log(isIntersecting);
+
+  const { pages, pagesLeft } = paginate;
+  console.log(postQuery)
+
   const { loading, isError, error } = appState;
-  const { loading: isLoading, res } = appState1;
+  const { loading: loading1 } = appState1;
   const { pageNumber, limit } = postQuery;
 
   useEffect(() => {
     if (!val || isTyping || loading) return;
     guardianAsyncWrapper(async () => {
+      if (val.length < 3) return;
       if (searchResult.prevQuery === val) return;
       setAppState(prev => ({ ...prev, loading: true }));
       const searchQuery = sanitizeEntries({ val })
@@ -53,50 +68,61 @@ export default function Dashboard() {
     guardianAsyncWrapper(async () => {
       setAppState1(prev => ({ ...prev, loading: true }));
       const res = await postAPI.findPosts({ pageNumber, limit });
-      // console.log(res);
-      setAppState1(prev => ({ ...prev, res: res.data?.pageable }))
+      setPaginate(res.data.pageable)
       setPosts(res.data.data);
     }, setAppState1);
   }, [pageNumber, limit])
 
-  console.log(res);
+  // useEffect(() => {
+  //   if (isIntersecting && pages.next !== null && pagesLeft !== 0) {
+  //     setPostQuery(prev => ({
+  //       ...prev, pageNumber: prev.pageNumber + 1,
+  //       limit: prev.limit,
+  //     }));
+  //   }
+  // }, [pages.previous, pages.next, isIntersecting, pagesLeft])
+
+  const sortedPosts = posts.slice().sort((a, b) => b.createdAt.localeCompare(a?.createdAt))
 
   return (
-    <section className="flex flex-col flex-auto rounded-md overflow-y-scroll h-full shadow-md p-3 px-2">
+    <section className="flex flex-col flex-auto rounded-md overflow-y-scroll h-full shadow-md p-3 pb-10 px-2">
       <MetaTags
         title='Dashboard'
         description='Post page for all content'
         url=''
         image=''
       />
-      <div className="w-full flex justify-center z-20 sticky top-0">
-        <Input search={search} setSearch={setSearch} />
+      <div
+        onClick={() => setStartSearch(prev => !prev)}
+        className="w-full flex justify-end z-20 sticky top-0">
+        <Input
+          search={search} setSearch={setSearch}
+          classNames={`${startSearch ? 'w-full' : 'w-8 hover:scale-[1.05]'} transition-transform rounded-full active:scale-[1] transition-transform`}
+          placeholder=""
+          searchClassNames=""
+          inputClassNames={`hidden w-8 rounded-full`}
+        />
       </div>
-      <div className="flex flex-col flex-auto py-4 gap-4">
+
+      <RenderTemplate
+        defaultMessage={'No Posts Available'}
+        isLoading={loading1} isError={isError} content={sortedPosts}
+        LoadingComponent={PostSkeletonLoading} error={error}
+      >
         {
-          isLoading ?
-            [...Array(3).keys()].map((i) => (
-              <PostSkeletonLoading key={i} />
-            ))
-          :
-          isError ? 
-            <div className="mt-10 flex capitalize flex-col items-center gap-y-3">
-              <MdRunningWithErrors className="size-20" />
-              {error}
-            </div>
-          :
-          posts.length ?
-            posts?.map((post) => (
-              <Article key={post._id} post={post}
+          sortedPosts?.map((post) => (
+            <Article key={post._id} post={post} setPosts={setPosts}
               expandDetail={expandDetail} setExpandDetail={setExpandDetail}
-              />
-            ))
-            :
-            <div className="text-center mt-10 text-3xl">
-              Not posts Available
-            </div>
+            />
+          ))
         }
-      </div>
+      </RenderTemplate>
+      <section ref={observerRef}
+      className="flex items-center justify-center"
+      >
+        {loading1 ? <Loading classNames="size-10 self-center" /> : null}
+        <span>{pagesLeft === 0 ? 'No more posts' : ''}</span>
+      </section>
     </section>
   )
 }

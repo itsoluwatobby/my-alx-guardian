@@ -151,6 +151,10 @@ class CommentService {
       }
       const deletedComment = await commentRepository.deleteComment({ _id: id });
       if (!deletedComment) throwError(404, 'Error deleting comment');
+      await postsRepository.updatePost(
+        commentObj.postId,
+        { $inc: { commentCount: -1 } },
+      );
       return {
         data: deletedComment._id,
         message: 'BE: Comment deleted',

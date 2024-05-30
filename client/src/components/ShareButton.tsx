@@ -12,10 +12,11 @@ type ShareButtonProps = {
   link: string;
   hashtags?: string[];
   share: boolean;
-  setShare: React.Dispatch<React.SetStateAction<boolean>>
+  setShare: React.Dispatch<React.SetStateAction<boolean>>;
+  setPlatform: React.Dispatch<React.SetStateAction<Platform>>;
 }
 
-export default function ShareButton({ share, setShare, classNames, eventTitle, link, hashtags }: ShareButtonProps) {
+export default function ShareButton({ share, setShare, classNames, eventTitle, link, hashtags, setPlatform }: ShareButtonProps) {
 
   const iconClassNames = "cursor-pointer hover:scale-[1.04] active:scale-[1] transition-transform";
 
@@ -27,10 +28,14 @@ export default function ShareButton({ share, setShare, classNames, eventTitle, l
     }
     await navigator.clipboard.writeText(link);
     setShare(false);
+    setPlatform(prev => ({ ...prev, name: 'Copied' }))
     toast.info('link copied!!')
   }
 
-  const onclick = () => setShare(false);
+  const onclick = (name: PlatformNames) => {
+    setPlatform(prev => ({ ...prev, name }));
+    setShare(false)
+  };
 
   return (
     <article className={`${share ? 'scale-[1]' : 'scale-0'} duration-300 transition-transform flex gap-2.5 p-3 rounded-lg shadow-xl ${classNames}`}> 
@@ -40,7 +45,7 @@ export default function ShareButton({ share, setShare, classNames, eventTitle, l
         title={eventTitle} url={link}
       >
         <IoLogoWhatsapp 
-        onClick={onclick}
+        onClick={() => onclick('Whatsapp')}
         className={iconClassNames} />
       </WhatsappShareButton>
 
@@ -49,7 +54,7 @@ export default function ShareButton({ share, setShare, classNames, eventTitle, l
         >
         <FaSquareXTwitter 
           className={iconClassNames} 
-          onClick={onclick}
+          onClick={() => onclick('Twitter')}
         />
       </TwitterShareButton>
 
@@ -57,7 +62,7 @@ export default function ShareButton({ share, setShare, classNames, eventTitle, l
         title={eventTitle} url={link} 
         >
         <FaFacebookSquare 
-          onClick={onclick}
+          onClick={() => onclick('Facebook')}
           className={iconClassNames} 
           />
       </FacebookShareButton>
@@ -66,7 +71,7 @@ export default function ShareButton({ share, setShare, classNames, eventTitle, l
         title={eventTitle} url={link} 
         >
         <FaTelegram className={iconClassNames} 
-        onClick={onclick}
+        onClick={() => onclick()}
         />
       </TelegramShareButton> */}
 
@@ -74,7 +79,7 @@ export default function ShareButton({ share, setShare, classNames, eventTitle, l
         title={eventTitle} url={link}
       >
         <FaLinkedin className={iconClassNames}
-          onClick={onclick}
+          onClick={() => onclick('LinkedIn')}
         />
       </LinkedinShareButton>
     </article>

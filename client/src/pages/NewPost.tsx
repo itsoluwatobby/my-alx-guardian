@@ -96,7 +96,8 @@ export const NewPost = () => {
           <button
             disabled={!loading && !canSubmit}
             onClick={handleSubmit}
-            className={`${markdownText ? 'bg-[#0fa814]' : 'cursor-not-allowed bg-green-800'} ${loading ? '' : ''} transition-colors py-1 px-4 text-sm rounded-[3px] mr-1`}>{loading ? <Loading classNames='size-3' /> : 'Submit'}</button>
+            className={`${markdownText ? 'bg-[#0fa814]' : 'cursor-not-allowed bg-green-800'} ${loading ? '' : ''} transition-colors py-1 px-4 text-sm rounded-[3px] mr-1`}>{loading ? <Loading classNames='size-3' /> : 'Submit'}
+          </button>
           <button
             onClick={() => setPreview(prev => !prev)}
             className='py-1 px-2 text-sm rounded-[3px] bg-gray-600 mr-1'>{preview ? 'Editor' : 'Preview'}</button>

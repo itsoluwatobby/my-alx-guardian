@@ -73,8 +73,9 @@ export default function DashboardLayout() {
 
               <div className={`absolute left-0 top-10 w-full ${addItem ? 'flex' : 'hidden'} h-full ${theme === 'light' ? 'bg-gradient-to-b from-[#faeff5] from-[60%] to-transparent' : 'bg-gradient-to-b from-[#3e3e3e] from-[40%] to-[#606060] text-[#ffffff]'} opacity-90 rounded-md justify-center z-20`}>
                 <Input search={input} setSearch={setInput} 
-                classNames="text-sm -mt-28 shadow-md" inputClassNames="px-2" excludeSearch={true} max={15}
-                placeholder={`add ${'forum' || 'cohort'}`}
+                classNames="text-sm -mt-28 shadow-md" inputClassNames="px-2"
+                excludeSearch={true} max={15}
+                placeholder={`add ${'Forums' || 'Cohorts'}`}
                 />
               </div>
             </div>
