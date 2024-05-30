@@ -31,7 +31,13 @@ class PostService {
 
   async updatePost(postObj, activeId) {
     return tryCatchWrapperWithError(async () => {
-      const validationResponse = updatePostValidator(postObj);
+      const validationResponse = updatePostValidator(
+        {
+          id: postObj.id,
+          body: postObj.body,
+          userId: postObj.userId,
+        },
+      );
       if (!validationResponse.valid) {
         throw new Error(validationResponse.error);
       }

@@ -17,7 +17,7 @@ exports.createCategoryValidator = (data) => {
       .messages({
         'any.required': 'category is required',
       }),
-    banner: Joi.string()
+    banner: Joi.string().optional()
       .messages({
         'any.required': 'picture is required',
       }),
@@ -25,7 +25,7 @@ exports.createCategoryValidator = (data) => {
       .messages({
         'any.required': 'authorId is required',
       }),
-    description: Joi.string()
+    description: Joi.string().optional()
       .messages({
         'any.required': 'description is required',
       }),
@@ -45,7 +45,7 @@ exports.updateCategoryValidator = (data) => {
         .messages({
           'any.required': 'category.type is required',
         }),
-      name: Joi.string()
+      name: Joi.string().optional()
         .messages({
           'any.required': 'category.name is required',
         }),
@@ -57,7 +57,7 @@ exports.updateCategoryValidator = (data) => {
       .messages({
         'any.required': 'id is required',
       }),
-    banner: Joi.string()
+    banner: Joi.string().optional()
       .messages({
         'any.required': 'banner is required',
       }),
@@ -65,7 +65,7 @@ exports.updateCategoryValidator = (data) => {
       .messages({
         'any.required': 'authorId is required',
       }),
-    description: Joi.string()
+    description: Joi.string().optional()
       .messages({
         'any.required': 'description is required',
       }),
