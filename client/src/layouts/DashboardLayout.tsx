@@ -1,45 +1,95 @@
 import { useState } from "react";
 import { FaMinusSquare, FaPlusSquare } from "react-icons/fa";
 import { MdArrowDropDown } from "react-icons/md";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import { Input } from "../components/component/Input";
 import { useGuardianContext } from "../hooks/useGuardianContext";
+// import { guardianAsyncWrapper } from "../app/guardianAsyncWrapper";
+// import { categoryAPI } from "../app/api-calls/category.api";
+// import { initAppState } from "../utility/initVaraibles";
 
-type Toggles = 'forums' | 'cohorts'
+type Toggles = 'Forums' | 'Cohorts'
 type ToggleStates = Record<Toggles, boolean>;
 
 export default function DashboardLayout() {
-  const { theme } = useGuardianContext() as GuardianContextType;
+  const { pathname } = useLocation();
+  const { theme, loggedInUserId } = useGuardianContext() as GuardianContextType;
   const [addItem, setAddItem] = useState<boolean>(false);
   const [input, setInput] = useState<string>('');
-  const [toggle,setToggle] = useState<ToggleStates>({} as ToggleStates);
+
+  // const [categories, setCategories] = useState<CategoryObjType[]>([]);
+  // const [paginate, setPaginate] = useState<Pagination>({
+  //   pages: { previous: null, current: null, next: null },
+  //   length: 0, pagesLeft: 0, numberOfPages: 0,
+  // });
+  // const [postQuery] = useState<PostQuery>({
+    // pageNumber: 1, limit: 100,
+  // });
+  // const [appState, setAppState] = useState<AppStateType>(initAppState);
+  // const [appStateCreateCategory, setAppStateCreateCategory] = useState<AppStateType>(initAppState);
+  const [toggle, setToggle] = useState<ToggleStates>({} as ToggleStates);
+  // const [type, setType] = useState<CategoryType>('General');
+  
+  // const { pageNumber, limit } = postQuery;
 
   const rightBar = [
     { name: 'home', link: '/dashboard' },
-    { name: 'profile', link: '/profile/1234' },
-    { name: 'create post', link: '/new-post' },
+    // { name: 'profile', link: '/profile/1234' },
+    { name: 'create post', link: loggedInUserId ? '/new-post' : '/signin'  },
     {
-      name: 'forums',
-      link: () => setToggle(prev => ({ cohorts: false, forums: !prev.forums })), Icon: MdArrowDropDown
+      name: 'Forums',
+      link: () => setToggle(prev => ({ Cohorts: false, Forums: !prev.Forums })), Icon: MdArrowDropDown
     },
     {
-      name: 'cohorts',
-      link: () => setToggle(prev => ({ ...prev, forums: false, cohorts: !prev.cohorts })),
+      name: 'Cohorts',
+      link: () => setToggle(prev => ({ ...prev, Forums: false, Cohorts: !prev.Cohorts })),
       Icon: MdArrowDropDown
     },
   ]
-// console.log(input)
+
+  // useEffect(() => {
+  //   if (toggle.Cohorts) setType('Cohorts');
+  //   else if (toggle.Forums) setType('Forums');
+  //   else setType('General');
+  // }, [toggle.Cohorts, toggle.Forums])
+
+  // useEffect(() => {
+  //   if (type === 'General') return;
+  //   guardianAsyncWrapper(async () => {
+  //     setAppState(prev => ({ ...prev, loading: true }));
+  //     const res = await categoryAPI.findCategories(
+  //       { pageNumber, limit, type },
+  //     );
+  //     console.log(res.data)
+  //     setPaginate(res.data.pageable)
+  //     setCategories(res.data.data);
+  //   }, setAppState);
+  // }, [pageNumber, limit, type])
+
+  // const createCategory = () => {
+  //   if (appStateCreateCategory.loading) return;
+  //   guardianAsyncWrapper(async () => {
+  //     setAppStateCreateCategory(prev => ({ ...prev, loading: true }));
+  //     const res = await categoryAPI.createCategory(
+  //       { userId: loggedInUserId, title: 'New World' }
+  //     );
+  //     setPost(res.data);
+  //     setIsLiked(res.data.likes.includes(loggedInUserId));
+  //   }, setAppStateCreateCategory);
+  // }
+  // const c: CreateCategoryRequest
+
   const ForumsCommon = ['Java', 'C', 'Javascript', 'Python', 'Bash', 'Linus']
 
   return (
     <main className="flex items-center h-full w-full">
       <div className="flex items-center h-full w-full">
-        <aside className="sticky top-14 flex flex-col justify-between py-4 px-1 h-[90vh] -mt-14 shadow-inner max-w-1/4 min-w-48 midscreen:hidden">
+        <aside className="sticky top-14 flex flex-col justify-between py-4 px-1 h-[90vh] -mt-14 shadow-inner max-w-1/4 md:w-[28%] min-w-48 midscreen:hidden">
           <div className="flex flex-col gap-y-6 pl-10 py-8 border-b w-full">
             {
               rightBar.map(nav => (
                 !nav.Icon ?
-                  <Link to={nav.link} key={nav.name}
+                  <Link to={nav.link} state={pathname} key={nav.name}
                   className="capitalize"
                   >{nav.name}</Link>
                 :
@@ -53,9 +103,9 @@ export default function DashboardLayout() {
             }
           </div>
 
-          <div className={`relative ${toggle.forums ? 'flex' : 'hidden'} flex-col gap-y-4 py-3 flex-auto w-full`}>
+          <div className={`relative ${(!toggle.Forums && !toggle.Cohorts) ? 'hidden' : 'flex'} flex-col gap-y-4 py-3 flex-auto w-full`}>
             <div className={`w-fit flex items-center gap-x-2 self-center`}>
-              <h4 className="underline underline-offset-4 self-center">Forums</h4>
+              <h4 className="underline underline-offset-4 self-center">{toggle.Forums ? 'Forums' : 'Cohorts'}</h4>
               {
                 addItem ? 
                 <FaMinusSquare 
@@ -75,7 +125,7 @@ export default function DashboardLayout() {
                 <Input search={input} setSearch={setInput} 
                 classNames="text-sm -mt-28 shadow-md" inputClassNames="px-2"
                 excludeSearch={true} max={15}
-                placeholder={`add ${'Forums' || 'Cohorts'}`}
+                placeholder={`Add ${'Forums' || 'Cohorts'}`}
                 />
               </div>
             </div>
@@ -104,7 +154,7 @@ export default function DashboardLayout() {
 
         <Outlet />
 
-        <aside className="md:flex flex-col h-full overflow-y-scroll shadow-inner w-1/4 hidden">
+        <aside className="hidden mdflex flex-col h-full overflow-y-scroll shadow-inner w-1/4">
 
         </aside>
       </div>

@@ -6,7 +6,7 @@ export default function PostSkeletonLoading() {
   const bgClasses = 'shadow-slate-800 rounded-md border border-gray-300 bg-[#606065]';
 
   return (
-    <article className={`relative flex gap-x-2`}>
+    <article className={`relative flex gap-x-2 w-full`}>
       <SkeletonLoading classes='profile-circle bg-[#606065]' />
 
       <section className="flex flex-col w-full">

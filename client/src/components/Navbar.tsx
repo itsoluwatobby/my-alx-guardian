@@ -19,7 +19,7 @@ type NavbarProps = {
 
 export default function Navbar({ setOpenSidebarModal }: NavbarProps) {
   const navigate = useNavigate();
-  const { currentPost, theme, setTheme, showTitle } = useGuardianContext() as GuardianContextType;
+  const { currentPost, theme, setTheme, loggedInUserId, showTitle } = useGuardianContext() as GuardianContextType;
   const { pathname } = useLocation();
   const { postId } = useParams();
   const userRef = useRef<HTMLDivElement>(null);
@@ -33,19 +33,18 @@ export default function Navbar({ setOpenSidebarModal }: NavbarProps) {
     return `self-end w-1 h-1 rounded-sm ${theme === 'light' ? 'bg-black' : 'bg-white'} -translate-y-1 mx-[1px]`
   }, [])
 
-  const AuthenticatedRoutes = ['/dashboard'];
   const navigation = [
     [
       { name: 'Home', link: pathname === '/' ? '#' : '/' },
       { name: 'Sign in', link: '/signin' },
       { name: 'Sign up', link: '/signup' },
-      { name: 'About', link: '#about' },
-      { name: 'FAQ', link: '#faq' },
-      { name: 'Contact', link: '#contact' },
+      // { name: 'About', link: '#about' },
+      // { name: 'FAQ', link: '#faq' },
+      // { name: 'Contact', link: '#contact' },
     ],
     [
       { name: 'Dashboard', link: '/dashboard' },
-      { name: 'Profile', link: '/profile' },
+      // { name: 'Profile', link: '/profile' },
       // { name: 'Logout', link: logout },
     ]
   ];
@@ -66,7 +65,7 @@ export default function Navbar({ setOpenSidebarModal }: NavbarProps) {
 
       <div className="self-center md:flex justify-betwee gap-12 items-center w-fi hidden">
         {
-          navigation[AuthenticatedRoutes.includes(pathname) ? 1 : 0].map(nav => (
+          navigation[loggedInUserId ? 1 : 0].map(nav => (
             <a href={nav.link} key={nav.name}
             onClick={() => setActiveLink(nav.link)}
             className={`${activeLink === nav.link ? 'underline' : ''} hover:opacity-95 hover:underline underline-offset-4 transition-all text-[15px]`}>

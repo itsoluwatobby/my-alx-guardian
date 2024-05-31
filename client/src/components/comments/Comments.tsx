@@ -16,6 +16,7 @@ type CommentsProps = {
   expandDetail: ExpandDetailsType;
   setPosts: React.Dispatch<React.SetStateAction<PostType[]>>;
   setExpandDetail: React.Dispatch<React.SetStateAction<ExpandDetailsType>>;
+  // setReload: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export default function Comments({ expandDetail, setPosts, setExpandDetail, postId }: CommentsProps) {
