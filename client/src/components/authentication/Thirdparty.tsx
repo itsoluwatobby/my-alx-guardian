@@ -3,7 +3,7 @@ import { FaGithub } from 'react-icons/fa';
 import { thirdPartyAuthentication } from '../../utility/thirdpartySignups';
 import { useLocation, useNavigate } from 'react-router-dom';
 // import React from 'react';
-import useLocalStorage from '../../utility/localStorage';
+// import useLocalStorage from '../../utility/localStorage';
 import { toast } from 'react-toastify';
 
 // type ThirdPartyLoginProps = {
