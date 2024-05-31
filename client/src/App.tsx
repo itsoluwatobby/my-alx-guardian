@@ -22,7 +22,7 @@ import AccountVerification from './pages/AccountVerification';
 import SuccessVerification from './pages/SuccessVerification';
 
 function App() {
-  const { setTheme, theme } = useGuardianContext() as GuardianContextType;
+  const { setTheme, theme, loggedInUserId } = useGuardianContext() as GuardianContextType;
   const [openSidebarModal, setOpenSidebarModal] = useState<boolean>(false);
 
   return (
@@ -60,7 +60,7 @@ function App() {
       </Routes>
 
       <Sidebar
-        theme={theme} setTheme={setTheme}
+        theme={theme} setTheme={setTheme} loggedInUserId={loggedInUserId}
         openSidebarModal={openSidebarModal} setOpenSidebarModal={setOpenSidebarModal}
       />
 

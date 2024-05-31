@@ -94,7 +94,7 @@ export default function Dashboard() {
       />
       <div
         onClick={() => setStartSearch(prev => !prev)}
-        className="w-full flex justify-end z-20 sticky top-0">
+        className="w-full hidden mflex justify-end z-20 sticky top-0">
         <Input
           search={search} setSearch={setSearch}
           classNames={`${startSearch ? 'w-full' : 'w-8 hover:scale-[1.05]'} transition-transform rounded-full active:scale-[1] transition-transform`}

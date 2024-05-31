@@ -52,12 +52,23 @@ export default function Post() {
   useEffect(() => {
     if (!postId) return;
     guardianAsyncWrapper(async () => {
+      setAppState(prev => ({ ...prev, loading: true }));
       const res = await postAPI.getPost(postId);
       setPost(res.data);
       setCurrentPost(res.data)
     }, setAppState);
   }, [postId, setCurrentPost])
-
+  
+  const reloaded = () => {
+    // if (!postId) return;
+    guardianAsyncWrapper(async () => {
+      // setAppState(prev => ({ ...prev, loading: true }));
+      const res = await postAPI.getPost(postId as string);
+      setPost(res.data);
+      setCurrentPost(res.data)
+    }, () => {});
+  }
+  // }, [postId, setCurrentPost])
 
   useEffect(() => {
     if (!post.userId) return;
@@ -114,7 +125,7 @@ export default function Post() {
 
   return (
     <div
-      className="relative flex flex-col gap-2 h-full p-4 md:px-10 overflow-y-scroll">
+      className="relative flex flex-col gap-2 h-full w-full p-4 md:px-10 overflow-y-scroll">
       <section
         ref={observerRef}
         className={`${isIntersecting ? 'scale-1' : 'scale-0'} transition-transform flex items-center gap-x-3`}>
@@ -137,8 +148,8 @@ export default function Post() {
 
       <section
         // ref={expandDetail.toggle === 'CLOSE' ? null : scrollRef}
-        className="relative flex flex-col gap-y-2 pb-10">
-        <div className="text-[13px] flex flex-col gap-y-4 cursor-default mt-1">
+        className="relative flex flex-col gap-y-2 pb-10 w-full">
+        <div className="text-[13px] w-full flex flex-col gap-y-4 cursor-default mt-1">
           {
             appState?.loading ?
               <PostSkeletonLoading />
@@ -190,8 +201,9 @@ export default function Post() {
         </div>
 
         <Comments
-          setExpandDetail={setExpandDetail} setPosts={() => { }}
-          expandDetail={expandDetail} postId={post._id} />
+          setExpandDetail={setExpandDetail} setPosts={reloaded}
+          expandDetail={expandDetail} postId={post._id} 
+          />
 
       </section>
     </div>

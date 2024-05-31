@@ -119,7 +119,9 @@ export const Article = ({ post, setPosts, expandDetail, setExpandDetail }: Artic
 
         <Comments
           setExpandDetail={setExpandDetail} setPosts={setPosts}
-          expandDetail={expandDetail} postId={post._id} />
+          expandDetail={expandDetail} postId={post._id} 
+          
+          />
 
       </section>
 

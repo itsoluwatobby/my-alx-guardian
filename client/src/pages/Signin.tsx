@@ -1,10 +1,10 @@
+import { PasswordInputs } from "../components/authentication/PasswordInputs";
 import { ChangeEvent, useEffect, useState } from "react";
 import { ActionButton } from "../components/ActionButton";
-import { PasswordInputs } from "../components/authentication/PasswordInputs";
 import { FormInputs } from "../components/FormInputs";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import useLocalStorage from '../utility/localStorage';
-import ThirdPartyLogin from "../components/authentication/Thirdparty";
+// import ThirdPartyLogin from "../components/authentication/Thirdparty";
 import { guardianAsyncWrapper } from "../app/guardianAsyncWrapper";
 import { toast } from "react-toastify";
 import { MetaTags } from "../layouts/MetaTagsOGgraph";
@@ -82,7 +82,7 @@ export default function Signin() {
             />
             <span>Remember me</span>
           </div>
-          <Link to={'/forgotPassword'} className='text-gray-200 hover:underline underline-offset-2 hover:opacity-90 transition-all'>Forgot Password?</Link>
+          <Link to={'/forgotPassword'} className='text-gray-200 hover:underline underline-offset-2 hover:opacity-90 transition-all text-[13px]'>Forgot Password?</Link>
         </div>
 
         <ActionButton
@@ -96,13 +96,13 @@ export default function Signin() {
             <span>Don't have an Account?&nbsp;</span>
             <Link to='/signup' className='cursor-pointer text-[#14F400]'>Sign Up</Link>
           </div>
-          <span>or continue with</span>
+          {/* <span>or continue with</span> */}
 
-          <ThirdPartyLogin
+          {/* <ThirdPartyLogin
             // showModal={showModal}
             // setLoading={setAppState}
-          // setShowModal={setShowModal} 
-          />
+          // setShowModal={setShowModal}  */}
+          {/* /> */}
         </div>
       </form>
 

@@ -4,7 +4,7 @@ import { validation_regex } from "../utility/validation";
 import { PasswordInputs } from "../components/authentication/PasswordInputs";
 import { FormInputs } from "../components/FormInputs";
 import { Link, useNavigate } from "react-router-dom";
-import ThirdPartyLogin from "../components/authentication/Thirdparty";
+// import ThirdPartyLogin from "../components/authentication/Thirdparty";
 import { guardianAsyncWrapper } from "../app/guardianAsyncWrapper";
 import { toast } from "react-toastify";
 import { authenticationAPI } from "../app/api-calls/auth.api";
@@ -102,13 +102,13 @@ export default function Signup() {
             <span>Already have an Account?&nbsp;</span>
             <Link to='/signin' className='cursor-pointer text-[#14F400]'>Sign In</Link>
           </div>
-          <span>or continue with</span>
+          {/* <span>or continue with</span> */}
 
-          <ThirdPartyLogin
+          {/* <ThirdPartyLogin
             // showModal={showModal}
             // setLoading={setAppState}
           // setShowModal={setShowModal} 
-          />
+          /> */}
         </div>
       </form>
 

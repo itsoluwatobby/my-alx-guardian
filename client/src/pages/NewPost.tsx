@@ -54,17 +54,17 @@ export const NewPost = () => {
   useEffect(() => {
     if (isEditPost && editPost.body) {
       const hasEditPost = localStore.getStorage(postId as string, false) as string ?? '';
-      setMarkdownText(hasEditPost ?? editPost.body)
+      setMarkdownText(hasEditPost.length > 0 ? hasEditPost : editPost.body)
     }
   }, [isEditPost, editPost.body, postId])
 
   useEffect(() => {
-    if (!postId) return;
+    if (!postId || loadingEdit) return;
     guardianAsyncWrapper(async () => {
       const res = await postAPI.getPost(postId);
       setEditPost(res.data)
     }, setAppStateEdit);
-  }, [postId])
+  }, [postId, loadingEdit])
 
   useEffect(() => {
     if (val?.length && !isTyping && !postId) {
@@ -92,11 +92,12 @@ export const NewPost = () => {
         const { _id, category, ...rest } = editPost;
         const editedPost: UpdatePostRequest = {
           ...rest,
-          id: _id,
+          id: _id, body: val,
           category: { type: category.type },
         };
         await postAPI.updatePost(editedPost);
         localStore.removeStorage(postId as string);
+        toast.info('Post updated!');
       } else {
         const newPost: CreatePostRequest = {
           userId: loggedInUserId, body: val,
@@ -104,9 +105,9 @@ export const NewPost = () => {
         }
         await postAPI.createPost(newPost);
         localStore.removeStorage(userId);
+        toast.info('Post created!');
       }
       setMarkdownText('');
-      toast.info('Post created!');
       navigate('/dashboard');
     }, setAppState);
   }
