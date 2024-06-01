@@ -9,6 +9,10 @@ export const AUTH = {
     method: HTTP_METHOD.POST,
     url: '/auth/register'
   },
+  thirdParty: {
+    method: HTTP_METHOD.POST,
+    url: '/auth/thirdParty'
+  },
   accountActivation: {
     method: HTTP_METHOD.POST,
     url: '/auth/accountActivation'
@@ -33,4 +37,4 @@ export const AUTH = {
     method: HTTP_METHOD.PUT,
     url: '/auth/verifyOTP'
   },
-};
+} as const;

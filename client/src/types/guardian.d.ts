@@ -64,6 +64,10 @@ type RegistrationResponse = ResponseTemplate & {
   data: { id: string; email: string; }
 }
 
+type ThirdPartyRequest = Omit<UserInfoType, 'confirmPassword' | 'password'> & {
+  picture: string, provider: Provider;
+}
+
 type ErrorResponse = {
   response: {
     data: ResponseTemplate & { error: object; }
