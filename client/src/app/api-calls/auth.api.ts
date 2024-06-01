@@ -2,7 +2,7 @@ import { guardianAPI } from "../config";
 import { AUTH } from "../endpoints/auth.endpoints";
 
 const {
-  signin, accountActivation, register, signout, verifyOTP,
+  signin, accountActivation, thirdParty, register, signout, verifyOTP,
   resendOTP, forgotPassword, passwordReset,
 } = AUTH;
 
@@ -11,6 +11,12 @@ class AuthenticationAPI{
   async signup(newUser: RegistrationRequest): Promise<RegistrationResponse> {
     const response = await guardianAPI[register.method](
       register.url, newUser) as { data: RegistrationResponse };
+    return response.data
+  }
+
+  async thirdParty(newUser: ThirdPartyRequest): Promise<LoginResponse> {
+    const response = await guardianAPI[thirdParty.method](
+      thirdParty.url, newUser) as { data: LoginResponse };
     return response.data
   }
 

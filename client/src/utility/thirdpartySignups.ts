@@ -15,13 +15,10 @@ class ThirdPartyAuthentication {
     });
   }
 
-  async googleSignup(): Promise<{user: any; token: string}> {
+  async googleSignup(): Promise<any> {
     try {
-      const result = await signInWithPopup(this.auth, this.googleProvider)
-      const credential = GoogleAuthProvider.credentialFromResult(result)!;
-      const token = credential.accessToken as string;
-      const user = result.user;
-      return { user, token }
+      const result = await signInWithPopup(this.auth, this.googleProvider);
+      return result.user;
     }
     catch (error: any) {
       // The AuthCredential type that was used.
@@ -30,15 +27,10 @@ class ThirdPartyAuthentication {
       return error;
     }
   }
-  async githubSignup(): Promise<{user: any; token: string}> {
+  async githubSignup(): Promise<any> {
     try {
-      const result = await signInWithPopup(this.auth, this.githubProvider)
-      const credential = GithubAuthProvider.credentialFromResult(result)!;
-      const token = credential.accessToken as string;
-      const secret = credential.secret as string;
-      const user = result.user;
-      console.log(secret);
-      return { user, token };
+      const result = await signInWithPopup(this.auth, this.githubProvider);
+      return result.user;
     }
     catch (error: any) {
       // The AuthCredential type that was used.

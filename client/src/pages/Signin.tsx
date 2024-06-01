@@ -4,7 +4,7 @@ import { ActionButton } from "../components/ActionButton";
 import { FormInputs } from "../components/FormInputs";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import useLocalStorage from '../utility/localStorage';
-// import ThirdPartyLogin from "../components/authentication/Thirdparty";
+import ThirdPartyLogin from "../components/authentication/Thirdparty";
 import { guardianAsyncWrapper } from "../app/guardianAsyncWrapper";
 import { toast } from "react-toastify";
 import { MetaTags } from "../layouts/MetaTagsOGgraph";
@@ -20,10 +20,6 @@ export default function Signin() {
   const [reveal, setReveal] = useState<boolean>(false);
   const [persistLogin, setPersistLogin] = useState<boolean>(useLocalStorage.getStorage('guardianUser') as boolean ?? false);
   const [user, setUser] = useState<UserCredentialsType>({} as UserCredentialsType);
-  // const [loading, setLoading] = useState<boolean>(false);
-  // const [showModal, setShowModal] = useState<ClientModalType>({
-  //   selection: 'null', modal: false
-  // });
 
   const { loading, isError } = appState;
   const { email, password } = user;
@@ -98,11 +94,11 @@ export default function Signin() {
           </div>
           {/* <span>or continue with</span> */}
 
-          {/* <ThirdPartyLogin
+          <ThirdPartyLogin
             // showModal={showModal}
             // setLoading={setAppState}
           // setShowModal={setShowModal}  */}
-          {/* /> */}
+          />
         </div>
       </form>
 
