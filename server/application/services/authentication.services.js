@@ -261,6 +261,11 @@ class authenticationService {
       }
       const { email, password } = credentials;
       const user = await this.userRepository.getUser(email, true);
+      if (!user) throwError(404, 'Account not found');
+
+      if (user.provider !== Provider.Local) {
+        throwError(403, `Please login with <${user.provider}>`);
+      }
       if (!user.verified) {
         const userOTP = await authOTPRepository.getOTP(email);
         // // if OTP is expired - RESEND
@@ -278,7 +283,6 @@ class authenticationService {
           await mailer.sendMail(mailObj);
           throwError(406, 'OTP expired: Please check your email for the new OTP');
         }
-        throwError(406, 'Please check your email to activate your account');
       }
       // check for matching password
       const matchingPassword = await bcrypt.compare(password, user.password);
