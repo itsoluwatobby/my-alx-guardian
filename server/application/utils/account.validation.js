@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const { Provider } = require('./constants');
 
 const REGEX_PATTERN = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!£%*?&])[A-Za-z\d@£$!%?&]{9,}$/;
 exports.emailCheckValidator = async (data) => {
@@ -51,6 +52,39 @@ exports.registrationValidator = async (data) => {
       }),
   });
   const validationResponse = registrationSchema.validate(data);
+  return {
+    valid: validationResponse.error == null,
+    error: validationResponse.error?.message,
+  };
+};
+
+exports.thirdPartySignInValidator = async (data) => {
+  const { Google, Github } = Provider;
+  const thirdPpartySignInSchema = Joi.object().keys({
+    email: Joi.string().email()
+      .required()
+      .messages({
+        'string.email': 'email is not valid',
+        'any.required': 'email is required',
+      }),
+    firstName: Joi.string().required()
+      .messages({
+        'any.required': 'firstName is required',
+      }),
+    lastName: Joi.string().required()
+      .messages({
+        'any.required': 'lastName is required',
+      }),
+    picture: Joi.string().optional()
+      .messages({
+        'any.required': 'picture is a string',
+      }),
+    provider: Joi.string().valid(Google, Github).required()
+      .messages({
+        'any.required': 'provider is required',
+      }),
+  });
+  const validationResponse = thirdPpartySignInSchema.validate(data);
   return {
     valid: validationResponse.error == null,
     error: validationResponse.error?.message,

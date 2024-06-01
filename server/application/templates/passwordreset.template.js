@@ -26,7 +26,7 @@ exports.passwordresetTemplate = (recipientEmail, username, otp, ttl = 12) => {
               <p>You made an attempt to reset your password</p>
               <p>Please use the One Time Password (OTP) below to authenticate the reset. OTP expires in ${ttl} hours</p>
               <br/>
-              <h2 style='font-size: 2.5rem;'>${otp}</h2>
+              <h2 style='font-size: 2rem;'>${otp}</h2>
               <br/>
             </div>
             <footer>

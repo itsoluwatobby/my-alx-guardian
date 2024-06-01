@@ -13,6 +13,13 @@ class AuthenticationController {
     });
   }
 
+  thirdPartySignIn(req, res) {
+    return tryCatchWrapper(res, async () => {
+      const authentication = await this.authenticationService.thirdPartySignIn(req.body);
+      return res.json(response.success(authentication.data, authentication.message));
+    });
+  }
+
   login(req, res) {
     return tryCatchWrapper(res, async () => {
       const user = await this.authenticationService.login(req.body);

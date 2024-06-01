@@ -7,7 +7,7 @@ const { userRepository } = require('../repositories/user.repository');
 const { tryCatchWrapperWithError } = require('../utils/asyncWrapper');
 const { throwError } = require('../utils/responseAdapter');
 const {
-  registrationValidator, loginValidator,
+  registrationValidator, loginValidator, thirdPartySignInValidator,
   emailCheckValidator, passwordResetValidator,
   otpRequestValidator, otpVerificationValidator,
 } = require('../utils/account.validation');
@@ -87,6 +87,78 @@ class authenticationService {
         },
         message: 'BE: OTP verification successfull',
       };
+    });
+  }
+
+  async createNewThirdPartyUser(user) {
+    return tryCatchWrapperWithError(async () => {
+      const { randomBytes } = await import('node:crypto');
+      const randomPassword = await bcrypt.hash(randomBytes(10).toString('hex'), 10);
+
+      const userObj = {
+        firstName: user?.firstName,
+        lastName: user?.lastName,
+        email: user?.email,
+        password: randomPassword, // generate a dummy password
+        provider: user.provider,
+        verified: true,
+        profilePicture: user?.picture,
+      };
+      const newUser = await userRepository.createUser(userObj);
+      await authOTPRepository.createOTP({
+        email: userObj.email,
+        token: {
+          otp: '', purpose: OTP_PURPOSE.PASS, createdAt: null,
+        },
+      });
+
+      // welcome mail
+      logger.trace(' >>>> Call to mailer service');
+      const mailObj = successTemplate(newUser.email, newUser.firstName, 'account', this.clientLink);
+      await mailer.sendMail(mailObj);
+      const accessToken = createToken(newUser.email, newUser._id, newUser.provider);
+      const result = await this.userRepository.updateUser(newUser._id, { accessToken });
+      return {
+        id: result._id,
+        email: result.email,
+        provider: result.provider,
+        accessToken,
+      };
+    });
+  }
+
+  async thirdPartySignIn(userObj) {
+    return tryCatchWrapperWithError(async () => {
+      const validationResponse = await thirdPartySignInValidator(userObj);
+      if (!validationResponse.valid) {
+        throw new Error(validationResponse.error);
+      }
+      const { email } = userObj;
+
+      // checking if user registered and account is active
+      const emailTaken = await this.userRepository.findUser(email);
+      if (emailTaken) {
+        if (emailTaken.isAccountDeleted) {
+          await this.userRepository.deleteAccount(emailTaken._id);
+          const user = await this.createNewThirdPartyUser(userObj);
+          return { data: user, message: 'BE: Login successful' };
+        }
+        if (emailTaken.provider === Provider.Local) throwError(406, `Email <${email}> already taken`);
+        const accessToken = createToken(emailTaken.email, emailTaken._id, emailTaken.provider);
+        const result = await this.userRepository.updateUser(emailTaken._id, { accessToken });
+        return {
+          data: {
+            id: result._id,
+            email: result.email,
+            provider: result.provider,
+            accessToken,
+          },
+          message: 'BE: Login successful',
+        };
+      }
+      // create user
+      const user = await this.createNewThirdPartyUser(userObj);
+      return { data: user, message: 'BE: Login successful' };
     });
   }
 
