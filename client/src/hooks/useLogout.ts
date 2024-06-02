@@ -13,10 +13,11 @@ export const useLogout = (setOpenSidebarModal: FunctionType) => {
     guardianAsyncWrapper(async () => {
       const userId = localStore.getStorage('my-id') as string;
       localStore.clearStorage();
-      await authenticationAPI.logout({ userId });
       toast.info('Logout successful!')
       setOpenSidebarModal(false);
       navigate('/');
+      const gg = await authenticationAPI.logout({ userId });
+      console.log({ gg });
     }, () => {});
   }
   return logout;

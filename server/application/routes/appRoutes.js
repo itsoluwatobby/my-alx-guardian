@@ -9,7 +9,7 @@ const categoryRoute = require('./category.routes');
 exports.appRoutes = (app) => {
   app.use('/v1/auth', authenticationRoute);
 
-  app.use('/v1/post', publicRoute);
+  app.use('/v1/public', publicRoute);
 
   app.use(verifyAccessToken);
   // after logged in

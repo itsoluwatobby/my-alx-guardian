@@ -7,11 +7,11 @@ export const POST = {
   },
   getPosts: {
     method: HTTP_METHOD.GET,
-    url: '/post/get-posts',
+    url: '/public/get-posts', //  -- public url
   },
   get: {
     method: HTTP_METHOD.GET,
-    url: '/post/get', // :postId
+    url: '/public/get', // :postId  -- public url
   },
   update: {
     method: HTTP_METHOD.PUT,
@@ -35,6 +35,6 @@ export const POST = {
   },
   search: {
     method: HTTP_METHOD.GET,
-    url: '/post/search',
+    url: '/public/search',  //  -- public url
   },
 } as const;

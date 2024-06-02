@@ -7,11 +7,11 @@ export const CATEGORY = {
   },
   getCategories: {
     method: HTTP_METHOD.GET,
-    url: '/category/get-categories',
+    url: '/public/get-categories',  //  -- public url
   },
   get: {
     method: HTTP_METHOD.GET,
-    url: '/category/get', // :categoryId
+    url: '/public/get', // :categoryId  -- public url
   },
   getMembers: {
     method: HTTP_METHOD.GET,
@@ -35,6 +35,6 @@ export const CATEGORY = {
   },
   search: {
     method: HTTP_METHOD.GET,
-    url: '/category/search',
+    url: '/public/search',  //  -- public url
   },
 } as const;

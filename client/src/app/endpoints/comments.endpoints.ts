@@ -7,7 +7,7 @@ export const COMMENT = {
   },
   getComments: {
     method: HTTP_METHOD.GET,
-    url: '/comment/get-comments',
+    url: '/public/get-comments', //  -- public url
   },
   get: {
     method: HTTP_METHOD.GET,
