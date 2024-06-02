@@ -7,7 +7,7 @@ export const USER = {
   },
   get: {
     method: HTTP_METHOD.GET,
-    url: '/user/get', // :userId
+    url: '/public/get', // :userId  -- public url
   },
   update: {
     method: HTTP_METHOD.PUT,
