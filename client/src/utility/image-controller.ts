@@ -13,7 +13,8 @@ export const imageUpload = (image: File, store: StorageType): Promise<ImageRetur
       void(snap)
     },(error: any) => {
         void(error)
-        reject({status: "failed", url: ''})
+        console.log(error.message)
+        reject({ status: "failed", url: '' })
       }, 
       () => {
         getDownloadURL(uploadTask.snapshot.ref)

@@ -17,14 +17,6 @@ exports.createCategoryValidator = (data) => {
       .messages({
         'any.required': 'category is required',
       }),
-    banner: Joi.string().optional()
-      .messages({
-        'any.required': 'banner is required',
-      }),
-    title: Joi.string().optional()
-      .messages({
-        'any.required': 'title is required',
-      }),
     authorId: Joi.string().required()
       .messages({
         'any.required': 'authorId is required',
@@ -60,14 +52,6 @@ exports.updateCategoryValidator = (data) => {
     id: Joi.string().required()
       .messages({
         'any.required': 'id is required',
-      }),
-    banner: Joi.string().optional()
-      .messages({
-        'any.required': 'banner is required',
-      }),
-    title: Joi.string().optional()
-      .messages({
-        'any.required': 'title is required',
       }),
     authorId: Joi.string().required()
       .messages({
