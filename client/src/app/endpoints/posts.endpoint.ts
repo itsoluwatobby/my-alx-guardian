@@ -11,7 +11,7 @@ export const POST = {
   },
   get: {
     method: HTTP_METHOD.GET,
-    url: '/public/get', // :postId  -- public url
+    url: '/public/get-post', // :postId  -- public url
   },
   update: {
     method: HTTP_METHOD.PUT,

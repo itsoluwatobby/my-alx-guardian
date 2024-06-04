@@ -66,7 +66,7 @@ export const Article = ({ post, setPosts, expandDetail, setExpandDetail }: Artic
   }
 
   return (
-    <article className="relative flex gap-2">
+    <article className="relative flex gap-2 shadow p-2">
       <GuardianImages
         imageUri={user?.profilePicture ?? ''}
         alt={user?.firstName ?? ''} isLoading={loading}
@@ -119,9 +119,8 @@ export const Article = ({ post, setPosts, expandDetail, setExpandDetail }: Artic
 
         <Comments
           setExpandDetail={setExpandDetail} setPosts={setPosts}
-          expandDetail={expandDetail} postId={post._id} 
-          
-          />
+          expandDetail={expandDetail} postId={post._id}  
+        />
 
       </section>
 

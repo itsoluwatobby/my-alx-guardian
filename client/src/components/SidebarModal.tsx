@@ -33,7 +33,7 @@ export default function SidebarModal({ theme, loggedInUserId, openSidebarModal, 
       { name: 'Logout', link: logout },
     ]
   ];
-  console.log(loggedInUserId)
+  // console.log(loggedInUserId)/
 
   return (
     <div className={`md:hidden fixed flex justify-between top-0 ${openSidebarModal ? 'translate-x-0' : 'translate-x-[1000px]'} duration-500 transition-transform w-full h-full z-50`}>
@@ -67,7 +67,7 @@ export default function SidebarModal({ theme, loggedInUserId, openSidebarModal, 
 
         <div className={`relative flex flex-col gap-y-6 h-full px-8 py-10 items-end w-full border-b`}>
           {
-            navigation[loggedInUserId.length > 1 ? 1 : 0].map(nav => (
+            navigation[loggedInUserId?.length > 1 ? 1 : 0].map(nav => (
               typeof nav.link === 'string' ?
               <Link to={nav.link} state={pathname} key={nav.name}
                 className="border-b w-[80%] text-right rounded-br-md last:border-b-0 pb-4 hover:opacity-95 hover:pb-[18px] transition-all">

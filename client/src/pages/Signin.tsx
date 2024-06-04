@@ -12,12 +12,14 @@ import { authenticationAPI } from "../app/api-calls/auth.api";
 import { sanitizeEntries } from "../utility/helpers";
 import localStore from "../utility/localStorage";
 import AppStand from "../components/AppStand";
+import { useGuardianContext } from "../hooks/useGuardianContext";
 
 export default function Signin() {
   const navigate = useNavigate();
   const location = useLocation();
   const [appState, setAppState] = useState<AppStateType>({} as AppStateType);
   const [reveal, setReveal] = useState<boolean>(false);
+  const { setLoggedInUserId } = useGuardianContext() as GuardianContextType;
   const [persistLogin, setPersistLogin] = useState<boolean>(useLocalStorage.getStorage('guardianUser') as boolean ?? false);
   const [user, setUser] = useState<UserCredentialsType>({} as UserCredentialsType);
 
@@ -39,9 +41,9 @@ export default function Signin() {
       setAppState(prev => ({ ...prev, loading: true }));
       const credentails = sanitizeEntries({ email, password });
       const res = await authenticationAPI.login(credentails);
-      console.log(res);
       localStore.setStorage('token', res.data.accessToken);
       localStore.setStorage('my-id', res.data.id);
+      setLoggedInUserId(res.data.id);
       toast.success('Signin successful')
       const pathname: string = location.state ? location?.state : '/dashboard';
       navigate(pathname, { replace: true })

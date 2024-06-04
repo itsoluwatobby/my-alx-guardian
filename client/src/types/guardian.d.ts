@@ -13,9 +13,11 @@ type GuardianContextType = {
   showTitle: boolean;
   loggedInUserId: string;
   currentPost: Partial<PostType>;
+  currentUser: Partial<UserType>;
   setTheme: React.Dispatch<React.SetStateAction<Theme>>;
   setShowTitle: React.Dispatch<React.SetStateAction<boolean>>;
-  setCurrentPost: React.Dispatch<React.SetStateAction<Partial<PostType>>>
+  setLoggedInUserId: React.Dispatch<React.SetStateAction<string>>;
+  setCurrentPost: React.Dispatch<React.SetStateAction<Partial<PostType>>>;
 }
 
 type Toggle = 'OPEN' | 'CLOSE'
