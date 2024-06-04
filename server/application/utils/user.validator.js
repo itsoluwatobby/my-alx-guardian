@@ -6,44 +6,44 @@ exports.updateUserValidator = (data) => {
       .messages({
         'any.required': 'id is required',
       }),
-    firstName: Joi.string()
+    firstName: Joi.string().optional()
       .messages({
         'any.required': 'firstName is required',
       }),
-    lastName: Joi.string()
+    lastName: Joi.string().optional()
       .messages({
         'any.required': 'lastName is required',
       }),
-    title: Joi.string()
+    title: Joi.string().optional()
       .messages({
         'any.required': 'title is required',
       }),
-    cohort: Joi.string()
+    cohort: Joi.string().optional()
       .messages({
         'any.required': 'description is required',
       }),
-    bio: Joi.string()
+    bio: Joi.string().optional()
       .messages({
         'any.required': 'description is required',
       }),
-    skills: Joi.array()
+    skills: Joi.array().optional()
       .messages({
         'any.required': 'skills is required',
       }),
-    profilePicture: Joi.string()
+    profilePicture: Joi.string().optional()
       .messages({
         'any.required': 'profilePicture is required',
       }),
-    country: Joi.string()
+    country: Joi.string().optional()
       .messages({
         'any.required': 'country is required',
       }),
     location: Joi.object().keys({
-      address: Joi.string()
+      address: Joi.string().optional()
         .messages({
           'any.required': 'location.address is required',
         }),
-      country: Joi.string()
+      country: Joi.string().optional()
         .messages({
           'any.required': 'location.country is required',
         }),
@@ -51,7 +51,7 @@ exports.updateUserValidator = (data) => {
       .messages({
         'any.required': 'location is required',
       }),
-    activeAccounts: Joi.object()
+    activeAccounts: Joi.object().optional()
       .messages({
         'any.required': 'activeAccounts is required',
       }),

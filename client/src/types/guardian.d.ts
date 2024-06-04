@@ -20,6 +20,11 @@ type GuardianContextType = {
   setCurrentPost: React.Dispatch<React.SetStateAction<Partial<PostType>>>;
 }
 
+type ImageReturnType = { status: string, url: string };
+
+type CategoryToggles = 'Forums' | 'Cohorts'
+type CategoryToggleStates = Record<CategoryToggles, boolean>;
+
 type Toggle = 'OPEN' | 'CLOSE'
 type ExpandDetailsType = { id: string; toggle: Toggle; }
 

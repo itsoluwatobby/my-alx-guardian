@@ -6,6 +6,7 @@ export const guardianAsyncWrapper = async <T>(callback: () => T, setAppStateType
   }
   catch(error) {
     const errorRes = error as ErrorResponse
+    console.log(error)
     console.log(errorRes.response)
     const data = errorRes.response.data;
     const msg = data.message.split(': ')[1] ?? data.message

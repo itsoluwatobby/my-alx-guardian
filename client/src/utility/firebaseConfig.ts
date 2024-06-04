@@ -1,16 +1,16 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASEKEY,
-  authDomain: "project-frontend-ff45b.firebaseapp.com",
-  projectId: "project-frontend-ff45b",
-  storageBucket: "project-frontend-ff45b.appspot.com",
-  messagingSenderId: "285247248370",
-  appId: "1:285247248370:web:8a672bdd2e27d72b5f3d6b",
-  measurementId: "G-E3VS2PV1JX"
+  authDomain: "my-alx-guardian.firebaseapp.com",
+  projectId: "my-alx-guardian",
+  storageBucket: "my-alx-guardian.appspot.com",
+  messagingSenderId: "956056428633",
+  appId: "1:956056428633:web:3c00bfd6515a2009609148",
+  measurementId: "G-TX705ZLL6S"
 };
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
-export const analytics = getAnalytics(app);
+export const imageStorage = getStorage();

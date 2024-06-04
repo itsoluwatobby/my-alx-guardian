@@ -9,15 +9,17 @@ type InputProps = {
   placeholder?: string;
   max?: number;
   min?: number;
+  name?: string;
   setSearch: React.Dispatch<React.SetStateAction<string>>
 }
-export const Input = ({ search, setSearch, classNames, searchClassNames = '', excludeSearch = false, placeholder = 'search', inputClassNames='', max, min }: InputProps) => {
+export const Input = ({ search, setSearch, classNames, searchClassNames = '', excludeSearch = false, placeholder = 'search', inputClassNames='', name='', max, min }: InputProps) => {
 
   return (
     <div className={`self-center w-[80%] flex bg-white items-center gap-1.5 h-10 pl-1 rounded-md ${classNames}`}>
       {!excludeSearch ? <CiSearch className={`size-6 text-black font-bold ${searchClassNames}`} /> : null}
       <input type="text" 
         value={search}
+        name={name}
         className={`focus:ring-0 focus:border-0 focus:outline-0 text-black w-full h-full rounded-md ${inputClassNames}`}
         placeholder={placeholder}
         maxLength={max}
