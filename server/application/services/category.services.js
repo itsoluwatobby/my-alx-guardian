@@ -18,8 +18,9 @@ class CategoryService {
   }
 
   async createCategory(categoryObj) {
+    const { title, banner, ...others } = categoryObj;
     return tryCatchWrapperWithError(async () => {
-      const validationResponse = createCategoryValidator(categoryObj);
+      const validationResponse = createCategoryValidator(others);
       if (!validationResponse.valid) {
         throw new Error(validationResponse.error);
       }
@@ -48,7 +49,8 @@ class CategoryService {
 
   async updateCategory(categoryObj, activeId) {
     return tryCatchWrapperWithError(async () => {
-      const validationResponse = updateCategoryValidator(categoryObj);
+      const { title, banner, ...others } = categoryObj;
+      const validationResponse = updateCategoryValidator(others);
       if (!validationResponse.valid) {
         throw new Error(validationResponse.error);
       }

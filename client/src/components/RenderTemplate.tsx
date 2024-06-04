@@ -6,7 +6,9 @@ type RenderTemplateProps = {
   isError: boolean;
   error: string;
   classNames?: string;
+  errorTextClassNames?: string;
   extraClassNames?: string;
+  errorClassNames?: string;
   defaultMessage?: string | null;
   content: PostType[] | CommentType[] | CategoryObjType[];
   LoadingComponent: () => JSX.Element;
@@ -15,7 +17,8 @@ type RenderTemplateProps = {
 export default function RenderTemplate(
   {
     children, isLoading, isError, error, content, LoadingComponent,
-    classNames, extraClassNames, defaultMessage=null
+    classNames, extraClassNames, defaultMessage = null, errorClassNames,
+    errorTextClassNames,
   }: RenderTemplateProps) {
   return (
     <div className={`flex flex-col flex-auto py-4 gap-4 ${classNames}`}>
@@ -24,25 +27,25 @@ export default function RenderTemplate(
           [...Array(3).keys()].map((i) => (
             <LoadingComponent key={i} />
           ))
-        :
-        isError ? 
-          <div className="mt-10 flex capitalize flex-col items-center gap-y-3">
-            <MdRunningWithErrors className="size-20" />
-            {error}
-          </div>
-        :
-        content?.length ?
-          children
           :
-          <div className="text-center mt-10 text-3xl">
-            {
-              !content?.length ?
-              <p className={`capitalize ${extraClassNames}`}>{defaultMessage ?? 'No Content Available'}</p>
-              : [...Array(3).keys()].map((i) => (
-                <LoadingComponent key={i} />
-              ))
-            }
-          </div>
+          isError ?
+            <div className="mt-10 flex capitalize flex-col items-center gap-y-3">
+              <MdRunningWithErrors className={`size-20 ${errorClassNames}`} />
+              {error}
+            </div>
+            :
+            content?.length ?
+              children
+              :
+              <div className={`text-center mt-10 text-3xl ${errorTextClassNames}`}>
+                {
+                  !content?.length ?
+                    <p className={`capitalize ${extraClassNames}`}>{defaultMessage ?? 'No Content Available'}</p>
+                    : [...Array(3).keys()].map((i) => (
+                      <LoadingComponent key={i} />
+                    ))
+                }
+              </div>
       }
     </div>
   )

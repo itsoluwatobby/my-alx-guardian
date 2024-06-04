@@ -12,10 +12,12 @@ import { toast } from 'react-toastify';
 type CategoryFormType = {
   loggedInUserId: string;
   setAddItem: React.Dispatch<React.SetStateAction<boolean>>;
+  setCategories: React.Dispatch<React.SetStateAction<CategoryObjType[]>>
 }
-export default function CategoryForm({ loggedInUserId, setAddItem }: CategoryFormType) {
+export default function CategoryForm({ loggedInUserId, setAddItem, setCategories }: CategoryFormType) {
   const [categoryObj, setCategoryObj] = useState<CreateCategoryRequest>(initCategory);
   const [file, setFile] = useState<File | null>(null);
+  const [errorImageUrl, setErrorImageUrl] = useState<string | null>(null);
   const [appState, setAppState] = useState<AppStateType>(initAppState);
 
   const { loading, isError } = appState;
@@ -44,21 +46,23 @@ export default function CategoryForm({ loggedInUserId, setAddItem }: CategoryFor
       const { category, description, title } = categoryObj;
       const sanitizeCat = sanitizeEntries(category);
       const sanitizeStrings = sanitizeEntries({ description, title });
-      console.log('runn')
-      let res: ImageReturnType = { url: 'image.png', status: '' };
-      if (file) {
+      let res: ImageReturnType = { url: '', status: '' };
+      if (!errorImageUrl && file) {
+        console.log('run')
         res = await imageUpload(file as File, 'category-images');
+        setErrorImageUrl(res.url);
       }
-      console.log(res);
       const newCategory: CreateCategoryRequest = {
         ...categoryObj,
         ...sanitizeStrings,
         authorId: loggedInUserId,
-        banner: res.url,
+        banner: res.url ?? errorImageUrl,
         category: { ...sanitizeCat },
       }
       const newCat = await categoryAPI.createCategory(newCategory);
       console.log(newCat);
+      setCategories(prev => ([...prev, newCat.data]));
+      setCategoryObj(initCategory);
       toast.success(`${category.type} added✌️`);
     }, setAppState);
   };
