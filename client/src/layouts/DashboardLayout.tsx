@@ -2,14 +2,11 @@ import { useState } from "react";
 import { FaMinusSquare, FaPlusSquare } from "react-icons/fa";
 import { MdArrowDropDown } from "react-icons/md";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { Input } from "../components/component/Input";
 import { useGuardianContext } from "../hooks/useGuardianContext";
+import CategoryForm from "../components/CategoryForm";
 // import { guardianAsyncWrapper } from "../app/guardianAsyncWrapper";
 // import { categoryAPI } from "../app/api-calls/category.api";
 // import { initAppState } from "../utility/initVaraibles";
-
-type Toggles = 'Forums' | 'Cohorts'
-type ToggleStates = Record<Toggles, boolean>;
 
 export default function DashboardLayout() {
   const { pathname } = useLocation();
@@ -27,7 +24,7 @@ export default function DashboardLayout() {
   // });
   // const [appState, setAppState] = useState<AppStateType>(initAppState);
   // const [appStateCreateCategory, setAppStateCreateCategory] = useState<AppStateType>(initAppState);
-  const [toggle, setToggle] = useState<ToggleStates>({} as ToggleStates);
+  const [toggle, setToggle] = useState<CategoryToggleStates>({} as CategoryToggleStates);
   // const [type, setType] = useState<CategoryType>('General');
   
   // const { pageNumber, limit } = postQuery;
@@ -97,7 +94,7 @@ export default function DashboardLayout() {
                   className="flex items-center capitalize gap-2 cursor-default"
                   >
                     {nav.name}
-                    <nav.Icon className={`size-8 ${toggle[nav.name as Toggles] ? 'rotate-[-90deg]' : ''} transition-transform cursor-pointer hover:opacity-95`}/>
+                    <nav.Icon className={`size-8 ${toggle[nav.name as CategoryToggles] ? 'rotate-[-90deg]' : ''} transition-transform cursor-pointer hover:opacity-95`}/>
                   </button>
               ))
             }
@@ -120,14 +117,6 @@ export default function DashboardLayout() {
                   className="size-4 cursor-pointer hover:opacity-90 active:opacity-100 transition-opacity"
                 />
               }
-
-              <div className={`absolute left-0 top-10 w-full ${addItem ? 'flex' : 'hidden'} h-full ${theme === 'light' ? 'bg-gradient-to-b from-[#faeff5] from-[60%] to-transparent' : 'bg-gradient-to-b from-[#3e3e3e] from-[40%] to-[#606060] text-[#ffffff]'} opacity-90 rounded-md justify-center z-20`}>
-                <Input search={input} setSearch={setInput} 
-                classNames="text-sm -mt-28 shadow-md" inputClassNames="px-2"
-                excludeSearch={true} max={15}
-                placeholder={`Add ${'Forums' || 'Cohorts'}`}
-                />
-              </div>
             </div>
 
 
@@ -158,6 +147,13 @@ export default function DashboardLayout() {
 
         </aside>
       </div>
+      {
+        addItem ?
+          <CategoryForm
+            setAddItem={setAddItem}
+            loggedInUserId={loggedInUserId}  
+          /> : null
+      }
     </main>
   )
 }

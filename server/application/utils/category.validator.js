@@ -19,7 +19,11 @@ exports.createCategoryValidator = (data) => {
       }),
     banner: Joi.string().optional()
       .messages({
-        'any.required': 'picture is required',
+        'any.required': 'banner is required',
+      }),
+    title: Joi.string().optional()
+      .messages({
+        'any.required': 'title is required',
       }),
     authorId: Joi.string().required()
       .messages({
@@ -60,6 +64,10 @@ exports.updateCategoryValidator = (data) => {
     banner: Joi.string().optional()
       .messages({
         'any.required': 'banner is required',
+      }),
+    title: Joi.string().optional()
+      .messages({
+        'any.required': 'title is required',
       }),
     authorId: Joi.string().required()
       .messages({
