@@ -108,6 +108,7 @@ export default function Dashboard() {
         defaultMessage={'No Posts Available'}
         isLoading={loading1} isError={isError} content={sortedPosts}
         LoadingComponent={PostSkeletonLoading} error={error}
+        classNames="gap-y-5"
       >
         {
           sortedPosts?.map((post) => (

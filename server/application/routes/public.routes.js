@@ -11,7 +11,7 @@ publicRoute.get('/get/:userId', (req, res) => UserController.getUser(req, res));
 
 // posts
 publicRoute.get('/get-posts', (req, res) => PostController.getPosts(req, res));
-publicRoute.get('/get/:postId', (req, res) => PostController.getPost(req, res));
+publicRoute.get('/get-post/:postId', (req, res) => PostController.getPost(req, res));
 publicRoute.get('/search', (req, res) => PostController.getSearchedPosts(req, res));
 
 // coments
@@ -20,6 +20,6 @@ publicRoute.get('/get-comments', (req, res) => CommentController.getComments(req
 // categories
 publicRoute.get('/get-categories', (req, res) => CategoryController.getCategories(req, res));
 publicRoute.get('/get/:categoryId', (req, res) => CategoryController.getCategory(req, res));
-publicRoute.get('/search', (req, res) => CategoryController.getSearchedCategories(req, res));
+publicRoute.get('/search-category', (req, res) => CategoryController.getSearchedCategories(req, res));
 
 module.exports = publicRoute;

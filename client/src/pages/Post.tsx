@@ -51,16 +51,17 @@ export default function Post() {
 
   useEffect(() => {
     if (!postId) return;
+    console.log(postId)
     guardianAsyncWrapper(async () => {
       setAppState(prev => ({ ...prev, loading: true }));
       const res = await postAPI.getPost(postId);
+      console.log(res)
       setPost(res.data);
       setCurrentPost(res.data)
     }, setAppState);
   }, [postId, setCurrentPost])
   
   const reloaded = () => {
-    // if (!postId) return;
     guardianAsyncWrapper(async () => {
       // setAppState(prev => ({ ...prev, loading: true }));
       const res = await postAPI.getPost(postId as string);
@@ -68,7 +69,6 @@ export default function Post() {
       setCurrentPost(res.data)
     }, () => {});
   }
-  // }, [postId, setCurrentPost])
 
   useEffect(() => {
     if (!post.userId) return;
@@ -78,7 +78,6 @@ export default function Post() {
       setUser(res.data)
     }, setAppStateGetUser);
   }, [post.userId])
-
 
   const toggleLike = () => {
     if (appStateToggleLike.loading) return;

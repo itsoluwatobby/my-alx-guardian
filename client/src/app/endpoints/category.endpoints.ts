@@ -35,6 +35,6 @@ export const CATEGORY = {
   },
   search: {
     method: HTTP_METHOD.GET,
-    url: '/public/search',  //  -- public url
+    url: '/public/search-category',  //  -- public url
   },
 } as const;
