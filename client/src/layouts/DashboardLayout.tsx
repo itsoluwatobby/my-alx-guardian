@@ -14,7 +14,7 @@ import { categoryAPI } from "../app/api-calls/category.api";
 
 export default function DashboardLayout() {
   const { pathname } = useLocation();
-  const { theme, loggedInUserId } = useGuardianContext() as GuardianContextType;
+  const { loggedInUserId } = useGuardianContext() as GuardianContextType;
   const [addItem, setAddItem] = useState<boolean>(false);
 
   const [categories, setCategories] = useState<CategoryObjType[]>([]);
@@ -26,32 +26,32 @@ export default function DashboardLayout() {
     pageNumber: 1, limit: 5,
   });
   const [appState, setAppState] = useState<AppStateType>(initAppState);
-  const [toggle, setToggle] = useState<CategoryToggleStates>({} as CategoryToggleStates);
+  const [categorytoggle, setCategoryToggle] = useState<CategoryToggleStates>({} as CategoryToggleStates);
   const [type, setType] = useState<CategoryType>('General');
-  
+
   const { pageNumber, limit } = postQuery;
   const { loading, isError, error } = appState;
 
   const rightBar = [
     { name: 'home', link: '/dashboard' },
     // { name: 'profile', link: '/profile/1234' },
-    { name: 'create post', link: loggedInUserId ? '/new-post' : '/signin'  },
+    { name: 'create post', link: loggedInUserId ? '/new-post' : '/signin' },
     {
       name: 'Forums',
-      link: () => setToggle(prev => ({ Cohorts: false, Forums: !prev.Forums })), Icon: MdArrowDropDown
+      link: () => setCategoryToggle(prev => ({ Cohorts: false, Forums: !prev.Forums })), Icon: MdArrowDropDown
     },
     {
       name: 'Cohorts',
-      link: () => setToggle(prev => ({ ...prev, Forums: false, Cohorts: !prev.Cohorts })),
+      link: () => setCategoryToggle(prev => ({ ...prev, Forums: false, Cohorts: !prev.Cohorts })),
       Icon: MdArrowDropDown
     },
   ]
 
   useEffect(() => {
-    if (toggle.Cohorts) setType('Cohorts');
-    else if (toggle.Forums) setType('Forums');
+    if (categorytoggle.Cohorts) setType('Cohorts');
+    else if (categorytoggle.Forums) setType('Forums');
     else setType('General');
-  }, [toggle.Cohorts, toggle.Forums])
+  }, [categorytoggle.Cohorts, categorytoggle.Forums])
 
   useEffect(() => {
     if (type === 'General') return;
@@ -74,35 +74,35 @@ export default function DashboardLayout() {
               rightBar.map(nav => (
                 !nav.Icon ?
                   <Link to={nav.link} state={pathname} key={nav.name}
-                  className="capitalize"
+                    className="capitalize"
                   >{nav.name}</Link>
-                :
+                  :
                   <button onClick={nav.link} key={nav.name}
-                  className="flex items-center capitalize gap-2 cursor-default"
+                    className="flex items-center capitalize gap-2 cursor-default"
                   >
                     {nav.name}
-                    <nav.Icon className={`size-8 ${toggle[nav.name as CategoryToggles] ? 'rotate-[-90deg]' : ''} transition-transform cursor-pointer hover:opacity-95`}/>
+                    <nav.Icon className={`size-8 ${categorytoggle[nav.name as CategoryToggles] ? 'rotate-[-90deg]' : ''} transition-transform cursor-pointer hover:opacity-95`} />
                   </button>
               ))
             }
           </div>
 
-          <div className={`relative ${(!toggle.Forums && !toggle.Cohorts) ? 'hidden' : 'flex'} flex-col gap-y-2 py-3 flex-auto w-full`}>
+          <div className={`relative ${(!categorytoggle.Forums && !categorytoggle.Cohorts) ? 'hidden' : 'flex'} flex-col gap-y-2 py-3 flex-auto w-full`}>
             <div className={`w-fit flex items-center gap-x-2 self-center`}>
-              <h4 className="underline underline-offset-4 self-center">{toggle.Forums ? 'Forums' : 'Cohorts'}</h4>
+              <h4 className="underline underline-offset-4 self-center">{categorytoggle.Forums ? 'Forums' : 'Cohorts'}</h4>
               {
-                addItem ? 
-                <FaMinusSquare 
-                title="Close"
-                onClick={() => setAddItem(false)}
-                className="size-4 cursor-pointer hover:opacity-90 active:opacity-100 transition-opacity"
-                />
-                :
-                <FaPlusSquare 
-                  title="Add"
-                  onClick={() => setAddItem(true)}
-                  className="size-4 cursor-pointer hover:opacity-90 active:opacity-100 transition-opacity"
-                />
+                addItem ?
+                  <FaMinusSquare
+                    title="Close"
+                    onClick={() => setAddItem(false)}
+                    className="size-4 cursor-pointer hover:opacity-90 active:opacity-100 transition-opacity"
+                  />
+                  :
+                  <FaPlusSquare
+                    title="Add"
+                    onClick={() => setAddItem(true)}
+                    className="size-4 cursor-pointer hover:opacity-90 active:opacity-100 transition-opacity"
+                  />
               }
             </div>
 
@@ -114,15 +114,15 @@ export default function DashboardLayout() {
                 errorTextClassNames='text-sm text-start'
                 errorClassNames='size-11'
                 isLoading={loading} isError={isError} content={categories}
-                LoadingComponent={() => <div 
-                className="animate-pulse w-full h-5 bg-[#333333]"
+                LoadingComponent={() => <div
+                  className="animate-pulse w-full h-5 bg-[#333333]"
                 ></div>} error={error}
               >
                 <div className="flex flex-col gap-y-2">
                   {
                     categories?.map((cat) => (
                       <button key={cat._id}
-                      className="capitalize cursor-default p-1 hover:bg-[#333333] focus:bg-[#333333] w-full text-start transition-colors"
+                        className="capitalize cursor-default p-1 hover:bg-[#333333] focus:bg-[#333333] w-full text-start transition-colors"
                       >
                         {cat.category.name}
                       </button>
@@ -134,15 +134,15 @@ export default function DashboardLayout() {
               <div className="absolute bottom-10 flex items-center w-full gap-x-2 text-[13px]">
                 {
                   [...Array(paginate.numberOfPages).keys()].map(i => (
-                    <button 
-                    key={i}
-                    onClick={() => setPageQuery(prev => ({ ...prev, pageNumber: i+1 }))}
-                    className="font-sans px-2 p-0.5 rounded-sm focus:bg-gray-700 bg-gray-500 hover:scale-[1.02] transition-transform text-white">{i+1}</button>
+                    <button
+                      key={i}
+                      onClick={() => setPageQuery(prev => ({ ...prev, pageNumber: i + 1 }))}
+                      className="font-sans px-2 p-0.5 rounded-sm focus:bg-gray-700 bg-gray-500 hover:scale-[1.02] transition-transform text-white">{i + 1}</button>
                   ))
                 }
               </div>
             </ul>
-            
+
           </div>
         </aside>
 
