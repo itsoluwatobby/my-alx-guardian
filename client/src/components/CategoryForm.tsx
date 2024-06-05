@@ -48,7 +48,6 @@ export default function CategoryForm({ loggedInUserId, setAddItem, setCategories
       const sanitizeStrings = sanitizeEntries({ description, title });
       let res: ImageReturnType = { url: '', status: '' };
       if (!errorImageUrl && file) {
-        console.log('run')
         res = await imageUpload(file as File, 'category-images');
         setErrorImageUrl(res.url);
       }
@@ -56,11 +55,10 @@ export default function CategoryForm({ loggedInUserId, setAddItem, setCategories
         ...categoryObj,
         ...sanitizeStrings,
         authorId: loggedInUserId,
-        banner: res.url ?? errorImageUrl,
+        banner: errorImageUrl ?? res.url,
         category: { ...sanitizeCat },
       }
       const newCat = await categoryAPI.createCategory(newCategory);
-      console.log(newCat);
       setCategories(prev => ([...prev, newCat.data]));
       setCategoryObj(initCategory);
       toast.success(`${category.type} added✌️`);

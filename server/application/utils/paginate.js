@@ -2,7 +2,7 @@ const pagination = async (pageNumber, limit, Model, queryObj = {}) => {
   const dataLength = +limit;
   const currentPage = +pageNumber;
   const startIndex = (currentPage * dataLength) - dataLength;
-  const resultLength = await Model.find(queryObj).count();
+  const resultLength = await Model.find(queryObj).countDocuments();
   const data = await Model.find(queryObj).skip(startIndex).limit(dataLength);
 
   const total = Math.ceil(resultLength / dataLength);
