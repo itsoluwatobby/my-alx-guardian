@@ -109,7 +109,8 @@ export const Article = ({ post, setPosts, page, expandDetail, setExpandDetail }:
         <div className={`${appState2.loading ? 'animate-pulse' : ''} flex flex-col text-sm`}>
           <UserDetails
             name={user?.firstName} userRef={userRef}
-            date={post.createdAt ?? new Date()} setReveal={setReveal}
+            date={post.createdAt ?? new Date()}
+            // setReveal={setReveal}
           />
           <Link to={`/post/${post._id}`} className="text-[13px] flex flex-col cursor-default mt-1">
             <ReactMarkdown
