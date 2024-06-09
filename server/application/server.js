@@ -3,7 +3,7 @@
 const mongoose = require('mongoose');
 const express = require('express');
 const http = require('http');
-const path = require('path');
+// const path = require('path');
 const cors = require('cors');
 const { connectDB } = require('./config/connections/mongo');
 const config = require('./config');
@@ -14,19 +14,19 @@ const apiAccessAuthMiddleware = require('./middleware/api-access.auth');
 connectDB();
 const app = express();
 const server = http.createServer(app);
-const buildPath = path.join(__dirname, '../../client/dist');
-app.use(express.static(buildPath));
+// const buildPath = path.join(__dirname, '../../client/dist');
+app.use(express.static('public'));
 
-app.get('/*', (req, res) => {
-  res.sendFile(
-    path.join(__dirname, '../../client/dist/index.html'),
-    (err) => {
-      if (err) {
-        res.status(500).send(err);
-      }
-    },
-  );
-});
+// app.get('/*', (req, res) => {
+//   res.sendFile(
+//     path.join(__dirname, '../../client/dist/index.html'),
+//     (err) => {
+//       if (err) {
+//         res.status(500).send(err);
+//       }
+//     },
+//   );
+// });
 
 app.use(cors({
   origin: '*',
