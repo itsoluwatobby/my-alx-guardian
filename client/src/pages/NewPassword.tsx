@@ -50,7 +50,7 @@ export default function NewPassword() {
   }
 
   return (
-    <main className="w-full flex flex-col md:flex-row items-center h-full">
+    <main className="page w-full flex flex-col md:flex-row items-center h-full">
       <form onSubmit={handleNewPassword} className="mt-10 flex-none md:w-[55%] w-full h-full flex flex-col gap-y-6 p-8 pt-14 items-center">
         
         <PasswordInputs

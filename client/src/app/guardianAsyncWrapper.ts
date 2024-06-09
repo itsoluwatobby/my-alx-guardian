@@ -6,6 +6,7 @@ export const guardianAsyncWrapper = async <T>(callback: () => T, setAppStateType
     return await callback();
   }
   catch(error: any) {
+    console.log(error)
     const errorRes = error as ErrorResponse
     if (error.status === 'failed') {
       const msg = 'Image upload filed';
@@ -20,6 +21,6 @@ export const guardianAsyncWrapper = async <T>(callback: () => T, setAppStateType
     }
   }
   finally {
-    setAppStateType(prev => ({ ...prev, loading: false })) 
+    setAppStateType(prev => ({ ...prev, loading: false }));
   }
 }

@@ -75,6 +75,7 @@ export default function DashboardLayout() {
       const res = await postAPI.findPosts({
         pageNumber: page, limit: 5, type
       });
+      console.log(res);
       setPaginate(res.data.pageable)
       setPosts(res.data.data);
     }, setAppStatePost);

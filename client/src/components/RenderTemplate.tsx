@@ -1,30 +1,31 @@
 import { MdRunningWithErrors } from 'react-icons/md'
 
 type RenderTemplateProps <T>= {
+  LoadingComponent: () => JSX.Element;
   children: React.ReactNode;
   isLoading: boolean;
   isError: boolean;
   error: string;
+  content: T[];
   classNames?: string;
-  errorTextClassNames?: string;
+  loaderCount?: number;
   extraClassNames?: string;
   errorClassNames?: string;
   defaultMessage?: string | null;
-  content: T[];
-  LoadingComponent: () => JSX.Element;
+  errorTextClassNames?: string;
 }
 
 export default function RenderTemplate<T>(
   {
     children, isLoading, isError, error, content, LoadingComponent,
     classNames, extraClassNames, defaultMessage = null, errorClassNames,
-    errorTextClassNames,
+    errorTextClassNames, loaderCount = 3,
   }: RenderTemplateProps<T>) {
   return (
     <div className={`flex flex-col flex-auto py-4 gap-4 ${classNames}`}>
       {
         isLoading ?
-          [...Array(3).keys()].map((i) => (
+          [...Array(loaderCount).keys()].map((i) => (
             <LoadingComponent key={i} />
           ))
           :

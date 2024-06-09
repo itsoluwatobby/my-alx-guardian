@@ -51,3 +51,37 @@ h1, h2, h3, h4, h5 {
   100% { transform: translate(2px, 2px); }
 }
 
+/* AnimatedPage.css */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.page {
+  animation: fadeIn 1s ease-in-out;
+}
+
+.text-3d {
+  font-size: 4rem;
+  color: #fff;
+  letter-spacing: 3px;
+  font-family: Arial, sans-serif;
+  text-shadow: 
+    1px 1px 0 #ccc, 
+    2px 2px 0 #bbb, 
+    3px 3px 0 #aaa, 
+    4px 4px 0 #999, 
+    5px 5px 0 #888,
+    6px 6px 0 #777, 
+    7px 7px 0 #666, 
+    8px 8px 0 #555, 
+    9px 9px 0 #444, 
+    10px 10px 0 #333,
+    11px 11px 0 #222, 
+    12px 12px 0 #111;
+  transform: rotateX(25deg) rotateY(0deg);
+}

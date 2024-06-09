@@ -84,7 +84,7 @@ export default function EditProfile() {
   };
 
   return (
-    <main className="flex flex-col gap-y-5 px-2 py-4 h-full w-full overflow-y-scroll">
+    <main className="page flex flex-col gap-y-5 px-2 py-4 h-full w-full overflow-y-scroll">
       <button
         onClick={() => navigate(-1)}
         className={`p-2 rounded-md -mt-2 ${theme === 'light' ? 'border-[#0f7743] bg-[#757474]' : 'border-[#335544] bg-[#333333]'} text-white border border-[#335544] w-32 text-[13px] hover:opacity-95 transition-opacity`}
