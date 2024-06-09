@@ -62,7 +62,7 @@ export default function AccountVerification() {
   }
 
   return (
-    <main className="w-full flex flex-col md:flex-row items-center h-full">
+    <main className="page w-full flex flex-col md:flex-row items-center h-full">
 
       <section className='maxscreen:fle relative flex-auto w-full h-full flex flex-col justify-center md:pl-14 px-2 gap-10 maxscreen:gap-12'>
         <h1 className="text-center text-3xl">{fromChangePassword ? 'Verify Token' : 'Account Verification'}</h1>

@@ -64,7 +64,7 @@ export default function Profile() {
   const sortedPosts = posts?.slice().sort((a, b) => b.createdAt.localeCompare(a?.createdAt));
 
   return (
-    <main className="flex flex-col gap-y-8 px-2 py-4 h-full w-full overflow-y-scroll">
+    <main className="page flex flex-col gap-y-8 px-2 py-4 h-full w-full overflow-y-scroll">
       <div className="flex gap-x-3 maxmobile:flex-col text-sm w-full">
         <GuardianImages
           imageUri={user.profilePicture ?? ''}

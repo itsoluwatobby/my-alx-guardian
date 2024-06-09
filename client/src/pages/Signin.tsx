@@ -52,7 +52,7 @@ export default function Signin() {
 
   const canSubmit = [...Object.values(user)].every(Boolean);
   return (
-    <main className="w-full flex flex-col md:flex-row items-center h-full">
+    <main className="page w-full flex flex-col md:flex-row items-center h-full">
       <MetaTags
         title='Signin'
         description='User signin page'

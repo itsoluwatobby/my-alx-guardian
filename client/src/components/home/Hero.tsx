@@ -1,12 +1,13 @@
 // import GuardianImages from '../component/Images'
 import { useNavigate } from "react-router-dom"
+// import { useEffect, useState } from 'react';
 
 export default function Hero() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col items-center gap-y-24">
-      <h2 className='text-6xl font-bold text-center'>
+    <div className="page flex flex-col items-center gap-y-24 h-screen">
+      <h2 className='text-3d text-5xl font-bold text-center'>
         MY ALX GUARDIAN
       </h2>
 
@@ -14,7 +15,7 @@ export default function Hero() {
         imageUri='/study.png'
         classNames=''
       /> */}
-      <p className="text-xl text-center">Make your ALX journey easier, connect with your colleagues</p>
+      <p className="text-lg text-center">Make your ALX journey easier, connect with your colleagues</p>
 
       <button 
       onClick={() => navigate('/signin')}

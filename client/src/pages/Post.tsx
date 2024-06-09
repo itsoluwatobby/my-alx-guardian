@@ -124,7 +124,7 @@ export default function Post() {
 
   return (
     <div
-      className="relative flex flex-col gap-2 h-full w-full p-4 md:px-10 overflow-y-scroll">
+      className="page relative flex flex-col gap-2 h-full w-full p-4 md:px-10 overflow-y-scroll">
       <section
         ref={observerRef}
         className={`${isIntersecting ? 'scale-1' : 'scale-0'} transition-transform flex items-center gap-x-3`}>

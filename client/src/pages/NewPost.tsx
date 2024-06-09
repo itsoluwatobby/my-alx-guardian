@@ -118,7 +118,7 @@ export const NewPost = () => {
 
   const plugins = ['header', 'my-plugins', 'link', 'font-strikethrough', 'list-unordered', 'imag', 'clear', 'logger', 'mode-toggle', 'full-screen'];
   return (
-    <div className="overflow-y-scroll flex flex-col gap-y-2 w-full transition-all h-full rounded-md">
+    <div className="page overflow-y-scroll flex flex-col gap-y-2 w-full transition-all h-full rounded-md">
       <div className='flex items-center justify-between w-full gap-x-3 mt-2'>
         <p className={``}>
           {!val ? '' : (isTyping ? 'saving ...' : 'saved')}

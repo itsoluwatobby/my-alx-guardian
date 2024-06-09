@@ -43,7 +43,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (!val || isTyping || loading) return;
     guardianAsyncWrapper(async () => {
-      if (val.length < 3) return;
+      if (val?.length < 3) return;
       if (searchResult.prevQuery === val) return;
       setAppState(prev => ({ ...prev, loading: true }));
       const searchQuery = sanitizeEntries({ val })
@@ -62,10 +62,10 @@ export default function Dashboard() {
   //   }
   // }, [pages.previous, pages.next, isIntersecting, pagesLeft])
 
-  const sortedPosts = posts.slice().sort((a, b) => b.createdAt.localeCompare(a?.createdAt))
+  const sortedPosts = posts?.slice().sort((a, b) => b.createdAt.localeCompare(a?.createdAt))
 
   return (
-    <section className="flex flex-col flex-auto rounded-md overflow-y-scroll h-full shadow-md p-3 pb-10 px-2">
+    <section className="page flex flex-col flex-auto rounded-md overflow-y-scroll h-full shadow-md p-3 pb-10 px-2">
       <MetaTags
         title='Dashboard'
         description='Post page for all content'
