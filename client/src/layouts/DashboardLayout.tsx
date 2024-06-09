@@ -35,9 +35,21 @@ export default function DashboardLayout() {
   const { pageNumber: page } = postQuery;
 
   const rightBar = [
-    { name: 'home', link: '/dashboard', display: true, },
-    { name: 'profile', link: `/profile/${loggedInUserId}`, display: false },
-    { name: 'create post', link: loggedInUserId ? '/new-post' : '/signin', display: false },
+    {
+      name: 'home',
+      link: loggedInUserId ? '/dashboard' : '/',
+      display: true,
+    },
+    {
+      name: 'profile',
+      link: `/profile/${loggedInUserId}`,
+      display: false,
+    },
+    {
+      name: 'create post',
+      link: loggedInUserId ? '/new-post' : '/signin',
+      display: false,
+    },
     {
       name: 'Forums', display: true,
       link: () => setCategoryToggle(prev => ({ Cohorts: false, Forums: !prev.Forums })),
@@ -75,7 +87,6 @@ export default function DashboardLayout() {
       const res = await postAPI.findPosts({
         pageNumber: page, limit: 5, type
       });
-      console.log(res);
       setPaginate(res.data.pageable)
       setPosts(res.data.data);
     }, setAppStatePost);

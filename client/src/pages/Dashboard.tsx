@@ -68,7 +68,7 @@ export default function Dashboard() {
     <section className="page flex flex-col flex-auto rounded-md overflow-y-scroll h-full shadow-md p-3 pb-10 px-2">
       <MetaTags
         title='Dashboard'
-        description='Post page for all content'
+        description='Posts of all categories'
         url=''
         image=''
       />

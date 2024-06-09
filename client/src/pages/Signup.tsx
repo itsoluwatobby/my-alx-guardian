@@ -60,8 +60,8 @@ export default function Signup() {
   return (
     <main className="page w-full flex flex-col md:flex-row items-center h-full">
       <MetaTags
-        title='Signup'
-        description='User registration'
+        title='Signup Page'
+        description='User registration page'
         url=''
         image=''
       />

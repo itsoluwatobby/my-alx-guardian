@@ -1,21 +1,22 @@
-import { FaCommentDots, FaShare } from "react-icons/fa6";
-import { useParams } from "react-router-dom"
-import { checkCount, reduceTextLength } from "../utility/helpers";
-import { FaHeart } from "react-icons/fa";
-import ShareButton from "../components/ShareButton";
-import GuardianImages from "../components/component/GuardianImages";
-import UserDetails from "../components/component/UserDetails";
-// import ProfilePopup from "../components/ProfilePopup";
-import { useCallback, useEffect, useRef, useState } from "react";
-import Comments from "../components/comments/Comments";
-import { useGuardianContext } from "../hooks/useGuardianContext";
-import useObserver from "../hooks/useObserver";
-import ReactMarkdown from 'react-markdown';
-import { postAPI } from "../app/api-calls/post.api";
-import { initAppState } from "../utility/initVaraibles";
-import { guardianAsyncWrapper } from "../app/guardianAsyncWrapper";
-import { userAPI } from "../app/api-calls/user.api";
 import PostSkeletonLoading from "../components/skeletonLoading/PostSkeletonLoading";
+import GuardianImages from "../components/component/GuardianImages";
+import { guardianAsyncWrapper } from "../app/guardianAsyncWrapper";
+import { checkCount, reduceTextLength } from "../utility/helpers";
+import { useGuardianContext } from "../hooks/useGuardianContext";
+import { useCallback, useEffect, useRef, useState } from "react";
+import UserDetails from "../components/component/UserDetails";
+import { FaCommentDots, FaShare } from "react-icons/fa6";
+import { initAppState } from "../utility/initVaraibles";
+import Comments from "../components/comments/Comments";
+import { MetaTags } from "../layouts/MetaTagsOGgraph";
+import ShareButton from "../components/ShareButton";
+import { postAPI } from "../app/api-calls/post.api";
+import { userAPI } from "../app/api-calls/user.api";
+// import ProfilePopup from "../components/ProfilePopup";
+import useObserver from "../hooks/useObserver";
+import { useParams } from "react-router-dom";
+import ReactMarkdown from 'react-markdown';
+import { FaHeart } from "react-icons/fa";
 
 export default function Post() {
   const { postId } = useParams();
@@ -51,11 +52,9 @@ export default function Post() {
 
   useEffect(() => {
     if (!postId) return;
-    console.log(postId)
     guardianAsyncWrapper(async () => {
       setAppState(prev => ({ ...prev, loading: true }));
       const res = await postAPI.getPost(postId);
-      console.log(res)
       setPost(res.data);
       setCurrentPost(res.data)
     }, setAppState);
@@ -123,8 +122,14 @@ export default function Post() {
   }, [isIntersecting, setShowTitle])
 
   return (
-    <div
-      className="page relative flex flex-col gap-2 h-full w-full p-4 md:px-10 overflow-y-scroll">
+    <div className="page relative flex flex-col gap-2 h-full w-full p-4 md:px-10 overflow-y-scroll">
+       <MetaTags
+        title='Post Page'
+        description='Post view page'
+        url=''
+        image=''
+      />
+
       <section
         ref={observerRef}
         className={`${isIntersecting ? 'scale-1' : 'scale-0'} transition-transform flex items-center gap-x-3`}>

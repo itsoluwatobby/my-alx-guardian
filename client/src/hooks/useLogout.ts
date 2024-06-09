@@ -16,8 +16,7 @@ export const useLogout = (setOpenSidebarModal: FunctionType) => {
       toast.info('Logout successful!')
       setOpenSidebarModal(false);
       navigate('/');
-      const gg = await authenticationAPI.logout({ userId });
-      console.log({ gg });
+      await authenticationAPI.logout({ userId });
     }, () => {});
   }
   return logout;
