@@ -1,5 +1,6 @@
-import { useEffect } from "react"
+import { MetaTags } from "../layouts/MetaTagsOGgraph";
 import { useNavigate } from "react-router-dom"
+import { useEffect } from "react"
 
 export default function NotFound() {
   const navigate = useNavigate();
@@ -16,6 +17,13 @@ export default function NotFound() {
 
   return (
     <div className="w-full h-full p-20 flex flex-col gap-y-14 items-center text-center">
+       <MetaTags
+        title='Page Not Found'
+        description='Error handling page'
+        url=''
+        image=''
+      />
+
       <h3 className="text-6xl animate-pulse">
         Oops!!!
       </h3>

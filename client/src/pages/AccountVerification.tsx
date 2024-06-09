@@ -6,6 +6,7 @@ import { authenticationAPI } from "../app/api-calls/auth.api";
 import { sanitizeEntries } from "../utility/helpers";
 import OTPComponent from "../components/authentication/OTPComponent";
 import AppStand from "../components/AppStand";
+import { MetaTags } from "../layouts/MetaTagsOGgraph";
 
 const initOTPValues = {
   entry1: '', entry2: '', entry3: '',
@@ -63,7 +64,12 @@ export default function AccountVerification() {
 
   return (
     <main className="page w-full flex flex-col md:flex-row items-center h-full">
-
+       <MetaTags
+        title='Account Verification'
+        description='Account verification page'
+        url=''
+        image=''
+      />
       <section className='maxscreen:fle relative flex-auto w-full h-full flex flex-col justify-center md:pl-14 px-2 gap-10 maxscreen:gap-12'>
         <h1 className="text-center text-3xl">{fromChangePassword ? 'Verify Token' : 'Account Verification'}</h1>
         <p className='whitespace-pre-wrap text-center'>

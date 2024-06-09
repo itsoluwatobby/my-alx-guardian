@@ -4,6 +4,7 @@ import { FormInputs } from "../components/FormInputs";
 import { Link, useNavigate } from "react-router-dom";
 import { guardianAsyncWrapper } from "../app/guardianAsyncWrapper";
 import { toast } from "react-toastify";
+import { MetaTags } from "../layouts/MetaTagsOGgraph";
 import AppStand from "../components/AppStand";
 import { authenticationAPI } from "../app/api-calls/auth.api";
 
@@ -31,6 +32,12 @@ export default function ForgotPassword() {
   const canSubmit = Boolean(email);
   return (
     <main className="page w-full flex flex-col md:flex-row items-center h-full">
+       <MetaTags
+        title='Forgot Password'
+        description='Page for requesting for a new password'
+        url=''
+        image=''
+      />
       <form onSubmit={handleSubmit} className="mt-16 flex-none md:w-[55%] w-full h-full flex flex-col gap-y-6 p-8 pt-14 items-center">
   
         <FormInputs

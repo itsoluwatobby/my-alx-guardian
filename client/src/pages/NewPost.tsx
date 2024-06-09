@@ -3,6 +3,7 @@ import { useGuardianContext } from '../hooks/useGuardianContext';
 import { guardianAsyncWrapper } from '../app/guardianAsyncWrapper';
 import useDeboundedInput from '../hooks/useDeboundedInput';
 import { initAppState } from '../utility/initVaraibles';
+import { MetaTags } from "../layouts/MetaTagsOGgraph";
 import { postAPI } from '../app/api-calls/post.api';
 import { MAX_LENGTH } from '../utility/constants';
 import 'react-markdown-editor-lite/lib/index.css';
@@ -119,6 +120,13 @@ export const NewPost = () => {
   const plugins = ['header', 'my-plugins', 'link', 'font-strikethrough', 'list-unordered', 'imag', 'clear', 'logger', 'mode-toggle', 'full-screen'];
   return (
     <div className="page overflow-y-scroll flex flex-col gap-y-2 w-full transition-all h-full rounded-md">
+       <MetaTags
+        title='Create Post Page'
+        description='Page for creation of a new post'
+        url=''
+        image=''
+      />
+
       <div className='flex items-center justify-between w-full gap-x-3 mt-2'>
         <p className={``}>
           {!val ? '' : (isTyping ? 'saving ...' : 'saved')}

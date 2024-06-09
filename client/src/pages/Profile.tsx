@@ -1,19 +1,20 @@
-import { useNavigate, useParams } from "react-router-dom";
-import GuardianImages from "../components/component/GuardianImages";
-import { useGuardianContext } from '../hooks/useGuardianContext';
-import { format } from 'timeago.js';
-import { useEffect, useState } from "react";
-import { guardianAsyncWrapper } from "../app/guardianAsyncWrapper";
 import { initAppState, initPagination, initUserDetails } from "../utility/initVaraibles";
+import PostSkeletonLoading from "../components/skeletonLoading/PostSkeletonLoading";
+import SkeletonLoading from "../components/skeletonLoading/SkeletonLoading";
+import GuardianImages from "../components/component/GuardianImages";
+import { guardianAsyncWrapper } from "../app/guardianAsyncWrapper";
+import { useGuardianContext } from '../hooks/useGuardianContext';
+import { useNavigate, useParams } from "react-router-dom";
+import { MetaTags } from "../layouts/MetaTagsOGgraph";
+import { reduceTextLength } from "../utility/helpers";
 import { userAPI } from "../app/api-calls/user.api";
 import RenderTemplate from "../components/RenderTemplate";
-import PostSkeletonLoading from "../components/skeletonLoading/PostSkeletonLoading";
 import { Article } from "../components/dashbord/Article";
 import { postAPI } from "../app/api-calls/post.api";
 import useObserver from "../hooks/useObserver";
 import Loading from "../components/Loading";
-import { reduceTextLength } from "../utility/helpers";
-import SkeletonLoading from "../components/skeletonLoading/SkeletonLoading";
+import { useEffect, useState } from "react";
+import { format } from 'timeago.js';
 
 export default function Profile() {
   const { userId } = useParams();
@@ -65,6 +66,13 @@ export default function Profile() {
 
   return (
     <main className="page flex flex-col gap-y-8 px-2 py-4 h-full w-full overflow-y-scroll">
+       <MetaTags
+        title={`${user?.firstName} Profile Page`}
+        description='User profile page'
+        url=''
+        image=''
+      />
+      
       <div className="flex gap-x-3 maxmobile:flex-col text-sm w-full">
         <GuardianImages
           imageUri={user.profilePicture ?? ''}
@@ -73,6 +81,7 @@ export default function Profile() {
         />
 
         <div className="flex flex-col gap-y-2 w-full">
+          <p className={`w-full font-sans text-end font-medium`}>{user?.cohort}</p>
           {user?.title ? <p className={`border-0 border-b border-b-[#b1adad] w-full`}>{user?.title}</p> : null}
           <p className="mt-3 text-[13px] w-full">
             {reduceTextLength(user.bio as string, 450)}
@@ -102,7 +111,7 @@ export default function Profile() {
               <span className={`${theme === 'light' ? 'text-[#2c2c2c]' : 'text-[#e6e2e2]'}`}>Skills:</span>
               <p className="flex items-center gap-x-1">
                 {
-                  ['c', 'java', 'programming', 'c#']?.map((skill) => (
+                  user?.skills?.map((skill) => (
                     <span key={skill}
                     className="p-0.5 bg-[#333333] rounded-[3px] px-2"
                     >{skill}</span>
@@ -111,12 +120,20 @@ export default function Profile() {
               </p>
             </div>
 
-            {/* <div className="flex flex-col">
-              <p>
-                <span>Forums</span>
-                <span></span>
-              </p>
-            </div> */}
+            <div className="flex items-center gap-x-1 mt-1">
+            {
+              user?.activeAccounts?.map((social) => (
+                <div key={social.handle}
+                  className="flex items-center gap-x bg-[#333333] w-fit rounded-sm"
+                >
+                  <a href={social.handle} target="_blank"
+                    className="capitalize text-blue-500 p-0.5 px-2"
+                  >{social.platform}</a>
+                </div>
+              ))
+            }
+          </div>
+            
           </div>
       }
       <button 

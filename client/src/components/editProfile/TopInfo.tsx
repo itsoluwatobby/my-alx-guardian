@@ -3,13 +3,14 @@ import GuardianImages from '../component/GuardianImages'
 import { TextInput } from './TextInput'
 
 type TopInfoProps = {
+  file: File | null;
   user: UpdateUserRequest;
   setFile: React.Dispatch<React.SetStateAction<File | null>>;
   handleChange: (event: ChangeEvent<HTMLInputElement>) => void;
   setUser: React.Dispatch<React.SetStateAction<Partial<UpdateUserRequest>>>;
 }
 
-export default function TopInfo({ user, handleChange, setFile, setUser }: TopInfoProps) {
+export default function TopInfo({ file, user, handleChange, setFile, setUser }: TopInfoProps) {
   const [reveal, setReveal] = useState<boolean>(false);
 
   const { profilePicture, firstName, title, bio } = user;
@@ -21,7 +22,7 @@ export default function TopInfo({ user, handleChange, setFile, setUser }: TopInf
     onMouseLeave={() => setReveal(false)}
     className="relative maxmobile:self-center">
       <GuardianImages
-        imageUri={profilePicture ?? ''}
+        imageUri={file ? URL.createObjectURL(file) : profilePicture as string}
         alt={firstName} textSize="text-6xl"
         classNames="maxmobile:self-center flex-none size-40 rounded-full" imageClassNames="rounded-full"
       />

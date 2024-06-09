@@ -4,6 +4,7 @@ import { PasswordInputs } from "../components/authentication/PasswordInputs";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { guardianAsyncWrapper } from "../app/guardianAsyncWrapper";
 import { toast } from "react-toastify";
+import { MetaTags } from "../layouts/MetaTagsOGgraph";
 import AppStand from "../components/AppStand";
 import { authenticationAPI } from "../app/api-calls/auth.api";
 import { sanitizeEntries } from "../utility/helpers";
@@ -51,6 +52,12 @@ export default function NewPassword() {
 
   return (
     <main className="page w-full flex flex-col md:flex-row items-center h-full">
+       <MetaTags
+        title='Password Reset Page'
+        description='Page for reseting user password'
+        url=''
+        image=''
+      />
       <form onSubmit={handleNewPassword} className="mt-10 flex-none md:w-[55%] w-full h-full flex flex-col gap-y-6 p-8 pt-14 items-center">
         
         <PasswordInputs

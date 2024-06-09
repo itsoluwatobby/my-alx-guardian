@@ -22,14 +22,14 @@ export default function SidebarModal({ openSidebarModal, setOpenSidebarModal }: 
       { name: 'Home', link: '/' },
       { name: 'Sign in', link: '/signin' },
       { name: 'Sign up', link: '/signup' },
-      // { name: 'About', link: '#about' },
+      { name: 'About', link: '#about' },
       // { name: 'FAQ', link: '#faq' },
       // { name: 'Contact', link: '#contact' },
     ],
     [
-      { name: 'Home', link: '/' },
+      { name: 'Home', link: loggedInUserId ? '/dashboard' : '/' },
       { name: 'Profile', link: `/profile/${loggedInUserId}` },
-      { name: 'create post', link: loggedInUserId ? '/new-post' : '/signin'  },
+      { name: 'create post', link: loggedInUserId ? '/new-post' : '/signin' },
       {
         name: 'Forums',
         link: () => {
@@ -84,7 +84,9 @@ export default function SidebarModal({ openSidebarModal, setOpenSidebarModal }: 
           {
             navigation[loggedInUserId?.length > 1 ? 1 : 0].map(nav => (
               typeof nav.link === 'string' ?
-              <Link to={nav.link} state={pathname} key={nav.name}
+              <Link to={nav.link} state={pathname} 
+              key={nav.name}
+                onClick={() => setOpenSidebarModal(false)}
                 className="border-b w-[80%] text-right rounded-br-md last:border-b-0 pb-4 hover:opacity-95 hover:pb-[18px] transition-all">
                 {nav.name}
               </Link>

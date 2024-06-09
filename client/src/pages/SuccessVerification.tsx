@@ -23,7 +23,7 @@ export default function SuccessVerification() {
   return (
     <main className="page w-full flex flex-col md:flex-row items-center h-full">
       <MetaTags
-        title='Success Verification'
+        title='Account Success Verification'
         description='Successfull account activation'
         url=''
         image=''
