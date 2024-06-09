@@ -22,11 +22,11 @@ import AccountVerification from './pages/AccountVerification';
 import SuccessVerification from './pages/SuccessVerification';
 
 function App() {
-  const { setTheme, theme, loggedInUserId } = useGuardianContext() as GuardianContextType;
+  const { theme } = useGuardianContext() as GuardianContextType;
   const [openSidebarModal, setOpenSidebarModal] = useState<boolean>(false);
 
   return (
-    <main className={`playfair-display-guardian w-full h-[100dvh h-screen flex flex-col xxlscreen:mx-auto max-w-[1440px] p-2 transition-colors ${theme === 'light' ? 'bg-gradient-to-b from-[#f4f1f3] from-[60%] to-transparent' : 'bg-gradient-to-b from-[#3e3e3e] from-[40%] to-[#606060] text-[#ffffff]'} overflow-y-scroll`}>
+    <main className={`playfair-display-guardian w-full h-[100dvh h-screen flex flex-col xxlscreen:mx-auto max-w-[1440px] p-4 transition-colors ${theme === 'light' ? 'bg-gradient-to-b from-[#f4f1f3] from-[60%] to-transparent' : 'bg-gradient-to-b from-[#3e3e3e] from-[40%] to-[#606060] text-[#ffffff]'} overflow-y-scroll`}>
       <Routes>
         <Route path='/' element={<GuardianWrapper 
           setOpenSidebarModal={setOpenSidebarModal}
@@ -49,7 +49,7 @@ function App() {
             <Route element={<ProtectedRoutes />}>
               <Route path='new-post' element={<NewPost />} />
               <Route path='edit-post/:postId' element={<NewPost />} />
-              <Route path='edit-profile' element={<EditProfile />} />
+              <Route path='edit-profile/:userId' element={<EditProfile />} />
             </Route>
           
           </Route>
@@ -60,7 +60,6 @@ function App() {
       </Routes>
 
       <Sidebar
-        theme={theme} setTheme={setTheme} loggedInUserId={loggedInUserId}
         openSidebarModal={openSidebarModal} setOpenSidebarModal={setOpenSidebarModal}
       />
 

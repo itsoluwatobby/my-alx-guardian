@@ -10,7 +10,7 @@ export default function GuardianWrapper({ setOpenSidebarModal }: GuardianWrapper
   // const { showTitle } = useGuardianContext() as GuardianContextType;
   
   return (
-    <div className="flex flex-col w-full h-full px-16 maxmobile:px-1">
+    <div className="flex flex-col w-full h-full px-16 maxmobile:px-1 lg:px-24">
        <Navbar 
         // theme={theme} 
         // setTheme={setTheme}

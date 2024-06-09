@@ -75,7 +75,7 @@ exports.thirdPartySignInValidator = async (data) => {
       .messages({
         'any.required': 'lastName is required',
       }),
-    picture: Joi.string().optional()
+    picture: Joi.optional()
       .messages({
         'any.required': 'picture is a string',
       }),

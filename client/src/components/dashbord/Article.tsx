@@ -15,12 +15,13 @@ import { postAPI } from "../../app/api-calls/post.api";
 
 type ArticleProp = {
   post: PostType;
+  page: 'PROFILE' | 'DASHBOARD';
   expandDetail: ExpandDetailsType;
   setPosts: React.Dispatch<React.SetStateAction<PostType[]>>;
   setExpandDetail: React.Dispatch<React.SetStateAction<ExpandDetailsType>>;
 }
 
-export const Article = ({ post, setPosts, expandDetail, setExpandDetail }: ArticleProp) => {
+export const Article = ({ post, setPosts, page, expandDetail, setExpandDetail }: ArticleProp) => {
   const { theme, loggedInUserId } = useGuardianContext() as GuardianContextType;
   const userRef = useRef<HTMLDivElement>(null);
   const popupRef = useRef<HTMLElement>(null);
@@ -37,14 +38,9 @@ export const Article = ({ post, setPosts, expandDetail, setExpandDetail }: Artic
   useEffect(() => {
     if (!userRef.current) return;
     if (!popupRef.current) return;
-    if (userRef.current.onmouseenter) setReveal(true);
-    if (popupRef.current.onmouseenter) setReveal(true);
-    // userRef.current.addEventListener('mouseleave', () => {
-    //   if (popupRef.current.onmouseenter) setReveal(true);
-    //   else setReveal(false);
-    // popupRef.current.addEventListener('mouseleave', () => setReveal(false));
-    // setReveal(false)
-    // });
+    userRef.current.addEventListener('mouseenter', () => setReveal(true));
+    popupRef.current.addEventListener('mouseenter', () => setReveal(true));
+    popupRef.current.addEventListener('mouseleave', () => setReveal(false));
   }, [])
 
   useEffect(() => {
@@ -66,7 +62,9 @@ export const Article = ({ post, setPosts, expandDetail, setExpandDetail }: Artic
   }
 
   return (
-    <article className="relative flex gap-2 shadow p-2">
+    <article 
+    onClick={() => setReveal(prev => !prev)}
+    className="relative flex gap-2 shadow p-2">
       <GuardianImages
         imageUri={user?.profilePicture ?? ''}
         alt={user?.firstName ?? ''} isLoading={loading}
@@ -75,7 +73,7 @@ export const Article = ({ post, setPosts, expandDetail, setExpandDetail }: Artic
       />
       {/* work on the popup */}
       <ProfilePopup
-        name="User 1" reveal={reveal} popupRef={popupRef}
+        user={user} reveal={page === 'DASHBOARD' ? reveal : false} popupRef={popupRef}
         classNames="z-10 top-5"
       />
 
@@ -83,7 +81,7 @@ export const Article = ({ post, setPosts, expandDetail, setExpandDetail }: Artic
         onClick={() => setOpenToggle(prev => !prev)}
         className={`absolute right-4 size-5 ${post.userId === loggedInUserId ? '' : 'hidden'} ${openToggle ? 'hidden' : ''} cursor-pointer hover:scale-[1.03] active:scale-[1] transition-transform`} />
 
-      <div className={`${openToggle ? 'flex' : 'hidden'} items-center text-2xl gap-x-2 absolute top-0 right-0`}>
+      <div className={`${openToggle ? 'flex' : 'hidden'} items-center text-2xl gap-x-1 absolute top-0 right-0`}>
         <MdEdit
           onClick={() => {
             navigate(`/edit-post/${post._id}`)
@@ -101,7 +99,7 @@ export const Article = ({ post, setPosts, expandDetail, setExpandDetail }: Artic
         />
       </div>
 
-      <section className="flex flex-col gap-1">
+      <section className="flex flex-col gap-1 w-full">
         <div className={`${appState2.loading ? 'animate-pulse' : ''} flex flex-col text-sm`}>
           <UserDetails
             name={user?.firstName} userRef={userRef}

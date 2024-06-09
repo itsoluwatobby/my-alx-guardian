@@ -4,7 +4,6 @@ const { Provider } = require('../utils/constants');
 const UserSocialAccounts = {
   platform: { type: String },
   handle: { type: String },
-  followers: { type: Number },
 };
 
 const UserSchema = mongoose.Schema(

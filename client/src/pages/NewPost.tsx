@@ -24,7 +24,7 @@ MdEditor.use(Plugins.AutoResize, {
 
 export const NewPost = () => {
   const { postId } = useParams();
-  const { loggedInUserId } = useGuardianContext() as GuardianContextType;
+  const { loggedInUserId, setPosts, type } = useGuardianContext() as GuardianContextType;
   const [markdownText, setMarkdownText] = useState<string>("");
   const [appState, setAppState] = useState<AppStateType>(initAppState);
   const [appStateEdit, setAppStateEdit] = useState<AppStateType>(initAppState);
@@ -95,15 +95,17 @@ export const NewPost = () => {
           id: _id, body: val,
           category: { type: category.type },
         };
-        await postAPI.updatePost(editedPost);
+        const res = await postAPI.updatePost(editedPost);
+        setPosts(prev => ([...prev.filter(filt => filt._id !== editedPost.id), res.data]));
         localStore.removeStorage(postId as string);
         toast.info('Post updated!');
       } else {
         const newPost: CreatePostRequest = {
           userId: loggedInUserId, body: val,
-          category: { type: 'General' },
+          category: { type },
         }
-        await postAPI.createPost(newPost);
+        const res = await postAPI.createPost(newPost);
+        setPosts(prev => ([res.data, ...prev]));
         localStore.removeStorage(userId);
         toast.info('Post created!');
       }
@@ -111,22 +113,6 @@ export const NewPost = () => {
       navigate('/dashboard');
     }, setAppState);
   }
-
-  // const handleUpdateSubmit = () => {
-  //   if (loading) return;
-  //   guardianAsyncWrapper(async () => {
-  //     setAppState(prev => ({ ...prev, loading: true }));
-  //     const updatedPost: UpdatePostRequest = {
-  //       userId: loggedInUserId, body: val,
-  //       category: { type: 'General' },
-  //     }
-  //     await postAPI.updatePost(updatedPost);
-  //     localStore.removeStorage(userId);
-  //     setMarkdownText('');
-  //     toast.info('Post created!');
-  //     navigate('/dashboard');
-  //   }, setAppState);
-  // }
 
   const canSubmit = Boolean(val);
 
@@ -137,7 +123,7 @@ export const NewPost = () => {
         <p className={``}>
           {!val ? '' : (isTyping ? 'saving ...' : 'saved')}
         </p>
-        <div className='flex items-center gap-x-3'>
+        <div className='flex items-center gap-x-3 text-white'>
           <button
             disabled={!loading && !canSubmit}
             onClick={handleSubmit}
@@ -151,7 +137,7 @@ export const NewPost = () => {
 
       {
         preview ?
-          <div className="flex border border-[#cccccc] p-2 rounded-md flex-col w-full h-[90%]">
+          <div className="flex border border-[#cccccc] p-2 rounded-md flex-col w-full h-[90%">
             <h2 className='border-b'>Preview</h2>
             <ReactMarkdown>{markdownText}</ReactMarkdown>
           </div>
