@@ -15,14 +15,14 @@ export default function NotFound() {
   }, [navigate])
 
   return (
-    <div className="w-full h-full p-20 flex flex-col gap-y-14 items-center">
+    <div className="w-full h-full p-20 flex flex-col gap-y-14 items-center text-center">
       <h3 className="text-6xl animate-pulse">
         Oops!!!
       </h3>
-      <h3 className="text-5xl">
+      <h3 className="text-5xl maxmobile:text-3xl">
         Page Not NotFound
       </h3>
-      <p className="text-xl">You wondered off. You will be automatically redirected!</p>
+      <p className="text-xl maxmobile:text-lg">You wondered off. You will be automatically redirected!</p>
     </div>
   )
 }

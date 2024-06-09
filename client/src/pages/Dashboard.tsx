@@ -12,6 +12,7 @@ import { MAX_LENGTH } from "../utility/constants";
 import { useEffect, useState } from "react";
 import useObserver from "../hooks/useObserver";
 import Loading from "../components/Loading";
+import { useGuardianContext } from "../hooks/useGuardianContext";
 
 type SearchResult = {
   prevQuery: string;
@@ -31,25 +32,13 @@ export default function Dashboard() {
   );
   const [appState, setAppState] = useState<AppStateType>(initAppState);
 
-  const [appState1, setAppState1] = useState<AppStateType>(initAppState);
   const [startSearch, setStartSearch] = useState<boolean>(false);
-  const [posts, setPosts] = useState<PostType[]>([]);
-  const [paginate, setPaginate] = useState<Pagination>({
-    pages: { previous: null, current: null, next: null },
-    length: 0, pagesLeft: 0, numberOfPages: 0,
-  });
-  const [postQuery] = useState<PostQuery>({
-    pageNumber: 1, limit: 100,
-  });
-// setPostQuery
+  const { posts, setPosts, appStatePost, paginate } = useGuardianContext() as GuardianContextType;
 
   const { pagesLeft } = paginate;
-  // const { pages, pagesLeft } = paginate;
-  // console.log(postQuery)
 
   const { loading, isError, error } = appState;
-  const { loading: loading1 } = appState1;
-  const { pageNumber, limit } = postQuery;
+  const { loading: loading1 } = appStatePost;
 
   useEffect(() => {
     if (!val || isTyping || loading) return;
@@ -63,15 +52,6 @@ export default function Dashboard() {
       setSearchResult({ prevQuery: val, result: res.data })
     }, setAppState);
   }, [isTyping, val, loading, searchResult.prevQuery])
-
-  useEffect(() => {
-    guardianAsyncWrapper(async () => {
-      setAppState1(prev => ({ ...prev, loading: true }));
-      const res = await postAPI.findPosts({ pageNumber, limit });
-      setPaginate(res.data.pageable)
-      setPosts(res.data.data);
-    }, setAppState1);
-  }, [pageNumber, limit])
 
   // useEffect(() => {
   //   if (isIntersecting && pages.next !== null && pagesLeft !== 0) {
@@ -114,6 +94,7 @@ export default function Dashboard() {
           sortedPosts?.map((post) => (
             <Article key={post._id} post={post} setPosts={setPosts}
               expandDetail={expandDetail} setExpandDetail={setExpandDetail}
+              page='DASHBOARD'
             />
           ))
         }
@@ -122,7 +103,13 @@ export default function Dashboard() {
       className="flex items-center justify-center"
       >
         {loading1 ? <Loading classNames="size-10 self-center" /> : null}
-        <span>{pagesLeft === 0 ? 'No more posts' : ''}</span>
+        <span>
+          {
+          pagesLeft === 0 
+          ? 'No more posts' 
+          : `${pagesLeft} ${pagesLeft === 1 ? 'page' : 'pages'} left`
+          }
+          </span>
       </section>
     </section>
   )

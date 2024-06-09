@@ -10,14 +10,24 @@ type DebouncedType = { val: string; isTyping: boolean, event: TypingEvent }
 
 type GuardianContextType = {
   theme: Theme;
+  posts: PostType[];
+  type: CategoryType;
   showTitle: boolean;
   loggedInUserId: string;
+  paginate: Pagination;
+  appStatePost: AppStateType;
   currentPost: Partial<PostType>;
   currentUser: Partial<UserType>;
+  categoryToggle: CategoryToggleStates;
   setTheme: React.Dispatch<React.SetStateAction<Theme>>;
+  setPosts: React.Dispatch<React.SetStateAction<PostType[]>>;
   setShowTitle: React.Dispatch<React.SetStateAction<boolean>>;
+  setType: React.Dispatch<React.SetStateAction<CategoryType>>;
+  setPaginate: React.Dispatch<React.SetStateAction<Pagination>>;
   setLoggedInUserId: React.Dispatch<React.SetStateAction<string>>;
+  setAppStatePost: React.Dispatch<React.SetStateAction<AppStateType>>;
   setCurrentPost: React.Dispatch<React.SetStateAction<Partial<PostType>>>;
+  setCategoryToggle: React.Dispatch<React.SetStateAction<CategoryToggleStates>>;
 }
 
 type ImageReturnType = { status: string, url: string };
@@ -117,7 +127,7 @@ type ResendOTPRequest = Pick<PasswordResetRequest, 'email'>;
 type ResendOTPResponse = { id: string; email: string; }
 
 // --------------- USERS -----------------
-type UserSocialAccounts = { platform: string; handle: string; followers: number; };
+type UserSocialAccounts = { platform: string; handle: string; };
 type UserType = {
   location: { address: string; country: string; },
   _id: string;
@@ -140,6 +150,7 @@ type GetUserResponse = ResponseTemplate & { data: UserType; }
 type GetUsersResponse = ResponseTemplate & { data: UserType[]; }
 
 type UpdateUserRequest = {
+  _id?: string;
   id: string;
   location?: { address: string; country: string; },
   firstName?: string;
@@ -148,7 +159,7 @@ type UpdateUserRequest = {
   cohort?: string;
   provider?: Provider;
   title?: string;
-  skills?: string[];
+  skills?: string[] | string;
   bio?: string;
   activeAccounts?: UserSocialAccounts[];
 }
@@ -193,7 +204,11 @@ type GetPosts = ResponseTemplate & {
   data: { pageable: Pagination; data: PostType[]; }
 }
 
-type PostQuery = { pageNumber: number; limit: number; userId?: string; }
+type PostQuery = {
+  [x:string]: string | number;
+  pageNumber: number;
+  limit: number;
+}
 type GetPostResponse = CreatePostResponse
 
 type UpdatePostRequest = { id: strimg; } & Omit<PostType, '_id'>;

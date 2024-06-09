@@ -2,7 +2,7 @@ import { ChangeEvent, useState, useEffect } from 'react';
 import { initAppState, initCategory } from '../utility/initVaraibles';
 import { FaTimes } from 'react-icons/fa';
 import { ActionButton } from './ActionButton';
-import { imageUpload } from '../utility/image-controller';
+import { deleteImage, imageUpload } from '../utility/image-controller';
 import { MAX_LENGTH } from '../utility/constants';
 import { guardianAsyncWrapper } from '../app/guardianAsyncWrapper';
 import { sanitizeEntries } from '../utility/helpers';
@@ -21,7 +21,7 @@ export default function CategoryForm({ loggedInUserId, setAddItem, setCategories
   const [appState, setAppState] = useState<AppStateType>(initAppState);
 
   const { loading, isError } = appState;
-  const { description, title, category } = categoryObj;
+  const { description, title, category, banner } = categoryObj;
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -51,6 +51,7 @@ export default function CategoryForm({ loggedInUserId, setAddItem, setCategories
         res = await imageUpload(file as File, 'category-images');
         setErrorImageUrl(res.url);
       }
+      if (banner) await deleteImage(banner, 'category-images');
       const newCategory: CreateCategoryRequest = {
         ...categoryObj,
         ...sanitizeStrings,

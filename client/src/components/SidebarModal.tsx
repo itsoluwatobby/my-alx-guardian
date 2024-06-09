@@ -3,17 +3,17 @@ import { FaMoon, FaSun } from "react-icons/fa6";
 import { useLocation } from "react-router-dom";
 import { useLogout } from "../hooks/useLogout";
 import { Link } from "react-router-dom";
+import { useGuardianContext } from "../hooks/useGuardianContext";
+import { MdArrowDropDown } from "react-icons/md";
 
 type SidebarModalProps = {
-  theme: Theme;
   openSidebarModal: boolean;
-  loggedInUserId: string;
-  setTheme: React.Dispatch<React.SetStateAction<Theme>>;
   setOpenSidebarModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function SidebarModal({ theme, loggedInUserId, openSidebarModal, setTheme, setOpenSidebarModal }: SidebarModalProps) {
+export default function SidebarModal({ openSidebarModal, setOpenSidebarModal }: SidebarModalProps) {
   const { pathname } = useLocation();
+  const { categoryToggle, setCategoryToggle, theme, setTheme, loggedInUserId } = useGuardianContext() as GuardianContextType;
   const logout = useLogout(setOpenSidebarModal);
 
   // const AuthenticatedRoutes = ['/dashboard'];
@@ -30,6 +30,15 @@ export default function SidebarModal({ theme, loggedInUserId, openSidebarModal, 
       { name: 'Home', link: '/' },
       // { name: 'Profile', link: '/profile' },
       { name: 'create post', link: loggedInUserId ? '/new-post' : '/signin'  },
+      {
+        name: 'Forums',
+        link: () => setCategoryToggle(prev => ({ Cohorts: false, Forums: !prev.Forums })), Icon: MdArrowDropDown
+      },
+      {
+        name: 'Cohorts',
+        link: () => setCategoryToggle(prev => ({ ...prev, Forums: false, Cohorts: !prev.Cohorts })),
+        Icon: MdArrowDropDown
+      },
       { name: 'Logout', link: logout },
     ]
   ];
