@@ -276,7 +276,7 @@ type CategoryObjType = {
   title?: string;
   description?: string;
   category: { type: CategoryType; name?: string; };
-  _id: string;
+  _id?: string;
   members: [];
   updates: [];
   modifiedBy: { userId: string; };
@@ -284,7 +284,9 @@ type CategoryObjType = {
   updatedAt: string;
 }
 
-type CreateCategoryRequest = Pick<CategoryObjType, 'authorId' | 'category' | 'banner' | 'title' | 'description'>;
+type AddItemType = { category: CategoryObjType, toggle: boolean }
+
+type CreateCategoryRequest = Pick<CategoryObjType, 'authorId' | 'category' | 'banner' | 'title' | 'description' | '_id'>;
 type CreateCategoryResponse = ResponseTemplate & { data: CategoryObjType }
 
 type CategoryQuery = { pageNumber: number; limit: number; type: Exclude<CategoryType, 'General'>; }

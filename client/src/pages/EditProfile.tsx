@@ -66,7 +66,9 @@ export default function EditProfile() {
         setErrorImageUrl(res.url);
       }
       // delete previous image
-      if (profilePicture) await deleteImage(profilePicture, 'profile-images');
+      if ((profilePicture as string)?.length > 1) {
+        await deleteImage(profilePicture!, 'profile-images');
+      }
       const userObj: UpdateUserRequest = {
         id: _id as string, ...sanitizeStrings,
         skills: (skills as unknown as string)?.split(', '),

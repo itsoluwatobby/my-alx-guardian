@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-const { CategoryModel } = require('../models');
+const { CategoryModel, PostsModel } = require('../models');
 const { CategoryEnum } = require('../utils/accountEnum');
 const { pagination } = require('../utils/paginate');
 
@@ -78,6 +78,16 @@ class CategoryRepository {
   }
 
   async deleteCategory(query) {
+    const { _id } = query;
+    const category = await this.getCategory(_id);
+    await PostsModel.deleteMany(
+      {
+        $and: [
+          { 'category.type:': { $in: [category.category.type] } },
+          { 'category.name:': { $in: [category.category.name] } },
+        ],
+      },
+    );
     const result = await CategoryModel.findOneAndDelete(query);
     return result;
   }

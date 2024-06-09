@@ -1,42 +1,42 @@
-import { useEffect, useState } from "react";
-import { FaMinusSquare, FaPlusSquare } from "react-icons/fa";
-import { MdArrowDropDown } from "react-icons/md";
-import { Link, Outlet, useLocation } from "react-router-dom";
-import { useGuardianContext } from "../hooks/useGuardianContext";
-import CategoryForm from "../components/CategoryForm";
-import RenderTemplate from "../components/RenderTemplate";
 import { guardianAsyncWrapper } from "../app/guardianAsyncWrapper";
-import { initAppState, initPagination } from "../utility/initVaraibles";
+import { initAppState, initCategoryObj, initPagination } from "../utility/initVaraibles";
+import CategoryDisplay from "../components/dashbord/CategoryDisplay";
+import { useGuardianContext } from "../hooks/useGuardianContext";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import { categoryAPI } from "../app/api-calls/category.api";
+import CategoryForm from "../components/CategoryForm";
 import { postAPI } from "../app/api-calls/post.api";
+import { MdArrowDropDown } from "react-icons/md";
 import { useLogout } from "../hooks/useLogout";
+import { useEffect, useState } from "react";
+import CategoryDetailPage from "../components/CategoryDetailPage";
 
+const initPageQuery = { pageNumber: 1, limit: 5 };
 export default function DashboardLayout() {
   const { pathname } = useLocation();
   const logout = useLogout(() => {});
   const { loggedInUserId, categoryToggle, setCategoryToggle,
-    setPosts, setAppStatePost, setPaginate, type, setType,
+    setPosts, posts, setAppStatePost, setPaginate, type, setType,
    } = useGuardianContext() as GuardianContextType;
-  const [addItem, setAddItem] = useState<boolean>(false);
+  const [addItem, setAddItem] = useState<AddItemType>({
+    category: {} as CategoryObjType, toggle: false
+  });
+  const [totalPosts, setTotalPosts] = useState<number>(0);
 
   const [categories, setCategories] = useState<CategoryObjType[]>([]);
   const [paginateCategory, setPaginateCategory] = useState<Pagination>(initPagination);
 
-  const [postQuery] = useState<Omit<CategoryQuery, 'type'>>({
-    pageNumber: 1, limit: 5,
-  });
-  const [categoryQuery, setCategoryQuery] = useState<Omit<CategoryQuery, 'type'>>({
-    pageNumber: 1, limit: 5,
-  });
+  const [postQuery] = useState<Omit<CategoryQuery, 'type'>>(initPageQuery);
+  const [categoryQuery, setCategoryQuery] = useState<Omit<CategoryQuery, 'type'>>(initPageQuery);
   const [appState, setAppState] = useState<AppStateType>(initAppState);
+  const [category, setCategory] = useState<CategoryObjType>(initCategoryObj);
 
   const { pageNumber, limit } = categoryQuery;
   const { pageNumber: page } = postQuery;
-  const { loading, isError, error } = appState;
 
   const rightBar = [
     { name: 'home', link: '/dashboard', display: true, },
-    { name: 'profile', link: '/profile/1234', display: false },
+    { name: 'profile', link: `/profile/${loggedInUserId}`, display: false },
     { name: 'create post', link: loggedInUserId ? '/new-post' : '/signin', display: false },
     {
       name: 'Forums', display: true,
@@ -80,11 +80,18 @@ export default function DashboardLayout() {
     }, setAppStatePost);
   }, [type, setAppStatePost, setPaginate, setPosts, page])
 
+  useEffect(() => {
+    if (!posts.length) return;
+    if (type === 'General') return;
+    const postType = posts?.filter(post => post.category.type === type);
+    setTotalPosts(postType?.length);
+  }, [type, posts])
+
   return (
     <main className="flex items-center h-full w-full">
       <div className="flex items-cente h-full w-full gap-4">
-        <aside className="sticky top-14 flex flex-col justify-between py-4 px-1 h-[90vh] -mt-14 shadow-inner max-w-1/4 md:w-[28%] min-w-48 midscreen:hidden">
-          <div className="flex flex-col gap-y-4 pl-10 py-6 border-b w-full">
+        <aside className={`md:sticky md:top-14 flex flex-col justify-between py-4 px-1 h-[90vh] -mt-14 shadow-inner max-w-1/4 md:w-[28%] min-w-48 ${(!categoryToggle.Forums && !categoryToggle.Cohorts) ? 'hidde midscreen:hidden' : 'midscreen:fixed midscreen:translate-x-[10px] midscreen:bottom-0 midscreen:w-full midscreen:bg-gradient-to-b from-[#333333] from-[40%] to-[#606060] midscreen:z-30 midscreen:opacity-90'}`}>
+          <div className="flex flex-col gap-y-4 pl-10 py-6 border-b midscreen:w-48 w-full">
             {
               rightBar.map(nav => (
                 !nav.Icon ?
@@ -102,66 +109,19 @@ export default function DashboardLayout() {
             }
           </div>
 
-          <div className={`relative ${(!categoryToggle.Forums && !categoryToggle.Cohorts) ? 'hidden' : 'flex'} shadow-md flex-col gap-y-0 py-3 flex-auto w-full`}>
-            <div className='w-fit flex items-center gap-x-2 self-center'>
-              <h4 className="underline underline-offset-4 self-center">{categoryToggle.Forums ? 'Forums' : 'Cohorts'}</h4>
-              {
-                addItem ?
-                  <FaMinusSquare
-                    title="Close"
-                    onClick={() => setAddItem(false)}
-                    className="size-4 cursor-pointer hover:opacity-90 active:opacity-100 transition-opacity"
-                  />
-                  :
-                  <FaPlusSquare
-                    title="Add"
-                    onClick={() => setAddItem(true)}
-                    className="size-4 cursor-pointer hover:opacity-90 active:opacity-100 transition-opacity"
-                  />
-              }
-            </div>
-
-            <ul className="pl-4 flex flex-col gap-y-1 text-sm">
-              <RenderTemplate
-                defaultMessage={`No ${type}`}
-                classNames="gap-y-0 py-1"
-                errorTextClassNames='text-sm text-start'
-                errorClassNames='size-11'
-                isLoading={loading} isError={isError} content={categories}
-                LoadingComponent={() => <div
-                  className="animate-pulse w-full h-5 bg-[#333333]"
-                ></div>} error={error}
-              >
-                <div className="flex flex-col gap-y-0">
-                  {
-                    categories?.map((cat) => (
-                      <button key={cat._id}
-                        className="capitalize cursor-default p-1 hover:bg-[#333333] focus:bg-[#333333] w-full text-start transition-colors"
-                      >
-                        {cat.category.name}
-                      </button>
-                    ))
-                  }
-                </div>
-              </RenderTemplate>
-
-              <div className="absolute bottom-10 flex items-center w-full gap-x-2 text-[13px]">
-                {
-                  [...Array(paginateCategory.numberOfPages).keys()].map(i => (
-                    <button
-                      key={i}
-                      onClick={() => setCategoryQuery(prev => ({ ...prev, pageNumber: i + 1 }))}
-                      className="font-sans px-2 p-0.5 rounded-sm focus:bg-gray-700 bg-gray-500 hover:scale-[1.02] transition-transform text-white">{i + 1}</button>
-                  ))
-                }
-              </div>
-            </ul>
-
-          </div>
+          <CategoryDisplay
+            categories={categories}
+            addItem={addItem} setAddItem={setAddItem}
+            categoryToggle={categoryToggle}
+            appState={appState} type={type}
+            setCategory={setCategory}
+            paginateCategory={paginateCategory}
+            setCategoryQuery={setCategoryQuery}
+          />
           
           <button
             onClick={logout}
-            className='self-center rounded-full py-2 disabled:cursor-not-allowed mobile:py-3 mobile:text-base w-36 mobile:w-36 font-medium text-white bg-blue-900 transition-colors duration-300 shadow-sm'
+            className='midscreen:self-start self-center rounded-full py-2 disabled:cursor-not-allowed mobile:py-3 mobile:text-base w-36 mobile:w-36 font-medium text-white bg-blue-900 transition-colors duration-300 shadow-sm'
           >
             Sign out
           </button>
@@ -174,12 +134,23 @@ export default function DashboardLayout() {
         </aside>
       </div>
       {
-        addItem ?
+        addItem.toggle ?
           <CategoryForm
             setAddItem={setAddItem}
+            addItem={addItem}
             loggedInUserId={loggedInUserId}
             setCategories={setCategories}
           /> : null
+      }
+
+      {
+        category._id ?
+        <CategoryDetailPage
+          categoryObj={category} totalPosts={totalPosts}
+          setAddItem={setAddItem}
+          setCategories={setCategories}
+          setCategory={setCategory} loggedInUserId={loggedInUserId}
+        /> : null
       }
     </main>
   )

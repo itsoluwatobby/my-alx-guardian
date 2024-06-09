@@ -27,3 +27,10 @@ export const initPost: PostType = {
   isRepost: false, sharedCount: 0, reposts: [], createdAt: '',
   updatedAt: '', commentCount: 0,
 }
+
+export const initCategoryObj: CategoryObjType = {
+  authorId: '', banner: '', title: '', description: '',
+  category: { type: '' as CategoryType, name: '' },
+  _id: '', members: [], updates: [],
+  modifiedBy: { userId: '' }, createdAt: '', updatedAt: '',
+}

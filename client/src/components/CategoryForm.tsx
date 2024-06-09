@@ -1,22 +1,24 @@
-import { ChangeEvent, useState, useEffect } from 'react';
-import { initAppState, initCategory } from '../utility/initVaraibles';
-import { FaTimes } from 'react-icons/fa';
-import { ActionButton } from './ActionButton';
 import { deleteImage, imageUpload } from '../utility/image-controller';
-import { MAX_LENGTH } from '../utility/constants';
+import { initAppState, initCategory } from '../utility/initVaraibles';
 import { guardianAsyncWrapper } from '../app/guardianAsyncWrapper';
-import { sanitizeEntries } from '../utility/helpers';
 import { categoryAPI } from '../app/api-calls/category.api';
+import { ChangeEvent, useState, useEffect } from 'react';
+import { sanitizeEntries } from '../utility/helpers';
+import { MAX_LENGTH } from '../utility/constants';
+import { ActionButton } from './ActionButton';
+import { FaTimes } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
 type CategoryFormType = {
+  addItem: AddItemType;
   loggedInUserId: string;
-  setAddItem: React.Dispatch<React.SetStateAction<boolean>>;
+  setAddItem: React.Dispatch<React.SetStateAction<AddItemType>>;
   setCategories: React.Dispatch<React.SetStateAction<CategoryObjType[]>>
 }
-export default function CategoryForm({ loggedInUserId, setAddItem, setCategories }: CategoryFormType) {
+export default function CategoryForm({ addItem, loggedInUserId, setAddItem, setCategories }: CategoryFormType) {
   const [categoryObj, setCategoryObj] = useState<CreateCategoryRequest>(initCategory);
   const [file, setFile] = useState<File | null>(null);
+  const [editable, setEditable] = useState<boolean | null>(null);
   const [errorImageUrl, setErrorImageUrl] = useState<string | null>(null);
   const [appState, setAppState] = useState<AppStateType>(initAppState);
 
@@ -37,6 +39,12 @@ export default function CategoryForm({ loggedInUserId, setAddItem, setCategories
     }
   }, [file])
 
+  useEffect(() => {
+    if (addItem.category._id) {
+      setCategoryObj(addItem.category);
+      setEditable(loggedInUserId === addItem.category.authorId);
+    }
+  }, [addItem.category, loggedInUserId])
 
   const canSubmit = [description, category.type, category.name].every(Boolean);
 
@@ -51,7 +59,10 @@ export default function CategoryForm({ loggedInUserId, setAddItem, setCategories
         res = await imageUpload(file as File, 'category-images');
         setErrorImageUrl(res.url);
       }
-      if (banner) await deleteImage(banner, 'category-images');
+
+      if ((banner as string)?.length > 1 && banner !== 'image.png') {
+        await deleteImage(banner!, 'category-images');
+      }
       const newCategory: CreateCategoryRequest = {
         ...categoryObj,
         ...sanitizeStrings,
@@ -59,10 +70,34 @@ export default function CategoryForm({ loggedInUserId, setAddItem, setCategories
         banner: errorImageUrl ?? res.url,
         category: { ...sanitizeCat },
       }
-      const newCat = await categoryAPI.createCategory(newCategory);
-      setCategories(prev => ([...prev, newCat.data]));
-      setCategoryObj(initCategory);
-      toast.success(`${category.type} added✌️`);
+
+      if (addItem.category._id) {
+        let updated: UpdateCategoryResponse | UpdateDescriptionResponse
+        const { _id, title, category, description, authorId } = newCategory;
+        if (editable !== null && editable) {
+          const updatedCat: UpdateCategoryRequest = { 
+            id: _id, title, description, category, authorId
+          };
+          updated = await categoryAPI.updateCategory(updatedCat);
+        } else {
+          const updatedCat: UpdateDescriptionRequest = {
+            id: _id as string,
+            userId: loggedInUserId,
+            description: description as string,
+          };
+          updated = await categoryAPI.updateCategoryDescription(updatedCat);
+        }
+        setCategories(prev => ([updated.data, ...prev.filter(other => other._id !== updated.data._id)]));
+        setCategoryObj(updated.data);
+      } else {
+        const newCat = await categoryAPI.createCategory(newCategory);
+        setCategories(prev => ([...prev, newCat.data]));
+        setCategoryObj(initCategory);
+      }
+      const msg = addItem.category._id ? 'updated' : 'added';
+      setAddItem(prev => ({ ...prev, toggle: false }));
+      setErrorImageUrl(null);
+      toast.success(`${category.type} ${msg}'✌️'`);
     }, setAppState);
   };
 
@@ -70,34 +105,47 @@ export default function CategoryForm({ loggedInUserId, setAddItem, setCategories
     <main 
     className='w-full fixed inset-0 h-screen bg-black bg-opacity-30 z-50 flex items-center justify-center'>
 
-      <div className='z-30 flex flex-col gap-1 self-center -mt-20 p-2 rounded-md bg-[#898989] text-black text-sm lg:w-[30%] w-1/2 maxmobile:w-[80%]'>
+      <div className='z-30 flex flex-col self-center -mt-20 py-1 p-2 rounded-md bg-[#898989] pb-3 text-black text-sm lg:w-[30%] w-1/2 maxmobile:w-[80%]'>
         <button title="close"
-          onClick={() => setAddItem(false)}
+          onClick={() => setAddItem(prev => ({ ...prev, toggle: false }))}
           className="rounded-sm px-2.5 py-1 w-fit self-end shadow-md bg-gray-700 text-white">
           <FaTimes />
         </button>
-        <div className='flex flex-col gap-y-3 w-full'>
+        <div className='flex flex-col gap-y-1 w-full'>
           <CustomInput
-            name='title'
+            name='title' max={20}
+            disabled={editable !== null ? !editable : false}
             value={title!} placeholder='Title' handleChange={handleChange}
             inputClassNames=''
           />
           <CustomInput
-            name='description'
+            name='description' max={100}
+            disabled={false}
             value={description!} placeholder='*Description'
             handleChange={handleChange} required={true}
+            inputClassNames=''
+          />
+          <CustomInput
+            name='name' max={20}
+            disabled={editable !== null ? !editable : false}
+            value={category.name!} placeholder={`*${category.type} Name`} handleChange={(event) => setCategoryObj(prev => ({ ...prev, category: {
+              ...prev.category, name: event.target.value as CategoryToggles,
+            } }))}
+            required={true}
             inputClassNames=''
           />
           <label htmlFor="banner"
           className='w-full'
           >
             <input type="file" id='banner' 
+            disabled={editable !== null ? !editable : false}
             onChange={e => setFile((e.target.files as FileList)[0])}
             accept='image/*' className='text-white'
             />
           </label>
           <select name="type"
             required={true}
+            disabled={editable !== null ? !editable : false}
             onChange={event => setCategoryObj(prev => ({ ...prev, category: {
             ...prev.category,
             type: event.target.value as CategoryToggles,
@@ -110,21 +158,14 @@ export default function CategoryForm({ loggedInUserId, setAddItem, setCategories
               ))
             }
           </select>
-          <CustomInput
-            name='name'
-            value={category.name!} placeholder={`*${category.type} Name`} handleChange={(event) => setCategoryObj(prev => ({ ...prev, category: {
-              ...prev.category, name: event.target.value as CategoryToggles,
-            } }))}
-            required={true}
-            inputClassNames=''
-          />
         </div>
 
         <ActionButton
           checker={canSubmit && !loading}
-          text='Create' disabled={!canSubmit || loading}
+          text={addItem.category._id ? 'Update' : 'Create'} 
+          disabled={!canSubmit || loading}
           loading={loading} isError={isError}
-          extraClassNames='mt-3' onClick={handleSubmit}
+          extraClassNames='mt-4' onClick={handleSubmit}
         />
       </div>
 
@@ -135,22 +176,31 @@ export default function CategoryForm({ loggedInUserId, setAddItem, setCategories
 type CustomInputType = {
   value: string;
   name: string;
+  disabled: boolean;
   placeholder: string;
   inputClassNames: string;
-  required?: boolean;
+  max: number;
   handleChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  required?: boolean;
 }
 
-const CustomInput = ({ name, value, inputClassNames, placeholder, handleChange, required=false }: CustomInputType) => {
+const CustomInput = ({ name, value, disabled, max, inputClassNames, placeholder, handleChange, required=false }: CustomInputType) => {
 
   return (
-    <input type="text"
-      value={value}
-      name={name}
-      className={`focus:ring-0 focus:border-0 focus:outline-0 text-black w-full h-full rounded-sm p-2 ${inputClassNames}`}
-      required={required as boolean}
-      placeholder={placeholder}
-      onChange={handleChange}
-    />
+    <div className='w-full flex flex-col'>
+      <label htmlFor={name}
+      className='capitalize font-medium text-[13px]'
+      >{name}</label>
+      <input type="text"
+        value={value}
+        disabled={disabled}
+        name={name}
+        className={`focus:ring-0 focus:border-0 focus:outline-0 text-black w-full h-full rounded-sm p-2 ${inputClassNames}`}
+        max={max}
+        required={required as boolean}
+        placeholder={placeholder}
+        onChange={handleChange}
+      />
+    </div>
   )
 }
