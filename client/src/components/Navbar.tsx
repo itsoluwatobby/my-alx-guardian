@@ -110,7 +110,7 @@ export default function Navbar({ setOpenSidebarModal }: NavbarProps) {
         <div 
         onClick={() => setOpenSidebarModal(true)}
         className="md:hidden cursor-pointer hover:opacity-95 active:opacity-100 h-fit rounded-sm shadow-inner transition-opacity">
-          <div className={`relative ${theme === 'light' ? 'bg-[#333333] before:bg-[#333333] after:bg-[#333333]' : 'bg-white before:bg-white after:bg-white'} rounded-sm w-6 h-1 before:absolute before:-top-1.5 before:w-6 before:rounded-sm before:h-1 after:absolute after:-bottom-1.5 after:w-6 after:rounded-sm after:h-1`}>
+          <div className={`relative ${theme === 'light' ? 'bg-[#333333] before:bg-[#333333] after:bg-[#333333]' : 'bg-white before:bg-white after:bg-white'} rounded-sm w-4 h-1 before:absolute before:-top-1.5 before:w-6 before:rounded-sm before:h-1 after:absolute after:-bottom-1.5 after:w-5 after:rounded-sm after:h-1`}>
           </div>
         </div>
       </div>

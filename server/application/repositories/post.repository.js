@@ -20,28 +20,19 @@ class PostsRepository {
       activeId, pageNumber, limit, ...query
     } = queryObj;
     let ref;
+    let posts;
     if (Object.keys(query).includes('type')) {
       const { type, ...rest } = query;
-      ref = { 'category.type': type, ...rest };
-    } else ref = query;
-    const posts = await pagination(pageNumber, limit, PostsModel, ref);
-    return posts;
-  }
-
-  async getAllPosts(queryObj) {
-    const { pageNumber, limit } = queryObj;
-    const posts = await pagination(
-      pageNumber ?? 1,
-      limit ?? 10,
-      PostsModel,
-      {
-        $or: [
-          { 'category.type': { $in: [CategoryEnum.General] } },
-          { 'category.type': { $in: [CategoryEnum.Forums] } },
-          { 'category.type': { $in: [CategoryEnum.Cohorts] } },
-        ],
-      },
-    );
+      if (type === CategoryEnum.General) {
+        const { General, Forums, Cohorts } = CategoryEnum;
+        ref = {
+          'category.type': { $in: [General, Forums, Cohorts] },
+        };
+      } else ref = { 'category.type': type, ...rest };
+      posts = await pagination(pageNumber, limit, PostsModel, ref);
+    } else {
+      posts = await pagination(pageNumber, limit, PostsModel, query);
+    }
     return posts;
   }
 

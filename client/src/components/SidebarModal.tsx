@@ -13,7 +13,7 @@ type SidebarModalProps = {
 
 export default function SidebarModal({ openSidebarModal, setOpenSidebarModal }: SidebarModalProps) {
   const { pathname } = useLocation();
-  const { categoryToggle, setCategoryToggle, theme, setTheme, loggedInUserId } = useGuardianContext() as GuardianContextType;
+  const { setCategoryToggle, theme, setTheme, loggedInUserId } = useGuardianContext() as GuardianContextType;
   const logout = useLogout(setOpenSidebarModal);
 
   // const AuthenticatedRoutes = ['/dashboard'];
@@ -28,15 +28,21 @@ export default function SidebarModal({ openSidebarModal, setOpenSidebarModal }: 
     ],
     [
       { name: 'Home', link: '/' },
-      // { name: 'Profile', link: '/profile' },
+      { name: 'Profile', link: `/profile/${loggedInUserId}` },
       { name: 'create post', link: loggedInUserId ? '/new-post' : '/signin'  },
       {
         name: 'Forums',
-        link: () => setCategoryToggle(prev => ({ Cohorts: false, Forums: !prev.Forums })), Icon: MdArrowDropDown
+        link: () => {
+          setCategoryToggle(prev => ({...prev, Cohorts: false, Forums: !prev.Forums }));
+          setOpenSidebarModal(false);
+        }, Icon: MdArrowDropDown
       },
       {
         name: 'Cohorts',
-        link: () => setCategoryToggle(prev => ({ ...prev, Forums: false, Cohorts: !prev.Cohorts })),
+        link: () => {
+          setCategoryToggle(prev => ({ ...prev, Forums: false, Cohorts: !prev.Cohorts }));
+          setOpenSidebarModal(false);
+        },
         Icon: MdArrowDropDown
       },
       { name: 'Logout', link: logout },

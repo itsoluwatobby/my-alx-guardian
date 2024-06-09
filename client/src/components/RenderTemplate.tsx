@@ -1,6 +1,6 @@
 import { MdRunningWithErrors } from 'react-icons/md'
 
-type RenderTemplateProps = {
+type RenderTemplateProps <T>= {
   children: React.ReactNode;
   isLoading: boolean;
   isError: boolean;
@@ -10,16 +10,16 @@ type RenderTemplateProps = {
   extraClassNames?: string;
   errorClassNames?: string;
   defaultMessage?: string | null;
-  content: PostType[] | CommentType[] | CategoryObjType[];
+  content: T[];
   LoadingComponent: () => JSX.Element;
 }
 
-export default function RenderTemplate(
+export default function RenderTemplate<T>(
   {
     children, isLoading, isError, error, content, LoadingComponent,
     classNames, extraClassNames, defaultMessage = null, errorClassNames,
     errorTextClassNames,
-  }: RenderTemplateProps) {
+  }: RenderTemplateProps<T>) {
   return (
     <div className={`flex flex-col flex-auto py-4 gap-4 ${classNames}`}>
       {

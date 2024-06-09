@@ -8,11 +8,12 @@ type ActionButtonProps = {
   text: string | IconType;
   disabled?: boolean;
   checker: boolean;
-  onClick?: () => void;
   extraClassNames?: string;
+  onClick?: () => void;
+  title?: string;
 }
 
-export const ActionButton = ({ text, loading, isError, checker, onClick, disabled = false, extraClassNames }: ActionButtonProps) => {
+export const ActionButton = ({ text, loading, isError, checker, onClick, disabled = false, extraClassNames, title }: ActionButtonProps) => {
   const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
@@ -31,6 +32,7 @@ export const ActionButton = ({ text, loading, isError, checker, onClick, disable
 
   return (
     <button
+      title={title}
       type="submit"
       onClick={onClick}
       disabled={disabled}
