@@ -52,11 +52,11 @@ exports.updateCommentValidator = (data) => {
 
 exports.getCommentsValidator = (data) => {
   const getCommentsSchema = Joi.object().keys({
-    pageNumber: Joi.number().min(1)
+    pageNumber: Joi.number().min(1).allow('')
       .messages({
         'any.required': 'pageNumber is required',
       }),
-    limit: Joi.number().min(1)
+    limit: Joi.number().min(1).allow('')
       .messages({
         'any.required': 'limit is required',
       }),

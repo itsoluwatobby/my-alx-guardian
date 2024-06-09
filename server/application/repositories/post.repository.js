@@ -1,6 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable class-methods-use-this */
 const { PostsModel, SharesModel } = require('../models');
+const { CategoryEnum } = require('../utils/accountEnum');
 const { pagination } = require('../utils/paginate');
 const { commentRepository } = require('./comment.respository');
 
@@ -15,8 +16,32 @@ class PostsRepository {
   }
 
   async getPosts(queryObj) {
-    const { pageNumber, limit, query } = queryObj;
-    const posts = await pagination(pageNumber, limit, PostsModel, query);
+    const {
+      activeId, pageNumber, limit, ...query
+    } = queryObj;
+    let ref;
+    if (Object.keys(query).includes('type')) {
+      const { type, ...rest } = query;
+      ref = { 'category.type': type, ...rest };
+    } else ref = query;
+    const posts = await pagination(pageNumber, limit, PostsModel, ref);
+    return posts;
+  }
+
+  async getAllPosts(queryObj) {
+    const { pageNumber, limit } = queryObj;
+    const posts = await pagination(
+      pageNumber ?? 1,
+      limit ?? 10,
+      PostsModel,
+      {
+        $or: [
+          { 'category.type': { $in: [CategoryEnum.General] } },
+          { 'category.type': { $in: [CategoryEnum.Forums] } },
+          { 'category.type': { $in: [CategoryEnum.Cohorts] } },
+        ],
+      },
+    );
     return posts;
   }
 
@@ -27,6 +52,17 @@ class PostsRepository {
         { body: { $in: [caseInsensitiveQuery] } },
         { 'category.type': { $in: [caseInsensitiveQuery] } },
         { 'category.name': { $in: [caseInsensitiveQuery] } },
+      ],
+    });
+    return posts;
+  }
+
+  async engagedPosts(query) {
+    const posts = await PostsModel.find({
+      $or: [
+        { userId: { $in: [query] } },
+        { likes: { $in: [query] } },
+        { 'reposts.userId': { $in: [query] } },
       ],
     });
     return posts;

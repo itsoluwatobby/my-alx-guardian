@@ -6,52 +6,52 @@ exports.updateUserValidator = (data) => {
       .messages({
         'any.required': 'id is required',
       }),
-    firstName: Joi.string().optional()
+    firstName: Joi.string().allow('')
       .messages({
         'any.required': 'firstName is required',
       }),
-    lastName: Joi.string().optional()
+    lastName: Joi.string().allow('')
       .messages({
         'any.required': 'lastName is required',
       }),
-    title: Joi.string().optional()
+    title: Joi.string().allow('')
       .messages({
         'any.required': 'title is required',
       }),
-    cohort: Joi.string().optional()
+    cohort: Joi.string().allow('')
       .messages({
-        'any.required': 'description is required',
+        'any.required': 'cohort is required',
       }),
-    bio: Joi.string().optional()
+    bio: Joi.string().allow('')
       .messages({
-        'any.required': 'description is required',
+        'any.required': 'bio is required',
       }),
-    skills: Joi.array().optional()
+    skills: Joi.array().allow('')
       .messages({
         'any.required': 'skills is required',
       }),
-    profilePicture: Joi.string().optional()
+    profilePicture: Joi.string().allow('')
       .messages({
         'any.required': 'profilePicture is required',
       }),
-    country: Joi.string().optional()
+    country: Joi.string().allow('')
       .messages({
         'any.required': 'country is required',
       }),
     location: Joi.object().keys({
-      address: Joi.string().optional()
+      address: Joi.string().allow('')
         .messages({
           'any.required': 'location.address is required',
         }),
-      country: Joi.string().optional()
+      country: Joi.string().allow('')
         .messages({
           'any.required': 'location.country is required',
         }),
-    })
+    }).allow('')
       .messages({
         'any.required': 'location is required',
       }),
-    activeAccounts: Joi.object().optional()
+    activeAccounts: Joi.array().allow('')
       .messages({
         'any.required': 'activeAccounts is required',
       }),
