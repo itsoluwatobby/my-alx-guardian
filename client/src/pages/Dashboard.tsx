@@ -62,7 +62,7 @@ export default function Dashboard() {
   //   }
   // }, [pages.previous, pages.next, isIntersecting, pagesLeft])
 
-  const sortedPosts = posts.slice().sort((a, b) => b.createdAt.localeCompare(a?.createdAt))
+  const sortedPosts = posts?.slice().sort((a, b) => b.createdAt.localeCompare(a?.createdAt))
 
   return (
     <section className="flex flex-col flex-auto rounded-md overflow-y-scroll h-full shadow-md p-3 pb-10 px-2">
