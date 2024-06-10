@@ -133,7 +133,7 @@ export default function DashboardLayout() {
           
           <button
             onClick={logout}
-            className='midscreen:self-start self-center rounded-full py-2 disabled:cursor-not-allowed mobile:py-3 mobile:text-base w-36 mobile:w-36 font-medium text-white bg-blue-900 transition-colors duration-300 shadow-sm'
+            className={`${loggedInUserId ? '' : 'hidden'} midscreen:self-start self-center rounded-full py-2 disabled:cursor-not-allowed mobile:py-3 mobile:text-base w-36 mobile:w-36 font-medium text-white bg-blue-900 transition-colors duration-300 shadow-sm`}
           >
             Sign out
           </button>
