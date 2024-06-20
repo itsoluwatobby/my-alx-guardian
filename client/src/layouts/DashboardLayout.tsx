@@ -1,23 +1,25 @@
 import { guardianAsyncWrapper } from "../app/guardianAsyncWrapper";
 import { initAppState, initCategoryObj, initPagination } from "../utility/initVaraibles";
 import CategoryDisplay from "../components/dashbord/CategoryDisplay";
+import CategoryDetailPage from "../components/CategoryDetailPage";
 import { useGuardianContext } from "../hooks/useGuardianContext";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { categoryAPI } from "../app/api-calls/category.api";
 import CategoryForm from "../components/CategoryForm";
 import { postAPI } from "../app/api-calls/post.api";
+import localStore from "../utility/localStorage";
 import { MdArrowDropDown } from "react-icons/md";
 import { useLogout } from "../hooks/useLogout";
 import { useEffect, useState } from "react";
-import CategoryDetailPage from "../components/CategoryDetailPage";
 
 const initPageQuery = { pageNumber: 1, limit: 5 };
 export default function DashboardLayout() {
   const { pathname } = useLocation();
   const logout = useLogout(() => {});
-  const { loggedInUserId, categoryToggle, setCategoryToggle,
+  const { categoryToggle, setCategoryToggle,
     setPosts, posts, setAppStatePost, setPaginate, type, setType,
    } = useGuardianContext() as GuardianContextType;
+  const [loggedInUserId] = useState(localStore.getStorage('my-id') as string);
   const [addItem, setAddItem] = useState<AddItemType>({
     category: {} as CategoryObjType, toggle: false
   });

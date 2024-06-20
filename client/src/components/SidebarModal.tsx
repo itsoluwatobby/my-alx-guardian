@@ -1,10 +1,12 @@
-import { FaTimes } from "react-icons/fa";
+import { useGuardianContext } from "../hooks/useGuardianContext";
+import { MdArrowDropDown } from "react-icons/md";
+import localStore from "../utility/localStorage";
 import { FaMoon, FaSun } from "react-icons/fa6";
 import { useLocation } from "react-router-dom";
 import { useLogout } from "../hooks/useLogout";
 import { Link } from "react-router-dom";
-import { useGuardianContext } from "../hooks/useGuardianContext";
-import { MdArrowDropDown } from "react-icons/md";
+import { FaTimes } from "react-icons/fa";
+import { useState } from 'react';
 
 type SidebarModalProps = {
   openSidebarModal: boolean;
@@ -13,8 +15,9 @@ type SidebarModalProps = {
 
 export default function SidebarModal({ openSidebarModal, setOpenSidebarModal }: SidebarModalProps) {
   const { pathname } = useLocation();
-  const { setCategoryToggle, theme, setTheme, loggedInUserId } = useGuardianContext() as GuardianContextType;
+  const { setCategoryToggle, theme, setTheme } = useGuardianContext() as GuardianContextType;
   const logout = useLogout(setOpenSidebarModal);
+  const [loggedInUserId] = useState(localStore.getStorage('my-id') as string);
 
   // const AuthenticatedRoutes = ['/dashboard'];
   const navigation = [

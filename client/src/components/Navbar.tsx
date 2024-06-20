@@ -1,14 +1,15 @@
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import GuardianImages from "./component/GuardianImages";
-import { useCallback, useEffect, useRef, useState } from "react";
-import UserDetails from "./component/UserDetails";
-import useObserver from "../hooks/useObserver";
-import { FaMoon } from "react-icons/fa6"
-import { FaSun } from "react-icons/fa"
 import { guardianAsyncWrapper } from "../app/guardianAsyncWrapper";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useGuardianContext } from "../hooks/useGuardianContext";
+import GuardianImages from "./component/GuardianImages";
 import { initAppState } from "../utility/initVaraibles";
 import { userAPI } from "../app/api-calls/user.api";
-import { useGuardianContext } from "../hooks/useGuardianContext";
+import UserDetails from "./component/UserDetails";
+import useObserver from "../hooks/useObserver";
+import localStore from "../utility/localStorage";
+import { FaMoon } from "react-icons/fa6"
+import { FaSun } from "react-icons/fa"
 
 type NavbarProps = {
   // showTitle: boolean;
@@ -19,10 +20,11 @@ type NavbarProps = {
 
 export default function Navbar({ setOpenSidebarModal }: NavbarProps) {
   const navigate = useNavigate();
-  const { currentPost, theme, setTheme, loggedInUserId, showTitle } = useGuardianContext() as GuardianContextType;
+  const { currentPost, theme, setTheme, showTitle } = useGuardianContext() as GuardianContextType;
   const { pathname } = useLocation();
   const { postId } = useParams();
   const userRef = useRef<HTMLDivElement>(null);
+  const [loggedInUserId] = useState(localStore.getStorage('my-id') as string);
   const [activeLink, setActiveLink] = useState<string>('/' || '#');
 
   const [appState, setAppState] = useState<AppStateType>(initAppState);
