@@ -1,5 +1,6 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable class-methods-use-this */
-const { MessagesModel, UserInConversationModel } = require('../models');
+const { MessagesModel, UsersInConversationModel } = require('../models');
 
 class MessagesRepository {
   async getMessages(conversationId) {
@@ -47,12 +48,12 @@ class MessagesRepository {
 
   async unreadMessages(conversationId, userId) {
     // call for getting users in conversation
-    const user = UserInConversationModel.findOne({ userId });
-    const unreadMessages = await MessagesModel.find({
+    const user = await UsersInConversationModel.findOne({ userId, conversationId }).exec();
+    const unreadCount = await MessagesModel.countDocuments({
       conversationId,
-      timestamp: { $gt: user.lastReadTimestamp },
-    }).countDocuments();
-    return unreadMessages;
+      createdAt: { $gt: user.lastReadTimestamp },
+    });
+    return { ...user._doc, unreadCount };
   }
 }
 

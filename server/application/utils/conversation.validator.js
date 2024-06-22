@@ -1,17 +1,10 @@
 const Joi = require('joi');
-const { userTypeEnums } = require('./constants');
-
-const userTypesSchema = Joi.string().valid(userTypeEnums.Brand, userTypeEnums.Influencer);
 
 exports.userValidator = (data) => {
   const userValidatorSchema = Joi.object().keys({
     id: Joi.string().required()
       .messages({
         'any.required': 'id is required',
-      }),
-    userType: userTypesSchema.required()
-      .messages({
-        'any.required': 'userType is required',
       }),
   });
 
@@ -27,14 +20,6 @@ exports.createConversationValidator = (data) => {
     authorId: Joi.string().required()
       .messages({
         'any.required': 'authorId is required',
-      }),
-    campaignId: Joi.string().required()
-      .messages({
-        'any.required': 'campaignId is required',
-      }),
-    userType: userTypesSchema.required()
-      .messages({
-        'any.required': 'userType is required',
       }),
     members: Joi.array().required()
       .messages({
@@ -62,10 +47,6 @@ exports.createChatValidator = (data) => {
     authorId: Joi.string().required()
       .messages({
         'any.required': 'authorId is required',
-      }),
-    userType: userTypesSchema.required()
-      .messages({
-        'any.required': 'userType is required',
       }),
     members: Joi.array().min(2).max(2).required()
       .messages({
@@ -108,6 +89,55 @@ exports.endConversationValidator = (data) => {
   });
 
   const validationResponse = endConversationSchema.validate(data);
+  return {
+    valid: validationResponse.error == null,
+    error: validationResponse.error?.message,
+  };
+};
+
+exports.getConversationsByUserValidator = (data) => {
+  const getConversationsByCampaignSchema = Joi.object().keys({
+    activeId: Joi.string().required()
+      .messages({
+        'any.required': 'activeId is required',
+      }),
+  });
+
+  const validationResponse = getConversationsByCampaignSchema.validate(data);
+  return {
+    valid: validationResponse.error == null,
+    error: validationResponse.error?.message,
+  };
+};
+
+exports.addInfluencerToConversationValidator = (data) => {
+  const addInfluencerToConversationSchema = Joi.object().keys({
+    conversationId: Joi.string().required()
+      .messages({
+        'any.required': 'conversationId is required',
+      }),
+    influencerId: Joi.string().required()
+      .messages({
+        'any.required': 'influencerId is required',
+      }),
+  });
+
+  const validationResponse = addInfluencerToConversationSchema.validate(data);
+  return {
+    valid: validationResponse.error == null,
+    error: validationResponse.error?.message,
+  };
+};
+
+exports.getInfluencersInConversationValidator = (data) => {
+  const getInfluencersInConversationSchema = Joi.object().keys({
+    conversationId: Joi.string().required()
+      .messages({
+        'any.required': 'conversationId is required',
+      }),
+  });
+
+  const validationResponse = getInfluencersInConversationSchema.validate(data);
   return {
     valid: validationResponse.error == null,
     error: validationResponse.error?.message,

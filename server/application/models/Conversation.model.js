@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
-const { userTypeEnums } = require('../utils/constants');
 
-const userInConversationSchema = new mongoose.Schema({
+const UsersInConversationSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
   isOpened: { type: Boolean, default: false },
   conversationId: { type: mongoose.Schema.Types.ObjectId, ref: 'Conversations' },
@@ -10,9 +9,7 @@ const userInConversationSchema = new mongoose.Schema({
 
 const ConversationSchema = mongoose.Schema(
   {
-    authorId: { type: String, required: true, ref: 'userType' },
-    userType: { type: String, enum: Object.values(userTypeEnums) },
-    campaignId: { type: String, ref: 'campaigns' },
+    authorId: { type: String, required: true, ref: 'users' },
     members: { type: Array, default: [] },
     title: { type: String },
     banner: { type: String },
@@ -22,5 +19,5 @@ const ConversationSchema = mongoose.Schema(
   { timestamps: true },
 );
 
-exports.UserInConversationModel = mongoose.model('usersInconversations', userInConversationSchema);
+exports.UsersInConversationModel = mongoose.model('usersInconversations', UsersInConversationSchema);
 exports.ConversationModel = mongoose.model('conversations', ConversationSchema);

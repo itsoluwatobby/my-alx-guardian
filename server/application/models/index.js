@@ -1,4 +1,4 @@
-const { ConversationModel, UserInConversationModel } = require('./Conversation.model');
+const { ConversationModel, UsersInConversationModel } = require('./Conversation.model');
 const { PostsModel, SharesModel } = require('./Posts.model');
 const { CategoryModel } = require('./Categories.models');
 const { MessagesModel } = require('./Messages.model');
@@ -15,5 +15,5 @@ module.exports = {
   CommentModel,
   ConversationModel,
   MessagesModel,
-  UserInConversationModel,
+  UsersInConversationModel,
 };

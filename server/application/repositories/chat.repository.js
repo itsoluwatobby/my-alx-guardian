@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable class-methods-use-this */
-const { ConversationModel, UserInConversationModel } = require('../models');
+const { ConversationModel, UsersInConversationModel } = require('../models');
 
 class ChatRepository {
   async createChat(newChatObj) {
@@ -9,7 +9,7 @@ class ChatRepository {
     const usersInConversation = members.map((memberId) => (
       { userId: memberId, conversationId: result._id }
     ));
-    await UserInConversationModel.insertMany(usersInConversation);
+    await UsersInConversationModel.insertMany(usersInConversation);
     return result;
   }
 

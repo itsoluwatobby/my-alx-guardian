@@ -1,7 +1,8 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable class-methods-use-this */
-const { ConversationModel, UserInConversationModel } = require('../models');
+const { ConversationModel, UsersInConversationModel } = require('../models');
 const { throwError } = require('../utils/responseAdapter');
+const { messagesRepository } = require('./messages.repository');
 
 class ConversationRepository {
   async conversationExists(queryObj) {
@@ -14,12 +15,12 @@ class ConversationRepository {
     const conversation = await ConversationModel.findById(conversationId);
     if (!conversation) throwError(404, 'conversation not found');
     if (conversation.hasEnded) throwError(403, 'You ended this conversation');
-    await UserInConversationModel.updateMany(
+    await UsersInConversationModel.updateMany(
       { userId },
       { $set: { isOpened: false } },
       { arrayFilters: [{ isOpened: true }] },
     );
-    await UserInConversationModel.findOneAndUpdate(
+    await UsersInConversationModel.findOneAndUpdate(
       { userId, conversationId },
       { $set: { isOpened: true } },
     );
@@ -55,19 +56,19 @@ class ConversationRepository {
     const usersInConversation = members.map((memberId) => (
       { userId: memberId, conversationId: newConversation._id }
     ));
-    await UserInConversationModel.insertMany(usersInConversation);
+    await UsersInConversationModel.insertMany(usersInConversation);
     return newConversation;
   }
 
   async updateUserLastSeenInConversation(conversationId, userId) {
-    await UserInConversationModel.findOneAndUpdate(
+    await UsersInConversationModel.findOneAndUpdate(
       { userId, conversationId },
       { lastReadTimestamp: new Date() },
     );
   }
 
   async userAlreadyInConversation(conversationId, userId) {
-    const isMember = await UserInConversationModel.exists(
+    const isMember = await UsersInConversationModel.exists(
       { userId, conversationId },
     );
     return isMember;
@@ -80,6 +81,41 @@ class ConversationRepository {
       { new: true },
     );
     return result;
+  }
+
+  async getConverstionsByUser(userId) {
+    const conversations = await ConversationModel.find(
+      {
+        $or: [
+          { authorId: userId },
+          { members: { $in: [userId] } },
+        ],
+      },
+    );
+    return conversations;
+  }
+
+  async addInfluencerToConversation(conversationId, influencerId) {
+    const conversation = await ConversationModel.findOneAndUpdate(
+      { _id: conversationId },
+      { $addToSet: { members: influencerId } },
+      { new: true },
+    );
+    if (!await this.userAlreadyInConversation(conversationId, influencerId)) {
+      await UsersInConversationModel.insertMany(
+        { conversationId, userId: influencerId },
+      );
+    }
+    return conversation;
+  }
+
+  async getConversationMembers(conversationId) {
+    const conversation = await this.findConversation(conversationId);
+    const membersChatInfo = await Promise.all(conversation.members.map(async (memberId) => {
+      const res = await messagesRepository.unreadMessages(conversationId, memberId);
+      return res;
+    }));
+    return [conversation.members, membersChatInfo];
   }
 }
 

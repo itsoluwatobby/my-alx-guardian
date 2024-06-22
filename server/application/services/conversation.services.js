@@ -1,28 +1,31 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable class-methods-use-this */
 const { chatRepository } = require('../repositories/chat.repository');
+const { userRepository } = require('../repositories/user.repository');
 const { conversationRepository } = require('../repositories/conversation.repository');
 const { tryCatchWrapperWithError } = require('../utils/asyncWrapper');
 const {
   createConversationValidator, getConversationValidator, endConversationValidator,
-  createChatValidator,
+  getConversationsByUserValidator, addInfluencerToConversationValidator,
+  getInfluencersInConversationValidator, createChatValidator,
 } = require('../utils/conversation.validator');
 const { throwError } = require('../utils/responseAdapter');
 
 class ConversationService {
   constructor() {
     this.conversationRepository = conversationRepository;
+    this.userRepository = userRepository;
     this.chatRepository = chatRepository;
   }
 
   async createConversation(conversationObj) {
     return tryCatchWrapperWithError(async () => {
-      const { authorId, campaignId } = conversationObj;
+      const { authorId } = conversationObj;
       const validationResponse = createConversationValidator(conversationObj);
       if (!validationResponse.valid) {
         throw new Error(validationResponse.error);
       }
-      if (await this.conversationRepository.conversationExists({ authorId, campaignId })) {
+      if (await this.conversationRepository.conversationExists({ authorId })) {
         throwError(409, 'Conversation already exist');
       }
       const conversation = await this.conversationRepository.createConversation(conversationObj);
@@ -89,6 +92,73 @@ class ConversationService {
       return {
         data: conversation,
         message: 'BE: Conversation closed',
+      };
+    });
+  }
+
+  async getConverstionsByUser(activeId) {
+    return tryCatchWrapperWithError(async () => {
+      const validationResponse = getConversationsByUserValidator({ activeId });
+      if (!validationResponse.valid) {
+        throw new Error(validationResponse.error);
+      }
+      // eslint-disable-next-line max-len
+      const conversations = await this.conversationRepository.getConverstionsByUser(activeId);
+      // if (!conversations) throwError(404, 'No conversations found for this campaign');
+
+      return {
+        data: conversations,
+        message: 'BE: Conversations retrieved Successfully',
+      };
+    });
+  }
+
+  async addInfluencerToConversation(conversationId, influencerId) {
+    return tryCatchWrapperWithError(async () => {
+      const validationResponse = addInfluencerToConversationValidator({ conversationId });
+      if (!validationResponse.valid) {
+        throw new Error(validationResponse.error);
+      }
+      const conversation = await this.conversationRepository.addInfluencerToConversation(
+        conversationId,
+        influencerId,
+      );
+      if (!conversation) throwError(404, 'Conversation not found');
+
+      return {
+        data: conversation,
+        message: 'BE: Influencer added to conversation',
+      };
+    });
+  }
+
+  async getConversationMembers(queryObj) {
+    const { conversationId } = queryObj;
+    return tryCatchWrapperWithError(async () => {
+      const validationResponse = getInfluencersInConversationValidator({ conversationId });
+      if (!validationResponse.valid) {
+        throw new Error(validationResponse.error);
+      }
+      const [memberIds, membersChatInfo] = await this.conversationRepository.getConversationMembers(
+        conversationId,
+      );
+      // get members details
+      const conversationMembers = [];
+      const usersResponse = await this.userRepository.getSearchedUsers(memberIds);
+      if (usersResponse.status !== 200) throwError(usersResponse.status, usersResponse.message.split(': ')[1]);
+
+      const users = usersResponse.data;
+      membersChatInfo.forEach((member) => {
+        users.forEach((user) => {
+          if (member.userId.toString() === user._id) {
+            conversationMembers.push({ ...user, unreadMessages: member.unreadCount });
+          }
+        });
+      });
+
+      return {
+        data: conversationMembers,
+        message: 'BE: Influencer found in conversation',
       };
     });
   }

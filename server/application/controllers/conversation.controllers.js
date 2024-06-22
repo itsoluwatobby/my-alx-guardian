@@ -35,6 +35,33 @@ class ConversationController {
       return res.json(response.success(conversation.data, conversation.message));
     });
   }
+
+  getConverstionsByUser(req, res) {
+    return tryCatchWrapper(res, async () => {
+      const conversations = await this.conversationRepository.getConverstionsByUser(
+        req.query.activeId,
+      );
+      return res.json(response.success(conversations));
+    });
+  }
+
+  addInfluencerToConversation(req, res) {
+    return tryCatchWrapper(res, async () => {
+      const conversation = await this.conversationRepository.addInfluencerToConversation(
+        req.body,
+      );
+      return res.json(response.success(conversation.data, conversation.message));
+    });
+  }
+
+  getConversationMembers(req, res) {
+    return tryCatchWrapper(res, async () => {
+      const conversation = await this.conversationRepository.getConversationMembers(
+        req.query,
+      );
+      return res.json(response.success(conversation.data, conversation.message));
+    });
+  }
 }
 
 module.exports = new ConversationController();
