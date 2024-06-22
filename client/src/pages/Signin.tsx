@@ -39,28 +39,31 @@ export default function Signin() {
   }, [])
 
   useEffect(() => {
-    const id = 45
-    socket.on('connect', async() => {
+    const conversationId = '6673081e75466ed745719829';
+    const userId = '66487f32c9304deb9ce9451b';
+    socket.on('connect', async () => {
       console.log(socket.connected);
-      socket.emit('join', { userId: 457, conversationId: id, name: 'hello' });
+      socket.emit('join', { userId, conversationId, name: 'hello' });
 
       socket.on('user-joined', (data) => {
         console.log(data);
       })
       // const res = await socket.emitWithAck('write_message', { message: 'Good morning you all' });
       // console.log(res);
+
       socket.emit(
-        'write_message',
+        'sendMessage',
         {
           senderId: "66487f32c9304deb9ce9451b",
           conversationId: "6673081e75466ed745719829",
           recipientId: "66487f32c9304deb9ce9451c",
-          message: "second conversation"
+          message: "second conversation",
         },
         (data: any) => {
-        console.log(data)
-      });
-      socket.on('receive_message', (data) => {
+          console.log(data)
+          
+        });
+      socket.on('newMessage', (data) => {
         console.log(data);
       })
     })
