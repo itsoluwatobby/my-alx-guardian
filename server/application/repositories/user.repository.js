@@ -30,7 +30,12 @@ class UserRepository {
   }
 
   async getUsers(query) {
-    const users = await UserModel.find({ _id: { $in: query }, isAccountDeleted: false }).select('-isPasswordReset');
+    const users = await UserModel.find(
+      {
+        _id: { $in: query },
+        isAccountDeleted: false,
+      },
+    ).select('-isPasswordReset -isAccountDeleted -createdAt -updatedAt');
     return users;
   }
 
