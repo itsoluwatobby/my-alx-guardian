@@ -4,15 +4,28 @@ const mongoose = require('mongoose');
 const express = require('express');
 const http = require('http');
 const cors = require('cors');
+const { Server } = require('socket.io');
 const { connectDB } = require('./config/connections/mongo');
 const config = require('./config');
 const { appRoutes } = require('./routes/appRoutes');
 const correlationIdMiddleware = require('./middleware/correlation-id-middleware');
 const apiAccessAuthMiddleware = require('./middleware/api-access.auth');
+const socketServer = require('./services/socket.services');
 
 connectDB();
 const app = express();
 const server = http.createServer(app);
+
+const io = new Server(
+  server,
+  {
+    pingTimeout: 12000,
+    cors: {
+      origin: config.isProduction ? config.PROD_URL : config.LOCAL_URL,
+      methods: ['POST', 'GET'],
+    },
+  },
+);
 
 app.use(express.static('public'));
 app.use(cors({
@@ -33,6 +46,7 @@ app.get('/health-check', (req, res) => {
   });
 });
 
+socketServer.initialize(io);
 // handles all routes
 appRoutes(app);
 

@@ -1,19 +1,22 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { PasswordInputs } from "../components/authentication/PasswordInputs";
-import { ChangeEvent, useEffect, useState } from "react";
-import { ActionButton } from "../components/ActionButton";
-import { FormInputs } from "../components/FormInputs";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import useLocalStorage from '../utility/localStorage';
 import ThirdPartyLogin from "../components/authentication/Thirdparty";
 import { guardianAsyncWrapper } from "../app/guardianAsyncWrapper";
-import { toast } from "react-toastify";
-import { MetaTags } from "../layouts/MetaTagsOGgraph";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useGuardianContext } from "../hooks/useGuardianContext";
 import { authenticationAPI } from "../app/api-calls/auth.api";
+import { ActionButton } from "../components/ActionButton";
+import { ChangeEvent, useEffect, useState } from "react";
+import { FormInputs } from "../components/FormInputs";
+import useLocalStorage from '../utility/localStorage';
+import { MetaTags } from "../layouts/MetaTagsOGgraph";
 import { sanitizeEntries } from "../utility/helpers";
 import localStore from "../utility/localStorage";
 import AppStand from "../components/AppStand";
-import { useGuardianContext } from "../hooks/useGuardianContext";
+import { toast } from "react-toastify";
+import { Socket, connect } from 'socket.io-client';
 
+let socket: Socket;
 export default function Signin() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -32,10 +35,45 @@ export default function Signin() {
   };
 
   useEffect(() => {
+    socket = connect('http://localhost:5000')
+  }, [])
+
+  useEffect(() => {
+    const conversationId = '6673081e75466ed745719829';
+    const userId = '66487f32c9304deb9ce9451b';
+    socket.on('connect', async () => {
+      console.log(socket.connected);
+      socket.emit('join', { userId, conversationId, name: 'hello' });
+
+      socket.on('user-joined', (data) => {
+        console.log(data);
+      })
+      // const res = await socket.emitWithAck('write_message', { message: 'Good morning you all' });
+      // console.log(res);
+
+      socket.emit(
+        'sendMessage',
+        {
+          senderId: "66487f32c9304deb9ce9451b",
+          conversationId: "6673081e75466ed745719829",
+          recipientId: "66487f32c9304deb9ce9451c",
+          message: "second conversation",
+        },
+        (data: any) => {
+          console.log(data)
+          
+        });
+      socket.on('newMessage', (data) => {
+        console.log(data);
+      })
+    })
+  }, [])
+
+  useEffect(() => {
     useLocalStorage.setStorage('guardianUser', persistLogin);
   }, [persistLogin])
 
-  const handleLogin = async(event: ChangeEvent<HTMLFormElement>) => {
+  const handleLogin = async (event: ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
     guardianAsyncWrapper(async () => {
       setAppState(prev => ({ ...prev, loading: true }));
@@ -60,7 +98,7 @@ export default function Signin() {
         image=''
       />
       <form onSubmit={handleLogin} className="flex-none md:w-[55%] w-full h-full flex flex-col gap-y-6 p-8 pt-14 items-center">
-  
+
         <FormInputs
           name="email" value={email} handleUserInfo={handleUserInfo}
           type='email' autoComplete='on'
@@ -97,8 +135,8 @@ export default function Signin() {
           {/* <span>or continue with</span> */}
 
           <ThirdPartyLogin
-            // showModal={showModal}
-            // setLoading={setAppState}
+          // showModal={showModal}
+          // setLoading={setAppState}
           // setShowModal={setShowModal}  */}
           />
         </div>
