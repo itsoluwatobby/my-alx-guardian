@@ -33,41 +33,50 @@ export default function Signin() {
     const [name, value] = [event.target.name, event.target.value]
     setUser(prev => ({ ...prev, [name]: value }))
   };
-
+  
   useEffect(() => {
     socket = connect('http://localhost:5000')
   }, [])
-
+  
+  const conversationId = '66764f3b6cd64e13bc970188';
+  // const recipientId = '66487f32c9304deb9ce9451b';
+  const senderId = '66434401f1f86556653fb187';
   useEffect(() => {
-    const conversationId = '6673081e75466ed745719829';
-    const userId = '66487f32c9304deb9ce9451b';
     socket.on('connect', async () => {
       console.log(socket.connected);
-      socket.emit('join', { userId, conversationId, name: 'hello' });
+      socket.emit('join', { userId: senderId, conversationId, name: 'hello' });
 
       socket.on('user-joined', (data) => {
         console.log(data);
       })
       // const res = await socket.emitWithAck('write_message', { message: 'Good morning you all' });
-      // console.log(res);
-
-      socket.emit(
-        'sendMessage',
-        {
-          senderId: "66487f32c9304deb9ce9451b",
-          conversationId: "6673081e75466ed745719829",
-          recipientId: "66487f32c9304deb9ce9451c",
-          message: "second conversation",
-        },
-        (data: any) => {
-          console.log(data)
-          
-        });
-      socket.on('newMessage', (data) => {
-        console.log(data);
-      })
+      // console.log(res);;
     })
+
+    return () => {
+      socket.off('join');
+      socket.off('user-joined');
+    }
   }, [])
+
+  const sendMessage = () => {
+    console.log('run');
+    socket.emit(
+      'sendMessage',
+      {
+        senderId,
+        conversationId,
+        // recipientId,
+        message: "latest from member",
+      },
+      (data: any) => {
+        console.log(data)
+
+      });
+    socket.on('newMessage', (data) => {
+      console.log(data);
+    })
+  }
 
   useEffect(() => {
     useLocalStorage.setStorage('guardianUser', persistLogin);
@@ -125,6 +134,11 @@ export default function Signin() {
           checker={canSubmit && !loading}
           text='Login' disabled={!canSubmit || loading}
           loading={loading} isError={isError}
+        />
+        <ActionButton type='button'
+          checker={true} onClick={sendMessage}
+          text='Send Message' disabled={false}
+          loading={false} isError={isError}
         />
 
         <div className="flex flex-col gap-1 mobile:gap-0.5 items-center py-1 mobile:text-sm">

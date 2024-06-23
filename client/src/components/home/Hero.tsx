@@ -1,13 +1,16 @@
 // import GuardianImages from '../component/Images'
 import { useNavigate } from "react-router-dom"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import localStore from "../../utility/localStorage";
 // import { useEffect, useState } from 'react';
 
 export default function Hero() {
   const navigate = useNavigate();
-  const [loggedInUserId] = useState(localStore.getStorage('my-id'));
+  const [loggedInUserId, setLoggedInUserId] = useState('');
 
+  useEffect(() => {
+    setLoggedInUserId(localStore.getStorage('my-id') ?? '');
+  }, [])
   return (
     <div className="page flex flex-col items-center gap-y24 justify-between min-h-[75vh]">
       <h2 className='text-3d text-5xl font-bold text-center'>

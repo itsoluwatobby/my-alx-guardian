@@ -19,7 +19,7 @@ export default function DashboardLayout() {
   const { categoryToggle, setCategoryToggle,
     setPosts, posts, setAppStatePost, setPaginate, type, setType,
    } = useGuardianContext() as GuardianContextType;
-  const [loggedInUserId] = useState(localStore.getStorage('my-id') as string);
+  // const [loggedInUserId] = useState(localStore.getStorage('my-id') as string);
   const [addItem, setAddItem] = useState<AddItemType>({
     category: {} as CategoryObjType, toggle: false
   });
@@ -35,6 +35,11 @@ export default function DashboardLayout() {
 
   const { pageNumber, limit } = categoryQuery;
   const { pageNumber: page } = postQuery;
+  const [loggedInUserId, setLoggedInUserId] = useState('');
+
+  useEffect(() => {
+    setLoggedInUserId(localStore.getStorage('my-id'));
+  }, [])
 
   const rightBar = [
     {

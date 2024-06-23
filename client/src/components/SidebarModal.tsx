@@ -6,7 +6,7 @@ import { useLocation } from "react-router-dom";
 import { useLogout } from "../hooks/useLogout";
 import { Link } from "react-router-dom";
 import { FaTimes } from "react-icons/fa";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type SidebarModalProps = {
   openSidebarModal: boolean;
@@ -17,8 +17,11 @@ export default function SidebarModal({ openSidebarModal, setOpenSidebarModal }: 
   const { pathname } = useLocation();
   const { setCategoryToggle, theme, setTheme } = useGuardianContext() as GuardianContextType;
   const logout = useLogout(setOpenSidebarModal);
-  const [loggedInUserId] = useState(localStore.getStorage('my-id') as string);
+  const [loggedInUserId, setLoggedInUserId] = useState('');
 
+  useEffect(() => {
+    setLoggedInUserId(localStore.getStorage('my-id'));
+  }, [])
   // const AuthenticatedRoutes = ['/dashboard'];
   const navigation = [
     [
