@@ -1,12 +1,8 @@
 services:
   - type: web
-    name: my-react-app
-    env: node
+    name: my-static-site
+    env: static
     plan: free
-    region: oregon
-    branch: main
-    buildCommand: npm install && npm run build
-    startCommand: npm run preview
     staticPublishPath: dist
     routes:
       - type: rewrite
